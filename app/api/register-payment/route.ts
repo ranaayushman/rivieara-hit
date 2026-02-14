@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 import { generateImageHash, validateFile, buildFileName } from "@/lib/helpers";
 import type { ApiError, RegistrationSuccess } from "@/lib/types";
 
@@ -44,6 +44,8 @@ export async function POST(
     if (fileError) {
       return NextResponse.json({ error: fileError }, { status: 400 });
     }
+
+    const supabase = getSupabase();
 
     // ── 3. Check for duplicate UTR ──────────────────────────────────
     const { data: existingUTR } = await supabase

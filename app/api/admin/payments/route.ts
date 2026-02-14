@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
+import { verifyAdmin } from "@/lib/helpers";
 import type { Payment, PaymentStatus, ApiError } from "@/lib/types";
 
 /** Allowed values for the payment_status filter */
@@ -21,8 +22,12 @@ const VALID_STATUSES: PaymentStatus[] = [
  */
 export async function GET(
   req: NextRequest
-): Promise<NextResponse<Payment[] | ApiError>> {
+) {
   try {
+    // ---------- Auth check ----------
+    const auth = await verifyAdmin(req);
+    if (auth instanceof NextResponse) return auth;
+
     const { searchParams } = new URL(req.url);
     const statusFilter = searchParams.get("payment_status") as PaymentStatus | null;
 
@@ -35,6 +40,8 @@ export async function GET(
         { status: 400 }
       );
     }
+
+    const supabase = getSupabase();
 
     // Build query — select payments with related registration info
     let query = supabase
