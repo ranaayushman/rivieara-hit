@@ -1,11 +1,19 @@
-import React from 'react'
+import Hero from "@/components/Hero";
+import UpcomingEvents from "@/components/UpcomingEvents";
+import Gallery from "@/components/Gallery"; // preview section
+import Footer from "@/components/Footer";
+import Sponsors from "@/components/Sponsors";
+import Schedule from "@/components/Schedule";
 
-const page = () => {
+export default function Home() {
   return (
-    <div>
-      <h1 className='text-3xl font-bold text-center'>Welcome to Riviera</h1>
-    </div>
-  )
+    <>
+      <Hero />
+      <UpcomingEvents />
+      <Schedule />
+      <Gallery />
+      <Sponsors />
+      <Footer />
+    </>
+  );
 }
-
-export default page
