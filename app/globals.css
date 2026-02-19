@@ -43,3 +43,6 @@
 .animate-fade {
   animation: fade 0.4s ease-in-out;
 }
+html {
+  scroll-behavior: smooth;
+}

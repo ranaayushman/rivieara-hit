@@ -1,16 +1,16 @@
 import Hero from "@/components/Hero";
 import UpcomingEvents from "@/components/UpcomingEvents";
-import Gallery from "@/components/Gallery"; // preview section
-import Footer from "@/components/Footer";
+import Activities from "@/components/Activities";
+import Gallery from "@/components/Gallery";
 import Sponsors from "@/components/Sponsors";
-import Schedule from "@/components/Schedule";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
     <>
       <Hero />
       <UpcomingEvents />
-      <Schedule />
+      <Activities />
       <Gallery />
       <Sponsors />
       <Footer />

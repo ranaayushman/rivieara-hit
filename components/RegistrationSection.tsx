@@ -37,7 +37,7 @@ export default function RegistrationSection() {
 
           <div className="border border-white/10 rounded-2xl p-10 backdrop-blur-md bg-white/5 hover:border-red-500/50 transition-all duration-300">
             <MapPin className="mx-auto mb-4 text-red-500" size={32} />
-            <p className="text-gray-300">HIT Campus, Patna</p>
+            <p className="text-gray-300">HIT Campus, Haldia</p>
           </div>
 
           <div className="border border-white/10 rounded-2xl p-10 backdrop-blur-md bg-white/5 hover:border-red-500/50 transition-all duration-300">

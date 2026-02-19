@@ -15,7 +15,7 @@ export default function RootLayout({
         className={`${inter.className} bg-[#0f0f0f] text-white antialiased`}
       >
         <Navbar />
-        <main className="overflow-x-hidden">
+        <main className="overflow-x-hidden pt-24">
           {children}
         </main>
       </body>
