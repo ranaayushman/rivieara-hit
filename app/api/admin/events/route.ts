@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
-import { verifyAdmin, validateBannerFile, buildFileName } from "@/lib/helpers";
+import { verifyAdminToken } from "@/lib/jwt";
+import { validateBannerFile, buildFileName } from "@/lib/helpers";
 import type { Event } from "@/lib/types";
 
 /* ------------------------------------------------------------------ */
@@ -10,8 +11,7 @@ import type { Event } from "@/lib/types";
 
 export async function GET(req: NextRequest) {
   try {
-    // ---------- Auth check ----------
-    const auth = await verifyAdmin(req);
+    const auth = await verifyAdminToken(req);
     if (auth instanceof NextResponse) return auth;
 
     const supabase = getSupabase();
@@ -47,8 +47,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    // ---------- Auth check ----------
-    const auth = await verifyAdmin(req);
+    const auth = await verifyAdminToken(req);
     if (auth instanceof NextResponse) return auth;
 
     const formData = await req.formData();
@@ -59,7 +58,6 @@ export async function POST(req: NextRequest) {
     const venue = formData.get("venue") as string | null;
     const image = formData.get("image") as File | null;
 
-    // ---------- Validate required fields ----------
     if (!title || !description || !date || !venue) {
       return NextResponse.json(
         { error: "title, description, date, and venue are required" },
@@ -70,7 +68,6 @@ export async function POST(req: NextRequest) {
     const supabase = getSupabase();
     let bannerUrl: string | null = null;
 
-    // ---------- Upload image if provided ----------
     if (image && image.size > 0) {
       const fileError = validateBannerFile(image);
       if (fileError) {
@@ -95,7 +92,6 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // Build the public URL for the uploaded file
       const { data: publicUrlData } = supabase.storage
         .from("event-banners")
         .getPublicUrl(fileName);
@@ -103,16 +99,9 @@ export async function POST(req: NextRequest) {
       bannerUrl = publicUrlData.publicUrl;
     }
 
-    // ---------- Insert event row ----------
     const { data: event, error: insertError } = await supabase
       .from("events")
-      .insert({
-        title,
-        description,
-        date,
-        venue,
-        banner_url: bannerUrl,
-      })
+      .insert({ title, description, date, venue, banner_url: bannerUrl })
       .select()
       .single<Event>();
 
@@ -140,13 +129,11 @@ export async function POST(req: NextRequest) {
 /* ------------------------------------------------------------------ */
 /*  PUT /api/admin/events                                              */
 /*  Update an existing event. Accepts multipart form-data.             */
-/*  Requires "id" field in the form body.                              */
 /* ------------------------------------------------------------------ */
 
 export async function PUT(req: NextRequest) {
   try {
-    // ---------- Auth check ----------
-    const auth = await verifyAdmin(req);
+    const auth = await verifyAdminToken(req);
     if (auth instanceof NextResponse) return auth;
 
     const formData = await req.formData();
@@ -161,7 +148,6 @@ export async function PUT(req: NextRequest) {
 
     const supabase = getSupabase();
 
-    // Build update payload with only the provided fields
     const updates: Record<string, string> = {};
     const title = formData.get("title") as string | null;
     const description = formData.get("description") as string | null;
@@ -174,7 +160,6 @@ export async function PUT(req: NextRequest) {
     if (date) updates.date = date;
     if (venue) updates.venue = venue;
 
-    // ---------- Upload new image if provided ----------
     if (image && image.size > 0) {
       const fileError = validateBannerFile(image);
       if (fileError) {
@@ -213,7 +198,6 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    // ---------- Update event row ----------
     const { data: event, error: updateError } = await supabase
       .from("events")
       .update(updates)
@@ -249,8 +233,7 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    // ---------- Auth check ----------
-    const auth = await verifyAdmin(req);
+    const auth = await verifyAdminToken(req);
     if (auth instanceof NextResponse) return auth;
 
     const { searchParams } = new URL(req.url);

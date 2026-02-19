@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import { getSupabase } from "@/lib/supabase";
-import { signAdminToken } from "@/lib/helpers";
+import { signAdminToken } from "@/lib/jwt";
 import type { Admin, AdminLoginBody } from "@/lib/types";
 
 /* ------------------------------------------------------------------ */
 /*  POST /api/admin/login                                              */
-/*  Authenticate an admin and return a signed JWT.                     */
+/*  Authenticate an admin with email + password and return a JWT.      */
 /* ------------------------------------------------------------------ */
 
 export async function POST(req: NextRequest) {
