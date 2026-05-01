@@ -1,11 +1,19 @@
-import React from 'react'
+import Hero from "@/components/Hero";
+import UpcomingEvents from "@/components/UpcomingEvents";
+import Activities from "@/components/Activities";
+import Gallery from "@/components/Gallery";
+import Sponsors from "@/components/Sponsors";
+import Footer from "@/components/Footer";
 
-const page = () => {
+export default function Home() {
   return (
-    <div>
-      <h1 className='text-3xl font-bold text-center'>Welcome to Riviera</h1>
-    </div>
-  )
+    <>
+      <Hero />
+      <UpcomingEvents />
+      <Activities />
+      <Gallery />
+      <Sponsors />
+      <Footer />
+    </>
+  );
 }
-
-export default page
