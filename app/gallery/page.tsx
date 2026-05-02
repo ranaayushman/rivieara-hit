@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Gallery from "@/components/Gallery";
+import DetailedGallery from "@/components/DetailedGallery";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -11,7 +11,7 @@ export default function GalleryPage() {
   return (
     <>
       <div className="pt-20" />
-      <Gallery />
+      <DetailedGallery />
       <Footer />
     </>
   );
