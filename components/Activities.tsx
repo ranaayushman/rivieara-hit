@@ -1,74 +1,83 @@
 "use client";
 
-import { Code, Music, Gamepad2, Cpu } from "lucide-react";
+import { Code, Music, Gamepad2, Cpu, type LucideIcon } from "lucide-react";
+import { motion } from "framer-motion";
+import SectionWrapper from "@/components/ui/SectionWrapper";
+import SectionHeading from "@/components/ui/SectionHeading";
+import GlassCard from "@/components/ui/GlassCard";
 
-const activities = [
+interface Activity {
+  title: string;
+  desc: string;
+  icon: LucideIcon;
+}
+
+const activities: Activity[] = [
   {
     title: "Hackathon",
-    desc: "24-hour coding battle with exciting prizes and innovation.",
+    desc: "24-hour coding battle with exciting prizes, mentorship, and real-world innovation challenges.",
     icon: Code,
   },
   {
     title: "Cultural Night",
-    desc: "Music, dance & electrifying performances.",
+    desc: "Music, dance & electrifying performances by top artists and student talent.",
     icon: Music,
   },
   {
     title: "Gaming Arena",
-    desc: "Competitive esports tournaments & challenges.",
+    desc: "Competitive esports tournaments with head-to-head challenges across popular titles.",
     icon: Gamepad2,
   },
   {
     title: "Tech Expo",
-    desc: "Showcasing futuristic projects & AI innovations.",
+    desc: "Showcasing futuristic projects, AI innovations, and cutting-edge student research.",
     icon: Cpu,
   },
 ];
 
 export default function Activities() {
   return (
-    <section
-      id="activities"
-      className="relative py-32 bg-[#0f0f0f] text-white overflow-hidden"
-    >
-      {/* Background Glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.25)_0%,rgba(15,15,15,1)_70%)]"></div>
+    <SectionWrapper id="activities">
+      <SectionHeading
+        text="Fest"
+        accent="Activities"
+        subtitle="From coding battles to cultural nights — there's something for everyone"
+      />
 
-      <div className="relative max-w-7xl mx-auto px-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        {activities.map((activity, index) => {
+          const Icon = activity.icon;
 
-        {/* Heading */}
-        <h2 className="text-4xl md:text-6xl font-extrabold text-center mb-20">
-          Fest <span className="text-red-500">Activities</span>
-        </h2>
-
-        {/* Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
-
-          {activities.map((activity, index) => {
-            const Icon = activity.icon;
-
-            return (
-              <div
-                key={index}
-                className="group bg-white/5 border border-white/10 backdrop-blur-xl p-8 rounded-3xl hover:border-red-500 hover:shadow-[0_0_40px_rgba(239,68,68,0.4)] transition-all duration-300"
+          return (
+            <GlassCard key={activity.title} index={index} className="group">
+              {/* Icon container */}
+              <motion.div
+                className="w-14 h-14 rounded-xl bg-[var(--clr-primary-dim)] flex items-center justify-center mb-6 group-hover:bg-[var(--clr-primary)] transition-colors duration-300"
+                whileHover={{ rotate: [0, -10, 10, 0] }}
+                transition={{ duration: 0.4 }}
               >
-                <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-red-600/20 mb-6 group-hover:bg-red-600 transition">
-                  <Icon size={28} className="text-red-500 group-hover:text-white transition" />
-                </div>
+                <Icon
+                  size={26}
+                  className="text-[var(--clr-primary)] group-hover:text-white transition-colors duration-300"
+                />
+              </motion.div>
 
-                <h3 className="text-xl font-bold mb-3">
-                  {activity.title}
-                </h3>
+              {/* Title */}
+              <h3 className="text-lg md:text-xl font-bold mb-3 tracking-tight">
+                {activity.title}
+              </h3>
 
-                <p className="text-zinc-400 text-sm">
-                  {activity.desc}
-                </p>
-              </div>
-            );
-          })}
+              {/* Description */}
+              <p className="text-[var(--clr-text-muted)] text-sm leading-relaxed">
+                {activity.desc}
+              </p>
 
-        </div>
+              {/* Bottom accent line */}
+              <div className="mt-6 h-0.5 w-0 bg-gradient-to-r from-[var(--clr-primary)] to-red-400 group-hover:w-full transition-all duration-500 rounded-full" />
+            </GlassCard>
+          );
+        })}
       </div>
-    </section>
+    </SectionWrapper>
   );
 }

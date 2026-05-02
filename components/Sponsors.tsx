@@ -1,75 +1,63 @@
 "use client";
 
-import Image from "next/image";
+import { motion } from "framer-motion";
+import SectionWrapper from "@/components/ui/SectionWrapper";
+import SectionHeading from "@/components/ui/SectionHeading";
+import GlassCard from "@/components/ui/GlassCard";
+
+interface Sponsor {
+  name: string;
+  initials: string;
+  tier: string;
+  color: string;
+}
+
+const sponsors: Sponsor[] = [
+  { name: "Fanta", initials: "Fa", tier: "Title Sponsor", color: "from-orange-500 to-orange-600" },
+  { name: "Pepsi", initials: "Pe", tier: "Co-Sponsor", color: "from-blue-500 to-blue-700" },
+  { name: "SBI", initials: "SBI", tier: "Banking Partner", color: "from-blue-800 to-indigo-900" },
+  { name: "ICICI", initials: "IC", tier: "Payment Partner", color: "from-orange-600 to-red-700" },
+];
 
 export default function Sponsors() {
   return (
-    <section
-      id="sponsors"
-      className="relative py-32 bg-[#0f0f0f] text-white overflow-hidden"
-    >
-      {/* Red Radial Glow Background */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.3)_0%,rgba(15,15,15,1)_70%)]"></div>
+    <SectionWrapper id="sponsors">
+      <SectionHeading
+        text="Our"
+        accent="Sponsors"
+        subtitle="Proudly supported by industry leaders"
+      />
 
-      <div className="relative max-w-6xl mx-auto px-6 text-center">
-        {/* Heading */}
-        <h2 className="text-4xl md:text-6xl font-extrabold mb-20">
-          Our <span className="text-red-500">Sponsors</span>
-        </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto">
+        {sponsors.map((sponsor, index) => (
+          <GlassCard
+            key={sponsor.name}
+            index={index}
+            className="group text-center !p-8"
+          >
+            {/* Logo placeholder with initials */}
+            <motion.div
+              className={`w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br ${sponsor.color} flex items-center justify-center mb-5 shadow-lg`}
+              whileHover={{ scale: 1.1, rotate: 3 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <span className="text-2xl font-extrabold text-white drop-shadow-md">
+                {sponsor.initials}
+              </span>
+            </motion.div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-2 gap-8 place-items-center">
+            {/* Name */}
+            <h3 className="text-lg font-bold mb-1 tracking-tight">
+              {sponsor.name}
+            </h3>
 
-          {/* Fanta */}
-          <div className="relative bg-orange-500 rounded-2xl w-64 h-40 shadow-xl hover:scale-105 transition duration-300">
-            <div className="relative w-full h-full p-6">
-              <Image
-                src="/fanta.png"
-                alt="Fanta"
-                fill
-                className="object-contain"
-              />
-            </div>
-          </div>
-
-          {/* Pepsi */}
-          <div className="relative bg-white rounded-2xl w-64 h-40 shadow-xl hover:scale-105 transition duration-300">
-            <div className="relative w-full h-full p-6">
-              <Image
-                src="/pepsi.png"
-                alt="Pepsi"
-                fill
-                className="object-contain"
-              />
-            </div>
-          </div>
-
-          {/* SBI */}
-          <div className="relative bg-red-600 rounded-2xl w-64 h-40 shadow-xl hover:scale-105 transition duration-300">
-            <div className="relative w-full h-full p-6">
-              <Image
-                src="/sbi.png"
-                alt="SBI"
-                fill
-                className="object-contain"
-              />
-            </div>
-          </div>
-
-          {/* ICICI */}
-          <div className="relative bg-green-600 rounded-2xl w-64 h-40 shadow-xl hover:scale-105 transition duration-300">
-            <div className="relative w-full h-full p-8">
-              <Image
-                src="/ici.png"
-                alt="ICICI Bank"
-                fill
-                className="object-contain"
-              />
-            </div>
-          </div>
-
-        </div>
+            {/* Tier badge */}
+            <span className="text-xs text-[var(--clr-text-dim)] uppercase tracking-[0.2em] font-medium">
+              {sponsor.tier}
+            </span>
+          </GlassCard>
+        ))}
       </div>
-    </section>
+    </SectionWrapper>
   );
 }

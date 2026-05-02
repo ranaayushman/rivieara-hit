@@ -1,65 +1,132 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight, Sparkles } from "lucide-react";
+import Link from "next/link";
 
 export default function Hero() {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setPosition({ x: e.clientX, y: e.clientY });
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    const handle = (e: MouseEvent) =>
+      setMousePos({ x: e.clientX, y: e.clientY });
+    window.addEventListener("mousemove", handle);
+    return () => window.removeEventListener("mousemove", handle);
   }, []);
 
   return (
-    <section className="relative min-h-screen pt-24 flex items-center justify-center bg-black text-white overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center bg-[var(--clr-bg)] text-white overflow-hidden">
 
-      {/* 🔴 Mouse Glow (Optimized with transform for smooth 60fps) */}
+      {/* ── Background Layers ── */}
+
+      {/* Mouse-tracking glow */}
       <div
-        className="pointer-events-none absolute top-0 left-0 w-[600px] h-[600px] rounded-full bg-red-600/20 blur-[150px] transition-transform duration-75 ease-out z-0"
+        className="pointer-events-none absolute w-[600px] h-[600px] rounded-full bg-[var(--clr-primary)] opacity-[0.08] blur-[160px] hidden md:block will-change-transform"
         style={{
-          transform: `translate(${position.x - 300}px, ${position.y - 300}px)`,
+          transform: `translate(${mousePos.x - 300}px, ${mousePos.y - 300}px)`,
+          transition: "transform 80ms linear",
         }}
+        aria-hidden="true"
       />
 
-      {/* 🔲 Tech Grid (Faded at edges with a radial mask for depth) */}
-      <div className="absolute inset-0 z-0 opacity-40 bg-[linear-gradient(rgba(255,0,0,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(255,0,0,0.15)_1px,transparent_1px)] bg-[size:70px_70px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_40%,transparent_100%)]" />
+      {/* Tech grid */}
+      <div className="bg-grid" aria-hidden="true" />
 
-      {/* 🔥 Center Glow Core */}
-      <div className="absolute w-[400px] h-[400px] bg-red-600/20 rounded-full blur-[120px] z-0" />
+      {/* Center radial glow */}
+      <div
+        className="absolute w-[500px] h-[500px] bg-[var(--clr-primary)] opacity-[0.12] rounded-full blur-[180px]"
+        aria-hidden="true"
+      />
 
-      {/* Content */}
-      <div className="relative z-10 text-center max-w-4xl px-6 flex flex-col items-center">
-        
-        {/* Optional Status Badge for a pro feel */}
-        <div className="mb-6 inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-red-500/20 bg-red-500/10 text-red-200 text-sm font-medium backdrop-blur-sm">
-          <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+      {/* Noise */}
+      <div className="absolute inset-0 bg-noise" aria-hidden="true" />
+
+      {/* Gradient edge fade */}
+      <div
+        className="absolute inset-0 bg-gradient-to-b from-[var(--clr-bg)] via-transparent to-[var(--clr-bg)] opacity-60"
+        aria-hidden="true"
+      />
+
+      {/* ── Content ── */}
+      <div className="relative z-10 text-center section-container flex flex-col items-center px-4 sm:px-6 pt-24 pb-16 md:pt-0 md:pb-0">
+
+        {/* Status badge */}
+        <motion.div
+          className="mb-8 inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-[var(--clr-primary)]/20 bg-[var(--clr-primary-dim)] text-red-200 text-sm font-medium backdrop-blur-md animate-pulse-glow"
+          initial={{ opacity: 0, y: 20, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <Sparkles size={14} className="text-[var(--clr-primary)]" />
           Registrations Now Open
-        </div>
+        </motion.div>
 
-        <h1 className="text-6xl md:text-8xl font-extrabold tracking-tight">
+        {/* Main heading */}
+        <motion.h1
+          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[1.05]"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+        >
           Riviera{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-600 drop-shadow-[0_0_30px_rgba(239,68,68,0.8)]">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--clr-primary)] to-red-400 drop-shadow-[0_0_40px_rgba(239,68,68,0.7)]">
             2026
           </span>
-        </h1>
+        </motion.h1>
 
-        <p className="mt-6 text-lg md:text-xl text-zinc-400 leading-relaxed max-w-2xl mx-auto">
-          The Ultimate Tech & Cultural Fest. <br className="hidden md:block" />
-          Where <span className="text-zinc-200 font-medium">innovation</span> meets <span className="text-zinc-200 font-medium">creativity</span>.
-        </p>
+        {/* Subtitle */}
+        <motion.p
+          className="mt-6 md:mt-8 text-base sm:text-lg md:text-xl text-[var(--clr-text-muted)] leading-relaxed max-w-2xl mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        >
+          The Ultimate Tech & Cultural Fest.{" "}
+          <br className="hidden sm:block" />
+          Where{" "}
+          <span className="text-zinc-200 font-medium">innovation</span> meets{" "}
+          <span className="text-zinc-200 font-medium">creativity</span>.
+        </motion.p>
 
-        <div className="mt-10 flex justify-center">
-          <button className="group px-10 py-4 rounded-full text-lg font-semibold bg-red-600 text-white hover:bg-red-500 hover:scale-105 transition-all duration-300 shadow-[0_0_40px_rgba(239,68,68,0.5)] flex items-center gap-3">
+        {/* CTA Button */}
+        <motion.div
+          className="mt-10 md:mt-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.45 }}
+        >
+          <Link href="/#events" className="btn-primary group text-lg px-10 py-4">
             Explore Events
-            <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
-          </button>
-        </div>
+            <ArrowRight
+              size={20}
+              className="transition-transform duration-300 group-hover:translate-x-1"
+            />
+          </Link>
+        </motion.div>
 
+        {/* Scroll indicator */}
+        <motion.div
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2 }}
+        >
+          <span className="text-[10px] uppercase tracking-[0.3em] text-[var(--clr-text-dim)] font-medium">
+            Scroll
+          </span>
+          <motion.div
+            className="w-5 h-8 rounded-full border-2 border-white/20 flex items-start justify-center p-1"
+            animate={{ opacity: [0.3, 0.7, 0.3] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <motion.div
+              className="w-1 h-2 rounded-full bg-white/60"
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

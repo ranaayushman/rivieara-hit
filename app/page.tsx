@@ -1,5 +1,6 @@
 import Hero from "@/components/Hero";
 import UpcomingEvents from "@/components/UpcomingEvents";
+import Schedule from "@/components/Schedule";
 import Activities from "@/components/Activities";
 import Gallery from "@/components/Gallery";
 import Sponsors from "@/components/Sponsors";
@@ -10,6 +11,7 @@ export default function Home() {
     <>
       <Hero />
       <UpcomingEvents />
+      <Schedule />
       <Activities />
       <Gallery />
       <Sponsors />

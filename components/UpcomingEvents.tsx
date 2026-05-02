@@ -1,110 +1,196 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import SectionWrapper from "@/components/ui/SectionWrapper";
+import SectionHeading from "@/components/ui/SectionHeading";
 
-const events = [
+interface EventData {
+  title: string;
+  desc: string;
+  image: string;
+  tag: string;
+}
+
+const events: EventData[] = [
   {
     title: "AI Workshop",
     desc: "Riviera 2026 proudly presents an exclusive Workshop on Artificial Intelligence. Step into the world of AI and explore how intelligent systems are transforming industries.",
     image: "/gallery1.jpg",
+    tag: "Workshop",
   },
   {
     title: "Hackathon",
-    desc: "24-hour coding challenge with exciting prizes and real-world problem solving.",
+    desc: "24-hour coding challenge with exciting prizes and real-world problem solving. Build, innovate, and compete with the best developers.",
     image: "/gallery2.jpg",
+    tag: "Competition",
   },
   {
     title: "Cultural Night",
-    desc: "Music, dance and unforgettable performances with electrifying vibes.",
+    desc: "Music, dance and unforgettable performances with electrifying vibes. Experience the energy of the biggest cultural night in the region.",
     image: "/gallery3.jpg",
+    tag: "Cultural",
   },
 ];
 
+const slideVariants = {
+  enter: (dir: number) => ({
+    x: dir > 0 ? 300 : -300,
+    opacity: 0,
+    scale: 0.9,
+    rotateY: dir > 0 ? 15 : -15,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    scale: 1,
+    rotateY: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.16, 1, 0.3, 1] as const,
+    },
+  },
+  exit: (dir: number) => ({
+    x: dir > 0 ? -300 : 300,
+    opacity: 0,
+    scale: 0.9,
+    rotateY: dir > 0 ? -15 : 15,
+    transition: {
+      duration: 0.4,
+      ease: [0.16, 1, 0.3, 1] as const,
+    },
+  }),
+};
+
 export default function UpcomingEvents() {
   const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState(0);
 
-  const prevSlide = () => {
-    setCurrent((prev) =>
-      prev === 0 ? events.length - 1 : prev - 1
-    );
-  };
+  const navigate = useCallback(
+    (dir: 1 | -1) => {
+      setDirection(dir);
+      setCurrent((prev) => {
+        const next = prev + dir;
+        if (next < 0) return events.length - 1;
+        if (next >= events.length) return 0;
+        return next;
+      });
+    },
+    []
+  );
 
-  const nextSlide = () => {
-    setCurrent((prev) =>
-      prev === events.length - 1 ? 0 : prev + 1
-    );
-  };
+  const event = events[current];
 
   return (
-    <section className="relative py-32 bg-[#0f0f0f] text-white overflow-hidden">
+    <SectionWrapper id="events">
+      <SectionHeading
+        text="Upcoming"
+        accent="Events"
+        subtitle="Discover the most anticipated events of Riviera 2026"
+      />
 
-      {/* Background Red Glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.3)_0%,rgba(15,15,15,1)_70%)]"></div>
+      <div className="relative max-w-5xl mx-auto">
+        {/* Main card area */}
+        <div className="relative h-[420px] sm:h-[440px] md:h-[400px] [perspective:1800px]">
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.article
+              key={current}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              className="absolute inset-0 rounded-3xl border border-[var(--clr-border)] bg-gradient-to-br from-[#1a0000]/80 via-[var(--clr-surface)]/90 to-[var(--clr-bg)] backdrop-blur-md overflow-hidden"
+              style={{
+                boxShadow: "0 0 60px rgba(239, 68, 68, 0.12), 0 20px 50px rgba(0,0,0,0.5)",
+              }}
+            >
+              {/* Inner radial glow */}
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(239,68,68,0.15),transparent_50%)]" />
 
-      <div className="relative max-w-6xl mx-auto px-6">
+              <div className="relative h-full flex flex-col md:flex-row gap-6 p-6 sm:p-8 md:p-10">
+                {/* Image */}
+                <div className="relative flex-shrink-0 w-full md:w-[280px] h-[160px] md:h-full rounded-2xl overflow-hidden ring-1 ring-white/10">
+                  <Image
+                    src={event.image}
+                    alt={event.title}
+                    fill
+                    className="object-cover transition-transform duration-700 hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 280px"
+                  />
+                  {/* Tag badge */}
+                  <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-xs font-medium text-red-300">
+                    {event.tag}
+                  </div>
+                </div>
 
-        {/* Heading */}
-        <h2 className="text-4xl md:text-6xl font-bold text-center mb-20">
-          Upcoming <span className="text-red-500">Events</span>
-        </h2>
+                {/* Text content */}
+                <div className="flex flex-col justify-between flex-1 min-w-0">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.35em] text-red-300/70 mb-2 font-medium">
+                      Featured Event
+                    </p>
+                    <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-4">
+                      {event.title}
+                    </h3>
+                    <p className="text-[var(--clr-text-muted)] text-sm sm:text-base leading-relaxed line-clamp-3 md:line-clamp-4">
+                      {event.desc}
+                    </p>
+                  </div>
 
-        <div className="relative flex items-center justify-center">
+                  <div className="flex items-center justify-between mt-6">
+                    {/* Dots indicator */}
+                    <div className="flex gap-2">
+                      {events.map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => {
+                            setDirection(i > current ? 1 : -1);
+                            setCurrent(i);
+                          }}
+                          className={`transition-all duration-300 rounded-full ${
+                            i === current
+                              ? "w-8 h-2 bg-[var(--clr-primary)]"
+                              : "w-2 h-2 bg-white/20 hover:bg-white/40"
+                          }`}
+                          aria-label={`Go to event ${i + 1}`}
+                        />
+                      ))}
+                    </div>
 
-          {/* Side Glow Panels */}
-          <div className="hidden md:block absolute -left-32 w-96 h-80 border border-red-500/40 rounded-3xl blur-sm opacity-40"></div>
-          <div className="hidden md:block absolute -right-32 w-96 h-80 border border-red-500/40 rounded-3xl blur-sm opacity-40"></div>
-
-          {/* Main Card */}
-          <div className="relative w-full max-w-4xl bg-gradient-to-br from-[#1a0000] to-[#0f0f0f] border border-red-500/40 rounded-3xl p-12 shadow-[0_0_60px_rgba(239,68,68,0.3)] overflow-visible transition-all duration-500">
-
-            {/* Floating Circle Image */}
-            <div className="absolute -top-12 right-10 w-32 h-32 rounded-full border-4 border-red-500 overflow-hidden shadow-xl">
-              <Image
-                src={events[current].image}
-                alt="event"
-                fill
-                className="object-cover"
-              />
-            </div>
-
-            <h3 className="text-3xl font-bold mb-6">
-              {events[current].title}
-            </h3>
-
-            <p className="text-zinc-300 mb-8 max-w-xl">
-              {events[current].desc}
-            </p>
-
-            <button className="group px-6 py-3 bg-black border border-red-500 rounded-full flex items-center gap-2 hover:bg-red-600 transition-all duration-300">
-              Register Now
-              <ArrowRight
-                size={16}
-                className="group-hover:translate-x-1 transition"
-              />
-            </button>
-
-          </div>
-
-          {/* Left Arrow */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-4 md:-left-12 bg-red-600 p-3 rounded-full hover:bg-red-700 transition"
-          >
-            <ArrowLeft size={20} />
-          </button>
-
-          {/* Right Arrow */}
-          <button
-            onClick={nextSlide}
-            className="absolute right-4 md:-right-12 bg-red-600 p-3 rounded-full hover:bg-red-700 transition"
-          >
-            <ArrowRight size={20} />
-          </button>
-
+                    <button className="btn-primary !py-2.5 !px-6 !text-sm group">
+                      Register Now
+                      <ArrowRight
+                        size={16}
+                        className="transition-transform group-hover:translate-x-1"
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.article>
+          </AnimatePresence>
         </div>
+
+        {/* Navigation arrows */}
+        <button
+          onClick={() => navigate(-1)}
+          aria-label="Previous event"
+          className="absolute left-0 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[var(--clr-surface)] border border-white/10 flex items-center justify-center text-white hover:bg-[var(--clr-primary)] hover:border-[var(--clr-primary)] transition-all duration-300 shadow-lg hover:shadow-[var(--shadow-glow-sm)]"
+        >
+          <ArrowLeft size={18} />
+        </button>
+
+        <button
+          onClick={() => navigate(1)}
+          aria-label="Next event"
+          className="absolute right-0 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[var(--clr-surface)] border border-white/10 flex items-center justify-center text-white hover:bg-[var(--clr-primary)] hover:border-[var(--clr-primary)] transition-all duration-300 shadow-lg hover:shadow-[var(--shadow-glow-sm)]"
+        >
+          <ArrowRight size={18} />
+        </button>
       </div>
-    </section>
+    </SectionWrapper>
   );
 }

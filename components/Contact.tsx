@@ -1,91 +1,124 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Mail, Phone, User, MessageSquare } from "lucide-react";
+import { motion } from "framer-motion";
+
+interface FormFieldProps {
+  label: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}
+
+function FormField({ label, icon, children }: FormFieldProps) {
+  return (
+    <div className="space-y-2">
+      <label className="flex items-center gap-2 text-sm text-[var(--clr-text-muted)] font-medium">
+        {icon}
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+const inputStyles =
+  "w-full px-5 py-3.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder:text-[var(--clr-text-dim)] focus:border-[var(--clr-primary)] focus:ring-2 focus:ring-[var(--clr-primary)]/20 outline-none transition-all duration-300 text-sm";
 
 export default function Contact() {
   return (
-    <section
-      id="contact"
-      className="relative py-32 bg-[#0f0f0f] text-white overflow-hidden"
-    >
-      {/* Background Glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.25)_0%,rgba(15,15,15,1)_70%)]"></div>
+    <section className="relative min-h-screen flex items-center justify-center bg-[var(--clr-bg)] text-white overflow-hidden pt-24 pb-16 px-4 sm:px-6">
+      {/* Background */}
+      <div className="bg-glow" />
 
-      <div className="relative max-w-5xl mx-auto px-6 text-center">
+      <motion.div
+        className="relative z-10 w-full max-w-lg"
+        initial={{ opacity: 0, y: 30, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      >
+        {/* Card */}
+        <div className="relative rounded-3xl overflow-hidden">
+          {/* Gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[var(--clr-primary)] via-red-600 to-red-800" />
 
-        {/* Heading */}
-        <h2 className="text-4xl md:text-6xl font-extrabold mb-20">
-          Contact <span className="text-red-500">Us</span>
-        </h2>
+          {/* Subtle pattern overlay */}
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_20%_80%,rgba(255,255,255,0.3),transparent_50%)]" />
 
-        {/* Form Card */}
-        <div className="backdrop-blur-2xl bg-red-600/10 border border-red-500/30 rounded-3xl p-10 md:p-14 shadow-[0_0_60px_rgba(239,68,68,0.3)] transition-all duration-500">
-
-          <form className="space-y-8 text-left">
-
-            {/* Name */}
-            <div>
-              <label className="text-sm text-zinc-400 mb-2 block">
-                Your Name
-              </label>
-              <input
-                type="text"
-                placeholder="Riya Singh"
-                className="w-full px-6 py-4 rounded-full bg-black/40 border border-white/20 focus:border-red-500 focus:ring-2 focus:ring-red-500/40 outline-none transition-all duration-300"
-              />
+          <div className="relative p-8 sm:p-10 md:p-12">
+            {/* Heading */}
+            <div className="text-center mb-10">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-2">
+                Contact Us
+              </h2>
+              <p className="text-white/60 text-sm">
+                We&apos;d love to hear from you
+              </p>
             </div>
 
-            {/* Phone */}
-            <div>
-              <label className="text-sm text-zinc-400 mb-2 block">
-                Phone Number
-              </label>
-              <input
-                type="text"
-                placeholder="+91 **********"
-                className="w-full px-6 py-4 rounded-full bg-black/40 border border-white/20 focus:border-red-500 focus:ring-2 focus:ring-red-500/40 outline-none transition-all duration-300"
-              />
-            </div>
+            {/* Form */}
+            <form className="space-y-5">
+              <FormField
+                label="Your Name"
+                icon={<User size={14} className="text-white/50" />}
+              >
+                <input
+                  type="text"
+                  placeholder="Enter your name"
+                  className={inputStyles}
+                  style={{ background: "rgba(0,0,0,0.25)", borderColor: "rgba(255,255,255,0.2)" }}
+                />
+              </FormField>
 
-            {/* Email */}
-            <div>
-              <label className="text-sm text-zinc-400 mb-2 block">
-                Email ID
-              </label>
-              <input
-                type="email"
-                placeholder="yourname@gmail.com"
-                className="w-full px-6 py-4 rounded-full bg-black/40 border border-white/20 focus:border-red-500 focus:ring-2 focus:ring-red-500/40 outline-none transition-all duration-300"
-              />
-            </div>
+              <FormField
+                label="Phone Number"
+                icon={<Phone size={14} className="text-white/50" />}
+              >
+                <input
+                  type="tel"
+                  placeholder="+91 **********"
+                  className={inputStyles}
+                  style={{ background: "rgba(0,0,0,0.25)", borderColor: "rgba(255,255,255,0.2)" }}
+                />
+              </FormField>
 
-            {/* Query */}
-            <div>
-              <label className="text-sm text-zinc-400 mb-2 block">
-                Query
-              </label>
-              <textarea
-                rows={4}
-                placeholder="Write your message..."
-                className="w-full px-6 py-4 rounded-2xl bg-black/40 border border-white/20 focus:border-red-500 focus:ring-2 focus:ring-red-500/40 outline-none transition-all duration-300 resize-none"
-              />
-            </div>
+              <FormField
+                label="Email"
+                icon={<Mail size={14} className="text-white/50" />}
+              >
+                <input
+                  type="email"
+                  placeholder="yourname@gmail.com"
+                  className={inputStyles}
+                  style={{ background: "rgba(0,0,0,0.25)", borderColor: "rgba(255,255,255,0.2)" }}
+                />
+              </FormField>
 
-            {/* Submit Button */}
-            <div className="flex justify-center pt-4">
-              <button className="group relative px-10 py-4 rounded-full text-lg font-semibold bg-red-600 hover:bg-red-700 transition-all duration-300 shadow-[0_0_40px_rgba(239,68,68,0.6)] flex items-center gap-3">
+              <FormField
+                label="Query"
+                icon={<MessageSquare size={14} className="text-white/50" />}
+              >
+                <textarea
+                  rows={4}
+                  placeholder="Write your message..."
+                  className={`${inputStyles} !rounded-2xl resize-none`}
+                  style={{ background: "rgba(0,0,0,0.25)", borderColor: "rgba(255,255,255,0.2)" }}
+                />
+              </FormField>
+
+              <button
+                type="submit"
+                className="w-full mt-4 py-3.5 rounded-xl bg-black/80 hover:bg-black text-white font-semibold flex items-center justify-center gap-2 transition-all duration-300 group shadow-lg hover:shadow-xl"
+              >
                 Submit
                 <ArrowRight
-                  className="group-hover:translate-x-1 transition"
-                  size={20}
+                  size={18}
+                  className="group-hover:translate-x-1 transition-transform"
                 />
               </button>
-            </div>
-
-          </form>
-
+            </form>
+          </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
