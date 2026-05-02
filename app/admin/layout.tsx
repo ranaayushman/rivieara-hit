@@ -14,8 +14,13 @@ import type { NavItem } from "./_components/NavBar";
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/admin/dashboard" },
   { label: "Events", href: "/admin/events" },
-  { label: "Payments", href: "/admin/payments" },
   { label: "Sponsors", href: "/admin/sponsors" },
+  { label: "Gallery", href: "/admin/gallery" },
+  { label: "Schedule", href: "/admin/schedule" },
+  { label: "Activities", href: "/admin/activities" },
+  { label: "Payments", href: "/admin/payments" },
+  { label: "Contact", href: "/admin/contact" },
+  { label: "Settings", href: "/admin/settings" },
 ];
 
 export default function AdminLayout({

@@ -95,6 +95,86 @@ export interface CreateOrderBody {
   phone: string;
 }
 
+/* ── Sponsor ──────────────────────────────────────────────────────── */
+
+export interface Sponsor {
+  id: string;
+  name: string;
+  tier: string;          // free-text: "Title Sponsor", "Golden Food Partner", etc.
+  logo_url: string;
+  website_url: string | null;
+  bg_color: string;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+/* ── Gallery ──────────────────────────────────────────────────────── */
+
+export interface GalleryAlbum {
+  id: string;
+  title: string;
+  description: string | null;
+  cover_url: string | null;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+  images?: GalleryImage[];
+}
+
+export interface GalleryImage {
+  id: string;
+  album_id: string;
+  image_url: string;
+  caption: string | null;
+  sort_order: number;
+  created_at: string;
+}
+
+/* ── Schedule ────────────────────────────────────────────────────── */
+
+export interface ScheduleItem {
+  id: string;
+  day_label: string;
+  time: string;
+  title: string;
+  description: string | null;
+  sort_order: number;
+  created_at: string;
+}
+
+/* ── Activity ────────────────────────────────────────────────────── */
+
+export interface Activity {
+  id: string;
+  title: string;
+  description: string;
+  icon_name: string;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+/* ── Site Settings ───────────────────────────────────────────────── */
+
+export interface SiteSetting {
+  key: string;
+  value: Record<string, unknown>;
+  updated_at: string;
+}
+
+/* ── Contact Inquiry ─────────────────────────────────────────────── */
+
+export interface ContactInquiry {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+}
+
 /* ── Generic ──────────────────────────────────────────────────────── */
 
 /** Standard JSON error response */

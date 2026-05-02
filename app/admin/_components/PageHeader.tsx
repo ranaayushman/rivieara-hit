@@ -12,14 +12,16 @@ interface PageHeaderProps {
     href: string;
     icon?: React.ReactNode;
   };
+  /** Optional children rendered on the right (takes precedence over action) */
+  children?: React.ReactNode;
 }
 
-export default function PageHeader({ title, action }: PageHeaderProps) {
+export default function PageHeader({ title, action, children }: PageHeaderProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
       <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">{title}</h1>
 
-      {action && (
+      {children ? children : action ? (
         <Link
           href={action.href}
           className="inline-flex items-center justify-center gap-2 bg-[#ff3333] text-white rounded-full px-5 py-2.5 text-sm font-semibold
@@ -28,7 +30,8 @@ export default function PageHeader({ title, action }: PageHeaderProps) {
           {action.icon}
           {action.label}
         </Link>
-      )}
+      ) : null}
     </div>
   );
 }
+
