@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import RegistrationSection from "@/components/RegistrationSection";
-import Footer from "@/components/Footer";
+import RegisterForm from "@/components/RegisterForm";
 
 export const metadata: Metadata = {
   title: "Register | Riviera 2026",
@@ -9,10 +8,8 @@ export const metadata: Metadata = {
 
 export default function RegisterPage() {
   return (
-    <>
-      <div className="pt-20" />
-      <RegistrationSection />
-      <Footer />
-    </>
+    <main>
+      <RegisterForm />
+    </main>
   );
 }
