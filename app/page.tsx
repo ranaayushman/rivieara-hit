@@ -1,4 +1,5 @@
 import Hero from "@/components/Hero";
+import RegistrationSection from "@/components/RegistrationSection";
 import UpcomingEvents from "@/components/UpcomingEvents";
 import Schedule from "@/components/Schedule";
 import Activities from "@/components/Activities";
@@ -10,6 +11,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <RegistrationSection />
       <UpcomingEvents />
       <Schedule />
       <Activities />

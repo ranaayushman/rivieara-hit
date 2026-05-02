@@ -1,78 +1,98 @@
 "use client";
 
-import { CalendarDays, MapPin, Users, ArrowRight } from "lucide-react";
+import { CalendarDays, MapPin, User, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
-import SectionHeading from "@/components/ui/SectionHeading";
-import GlassCard from "@/components/ui/GlassCard";
 
 const infoCards = [
   {
     icon: CalendarDays,
-    label: "March 25 – 28, 2026",
-    sublabel: "4 Days of Events",
+    label: "March 25–28",
+    sublabel: "2026",
   },
   {
     icon: MapPin,
-    label: "HIT Campus, Haldia",
-    sublabel: "West Bengal, India",
+    label: "HIT Campus",
+    sublabel: "Haldia",
   },
   {
-    icon: Users,
-    label: "Open for All Students",
-    sublabel: "Register as Individual or Team",
+    icon: User,
+    label: "Open for All",
+    sublabel: "Students",
   },
 ];
 
 export default function RegistrationSection() {
   return (
     <SectionWrapper>
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <SectionHeading
-          text="Registrations"
-          accent="Open Now"
-          accentFirst={false}
-        />
-        <p className="text-[var(--clr-text-muted)] text-base md:text-lg leading-relaxed -mt-10">
-          Be a part of HIT Fest Riviera, one of the most awaited techno-cultural
-          celebrations, and experience days filled with innovation, talent,
-          competition, and unforgettable memories.
-        </p>
+      <div className="text-center max-w-3xl mx-auto mb-16 relative z-10">
+        <motion.h2 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-4xl sm:text-5xl md:text-6xl font-semibold text-white tracking-tight mb-6"
+        >
+          Registrations <span className="text-[#ff3333]">Open Now</span>
+        </motion.h2>
+        
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1 }}
+          className="text-white/60 text-sm md:text-base leading-relaxed max-w-2xl mx-auto font-light"
+        >
+          Be a part of HIT Fest Riviera, one of the most awaited
+          techno-cultural celebrations, and experience days filled
+          with innovation, talent, competition, and unforgettable memories.
+        </motion.p>
       </div>
 
-      {/* Info cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 max-w-4xl mx-auto mb-14">
+      {/* Info cards matching screenshot style */}
+      <div className="flex flex-col sm:flex-row gap-4 md:gap-6 max-w-4xl mx-auto mb-16 relative z-10">
         {infoCards.map((card, index) => {
           const Icon = card.icon;
           return (
-            <GlassCard
+            <motion.div
               key={card.label}
-              index={index}
-              className="text-center !p-8"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 + index * 0.1 }}
+              className="flex-1 px-6 py-5 rounded-2xl border border-white/10 bg-white/[0.02] flex items-center gap-4 hover:bg-white/[0.04] transition-colors"
             >
-              <div className="w-14 h-14 mx-auto rounded-2xl bg-[var(--clr-primary-dim)] flex items-center justify-center mb-4">
-                <Icon
-                  size={26}
-                  className="text-[var(--clr-primary)]"
-                />
+              <Icon
+                size={20}
+                className="text-white/60"
+              />
+              <div className="flex flex-col text-left">
+                 <span className="text-white/80 text-sm font-medium">{card.label}</span>
+                 <span className="text-white/40 text-xs">{card.sublabel}</span>
               </div>
-              <p className="text-white font-semibold mb-1">{card.label}</p>
-              <p className="text-xs text-[var(--clr-text-dim)]">{card.sublabel}</p>
-            </GlassCard>
+            </motion.div>
           );
         })}
       </div>
 
-      {/* CTA */}
-      <div className="flex justify-center">
-        <Link href="/register" className="btn-primary group text-lg px-10 py-4">
-          Register Now
-          <ArrowRight
-            size={20}
-            className="transition-transform duration-300 group-hover:translate-x-1"
-          />
+      {/* CTA Button matching screenshot */}
+      <motion.div 
+        className="flex justify-center relative z-10"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.5 }}
+      >
+        <Link 
+          href="/register" 
+          className="inline-flex items-center justify-between min-w-[220px] pl-10 pr-2 py-2 rounded-full border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/30 transition-all duration-300 group shadow-2xl"
+        >
+          <span className="text-white/90 font-light tracking-widest text-sm mr-8">Register Now</span>
+          <div className="w-10 h-10 rounded-full bg-[#ff3333] flex items-center justify-center shadow-[0_0_20px_rgba(255,51,51,0.6)] group-hover:scale-105 transition-all">
+            <ArrowRight size={16} className="text-white group-hover:translate-x-0.5 transition-transform" />
+          </div>
         </Link>
-      </div>
+      </motion.div>
     </SectionWrapper>
   );
 }
