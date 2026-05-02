@@ -16,13 +16,13 @@ interface EmptyStateProps {
 
 export default function EmptyState({ icon, message, action }: EmptyStateProps) {
   return (
-    <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
-      {icon && <div className="mx-auto mb-3 text-gray-300">{icon}</div>}
-      <p className="text-gray-500 text-sm">{message}</p>
+    <div className="text-center py-16 bg-[#0f0404]/80 backdrop-blur-md rounded-2xl border border-white/5 shadow-2xl">
+      {icon && <div className="mx-auto mb-4 text-white/20">{icon}</div>}
+      <p className="text-white/50 text-sm font-medium">{message}</p>
       {action && (
         <Link
           href={action.href}
-          className="mt-3 inline-block text-indigo-600 text-sm font-medium hover:underline"
+          className="mt-4 inline-block text-[#ff3333] text-sm font-semibold hover:text-red-400 hover:underline transition-colors"
         >
           {action.label}
         </Link>

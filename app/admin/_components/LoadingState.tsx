@@ -8,5 +8,5 @@ interface LoadingStateProps {
 }
 
 export default function LoadingState({ text = "Loading…" }: LoadingStateProps) {
-  return <p className="text-gray-500 animate-pulse py-4">{text}</p>;
+  return <p className="text-white/40 animate-pulse py-4 font-medium">{text}</p>;
 }

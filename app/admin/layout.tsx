@@ -15,6 +15,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/admin/dashboard" },
   { label: "Events", href: "/admin/events" },
   { label: "Payments", href: "/admin/payments" },
+  { label: "Sponsors", href: "/admin/sponsors" },
 ];
 
 export default function AdminLayout({
@@ -48,17 +49,17 @@ export default function AdminLayout({
   // Wait until auth check completes
   if (!ready) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-gray-500 animate-pulse">Loading…</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0202]">
+        <p className="text-white/40 animate-pulse">Loading…</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-[#0a0202] text-white flex flex-col">
       <NavBar items={NAV_ITEMS} />
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
       </main>
     </div>

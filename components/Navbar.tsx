@@ -34,6 +34,11 @@ export default function Navbar() {
     return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
 
+  // Do not render the public navbar on admin routes
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
+
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
     return pathname.startsWith(href.replace("/#", "/"));

@@ -30,42 +30,46 @@ export default function NavBar({ items }: NavBarProps) {
   }
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
+    <header className="bg-[#0a0202]/80 backdrop-blur-xl border-b border-white/10 sticky top-0 z-30">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         {/* Brand */}
         <Link
           href="/admin/dashboard"
-          className="text-lg font-bold text-indigo-600 tracking-tight"
+          className="text-lg font-bold bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent hover:from-[#ff3333] hover:to-red-400 transition-all duration-300"
         >
-          Riviera Admin
+          Riviera <span className="text-[#ff3333]">Admin</span>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden sm:flex items-center gap-1">
-          {items.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                pathname.startsWith(item.href)
-                  ? "bg-indigo-50 text-indigo-700"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+        <nav className="hidden sm:flex items-center gap-2">
+          {items.map((item) => {
+            const isActive = pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  isActive
+                    ? "bg-[#ff3333]/10 text-[#ff3333] border border-[#ff3333]/20"
+                    : "text-white/60 hover:text-white hover:bg-white/5 border border-transparent"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
           <button
             onClick={handleLogout}
-            className="ml-4 px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+            className="ml-4 px-5 py-2 rounded-full text-sm font-medium border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] hover:border-red-500/50 text-white transition-all duration-300 group flex items-center gap-2"
           >
             Logout
+            <div className="w-1.5 h-1.5 rounded-full bg-red-500 group-hover:animate-pulse" />
           </button>
         </nav>
 
         {/* Mobile hamburger */}
         <button
-          className="sm:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100 cursor-pointer"
+          className="sm:hidden p-2 rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
@@ -75,27 +79,32 @@ export default function NavBar({ items }: NavBarProps) {
 
       {/* Mobile menu drawer */}
       {menuOpen && (
-        <nav className="sm:hidden border-t border-gray-200 bg-white pb-3">
-          {items.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setMenuOpen(false)}
-              className={`block px-4 py-2 text-sm font-medium ${
-                pathname.startsWith(item.href)
-                  ? "bg-indigo-50 text-indigo-700"
-                  : "text-gray-600 hover:bg-gray-100"
-              }`}
+        <nav className="sm:hidden border-t border-white/10 bg-[#0f0404] pb-3 pt-2 px-4 space-y-1 shadow-2xl">
+          {items.map((item) => {
+            const isActive = pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className={`block px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                  isActive
+                    ? "bg-[#ff3333]/10 text-[#ff3333]"
+                    : "text-white/60 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+          <div className="pt-2 mt-2 border-t border-white/10">
+            <button
+              onClick={handleLogout}
+              className="w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors"
             >
-              {item.label}
-            </Link>
-          ))}
-          <button
-            onClick={handleLogout}
-            className="w-full text-left px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 cursor-pointer"
-          >
-            Logout
-          </button>
+              Logout
+            </button>
+          </div>
         </nav>
       )}
     </header>
