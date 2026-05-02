@@ -10,7 +10,7 @@ export default function Hero() {
 
   useEffect(() => {
     const handle = (e: MouseEvent) =>
-      setMousePos({ x: e.clientX, y: e.clientY });
+      setMousePos({ x: e.pageX, y: e.pageY });
     window.addEventListener("mousemove", handle);
     return () => window.removeEventListener("mousemove", handle);
   }, []);
