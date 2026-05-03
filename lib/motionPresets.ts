@@ -215,3 +215,141 @@ export const viewportTight = {
   once: true,
   margin: "-40px" as const,
 };
+
+/* ================================================================== */
+/*  HERO CINEMATIC PRESETS                                              */
+/* ================================================================== */
+
+/** Lantern floating — warm idle drift for floating elements */
+export const lanternFloat = {
+  y: [-8, 8, -8],
+  x: [-3, 3, -3],
+  transition: {
+    duration: 7,
+    repeat: Infinity,
+    ease: "easeInOut" as const,
+  },
+};
+
+/** Glow pulse — breathing aura effect */
+export const glowPulse = {
+  opacity: [0.5, 1, 0.5],
+  scale: [1, 1.05, 1],
+  transition: {
+    duration: 3,
+    repeat: Infinity,
+    ease: "easeInOut" as const,
+  },
+};
+
+/** Magical hover — levitation + glow bloom */
+export const magicalHover = {
+  y: -8,
+  scale: 1.04,
+  transition: { type: "spring", stiffness: 300, damping: 15 },
+};
+
+/** Cinematic intro — blur-to-clear text entrance */
+export const cinematicIntro = {
+  hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.9,
+      delay: i * 0.4 + 0.3,
+      ease: easing.cinematic,
+    },
+  }),
+};
+
+/** Shimmer sweep — for button background animations */
+export const shimmerSweep = {
+  x: ["-100%", "100%"],
+  transition: {
+    duration: 2,
+    repeat: Infinity,
+    repeatDelay: 3,
+    ease: "easeInOut" as const,
+  },
+};
+
+/** Aura expand — hover glow bloom for cards and buttons */
+export const auraExpand = {
+  scale: 1.06,
+  boxShadow: "0 0 60px rgba(212, 160, 23, 0.25), 0 0 120px rgba(212, 160, 23, 0.08)",
+  transition: { duration: duration.medium, ease: easing.spring },
+};
+
+/** Levitation motion — smooth cinematic float-up */
+export const levitationMotion = {
+  y: -10,
+  scale: 1.03,
+  transition: { type: "spring", stiffness: 200, damping: 15 },
+};
+
+/** Floating motion (slow) — for decorative background elements */
+export const floatingMotionSlow = {
+  y: [-4, 4, -4],
+  transition: {
+    duration: 8,
+    repeat: Infinity,
+    ease: "easeInOut" as const,
+  },
+};
+
+/** Stagger container (cinematic) — slower, more dramatic timing */
+export const staggerContainerCinematic = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: stagger.slow,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+/** Carousel card variants — 3D depth transitions for event carousel */
+export const carouselCard = {
+  center: {
+    x: "0%",
+    scale: 1,
+    rotateY: 0,
+    opacity: 1,
+    zIndex: 30,
+    filter: "blur(0px) brightness(1)",
+    transition: { duration: 0.7, ease: [0.32, 0.72, 0, 1] as readonly number[] },
+  },
+  left: {
+    x: "-50%",
+    scale: 0.82,
+    rotateY: 20,
+    opacity: 0.5,
+    zIndex: 10,
+    filter: "blur(2px) brightness(0.7)",
+    transition: { duration: 0.7, ease: [0.32, 0.72, 0, 1] as readonly number[] },
+  },
+  right: {
+    x: "50%",
+    scale: 0.82,
+    rotateY: -20,
+    opacity: 0.5,
+    zIndex: 10,
+    filter: "blur(2px) brightness(0.7)",
+    transition: { duration: 0.7, ease: [0.32, 0.72, 0, 1] as readonly number[] },
+  },
+};
+
+/** Navbar glass transition — morphs from transparent to glass */
+export const navbarGlass = {
+  transparent: {
+    backdropFilter: "blur(8px)",
+    background: "rgba(5, 5, 5, 0.2)",
+  },
+  glass: {
+    backdropFilter: "blur(24px)",
+    background: "var(--surface-glass)",
+  },
+};
+
