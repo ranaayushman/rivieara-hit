@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowUp, Mail, Phone, MapPin } from "lucide-react";
 
@@ -12,7 +13,39 @@ const quickLinks = [
   { label: "Contact", href: "/contact" },
 ];
 
+interface ContactInfo {
+  email: string;
+  phone: string;
+  address: string;
+}
+
+const defaultContact: ContactInfo = {
+  email: "info@riviera2026.com",
+  phone: "+91 9142047263",
+  address: "HIT Campus, Haldia,\nWest Bengal 721657",
+};
+
 export default function Footer() {
+  const [contact, setContact] = useState<ContactInfo>(defaultContact);
+
+  useEffect(() => {
+    fetch("/api/public/settings")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.settings) {
+          const s = data.settings as Record<string, string>;
+          if (s.contact_email || s.contact_phone || s.contact_address) {
+            setContact({
+              email: s.contact_email || defaultContact.email,
+              phone: s.contact_phone || defaultContact.phone,
+              address: s.contact_address || defaultContact.address,
+            });
+          }
+        }
+      })
+      .catch(() => { /* keep fallback */ });
+  }, []);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -70,24 +103,15 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <Mail size={16} className="text-[var(--clr-primary)] mt-0.5 flex-shrink-0" />
-                <div>
-                  <span className="text-sm text-[var(--clr-text-muted)]">info@riviera2026.com</span>
-                </div>
+                <span className="text-sm text-[var(--clr-text-muted)]">{contact.email}</span>
               </li>
               <li className="flex items-start gap-3">
                 <Phone size={16} className="text-[var(--clr-primary)] mt-0.5 flex-shrink-0" />
-                <div>
-                  <span className="text-sm text-[var(--clr-text-muted)]">+91 9142047263</span>
-                </div>
+                <span className="text-sm text-[var(--clr-text-muted)]">{contact.phone}</span>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin size={16} className="text-[var(--clr-primary)] mt-0.5 flex-shrink-0" />
-                <div>
-                  <span className="text-sm text-[var(--clr-text-muted)]">
-                    HIT Campus, Haldia,<br />
-                    West Bengal 721657
-                  </span>
-                </div>
+                <span className="text-sm text-[var(--clr-text-muted)] whitespace-pre-line">{contact.address}</span>
               </li>
             </ul>
           </div>

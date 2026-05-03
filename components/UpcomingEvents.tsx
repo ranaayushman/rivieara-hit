@@ -14,7 +14,8 @@ interface EventData {
   tag: string;
 }
 
-const events: EventData[] = [
+// Fallback data used when API returns nothing
+const fallbackEvents: EventData[] = [
   {
     title: "AI Workshop",
     desc: "Riviera 2026 proudly presents an exclusive Workshop on Artificial Intelligence. Step into the world of AI and explore how intelligent systems are transforming industries.",
@@ -35,9 +36,30 @@ const events: EventData[] = [
   },
 ];
 
+const FALLBACK_IMAGES = ["/gallery1.jpg", "/gallery2.jpg", "/gallery3.jpg", "/gallery4.jpg"];
+
 export default function UpcomingEvents() {
+  const [events, setEvents] = useState<EventData[]>(fallbackEvents);
   const [current, setCurrent] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/public/events")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.events && data.events.length > 0) {
+          setEvents(
+            data.events.map((e: Record<string, unknown>, i: number) => ({
+              title: e.title as string,
+              desc: (e.description as string) || "",
+              image: (e.banner_url as string) || FALLBACK_IMAGES[i % FALLBACK_IMAGES.length],
+              tag: (e.tag as string) || "Event",
+            }))
+          );
+        }
+      })
+      .catch(() => { /* keep fallback */ });
+  }, []);
 
   const navigate = useCallback((dir: number) => {
     setCurrent((prev) => {
@@ -46,7 +68,7 @@ export default function UpcomingEvents() {
       if (next >= events.length) return 0;
       return next;
     });
-  }, []);
+  }, [events.length]);
 
   // Auto-play interval for rotating animations
   useEffect(() => {
@@ -80,14 +102,13 @@ export default function UpcomingEvents() {
             const offset = getOffset(index);
             const isActive = offset === 0;
             const isNext = offset === 1;
-            const isPrev = offset === -1;
 
             return (
               <motion.article
                 key={index}
                 animate={{
                   x: offset === 0 ? "0%" : offset === 1 ? "45%" : "-45%",
-                  y: offset === 0 ? "0%" : offset === 1 ? "8%" : "8%",
+                  y: offset === 0 ? "0%" : "8%",
                   scale: offset === 0 ? 1 : 0.8,
                   rotateY: offset === 0 ? 0 : offset === 1 ? -25 : 25,
                   rotateZ: offset === 0 ? 0 : offset === 1 ? 6 : -6,

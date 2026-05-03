@@ -2,17 +2,30 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function Hero() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [subtitle, setSubtitle] = useState("Biggest Private College Fest in West Bengal");
 
   useEffect(() => {
     const handle = (e: MouseEvent) =>
       setMousePos({ x: e.pageX, y: e.pageY });
     window.addEventListener("mousemove", handle);
     return () => window.removeEventListener("mousemove", handle);
+  }, []);
+
+  // Optionally fetch dynamic hero subtitle from site settings
+  useEffect(() => {
+    fetch("/api/public/settings")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.settings?.hero_subtitle) {
+          setSubtitle(data.settings.hero_subtitle as string);
+        }
+      })
+      .catch(() => { /* keep fallback */ });
   }, []);
 
   return (
@@ -72,7 +85,7 @@ export default function Hero() {
           transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
         >
           <span className="text-sm sm:text-base md:text-lg text-white/70 font-light tracking-wide">
-            Biggest Private College Fest in West Bengal
+            {subtitle}
           </span>
         </motion.div>
 
@@ -93,29 +106,6 @@ export default function Hero() {
             </div>
           </Link>
         </motion.div>
-
-        {/* Scroll indicator */}
-        {/* <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
-        >
-          <span className="text-[10px] uppercase tracking-[0.3em] text-[var(--clr-text-dim)] font-medium">
-            Scroll
-          </span>
-          <motion.div
-            className="w-5 h-8 rounded-full border-2 border-white/20 flex items-start justify-center p-1"
-            animate={{ opacity: [0.3, 0.7, 0.3] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            <motion.div
-              className="w-1 h-2 rounded-full bg-white/60"
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            />
-          </motion.div>
-        </motion.div> */}
       </div>
     </section>
   );

@@ -7,16 +7,30 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 
-const images = [
-  "/gallery1.jpg",
-  "/gallery2.jpg",
-  "/gallery3.jpg",
-  "/gallery4.jpg",
-];
+const fallbackImages = ["/gallery1.jpg", "/gallery2.jpg", "/gallery3.jpg", "/gallery4.jpg"];
 
 export default function Gallery() {
+  const [images, setImages] = useState<string[]>(fallbackImages);
   const [current, setCurrent] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/public/gallery")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.albums && data.albums.length > 0) {
+          // Collect all image URLs from all albums
+          const allImages: string[] = [];
+          for (const album of data.albums) {
+            for (const img of album.gallery_images || []) {
+              allImages.push(img.image_url);
+            }
+          }
+          if (allImages.length > 0) setImages(allImages.length >= 3 ? allImages : [...allImages, ...fallbackImages].slice(0, 4));
+        }
+      })
+      .catch(() => { /* keep fallback */ });
+  }, []);
 
   const navigate = useCallback((dir: number) => {
     setCurrent((prev) => {
@@ -25,7 +39,7 @@ export default function Gallery() {
       if (next >= images.length) return 0;
       return next;
     });
-  }, []);
+  }, [images.length]);
 
   useEffect(() => {
     if (!isAutoPlaying) return;
@@ -35,10 +49,10 @@ export default function Gallery() {
 
   const getOffset = (index: number) => {
     const raw = index - current;
-    if (raw === 0) return 0; // Active
-    if (raw === 1 || raw === -(images.length - 1)) return 1; // Right
-    if (raw === -1 || raw === images.length - 1) return -1; // Left
-    return 2; // Hidden
+    if (raw === 0) return 0;
+    if (raw === 1 || raw === -(images.length - 1)) return 1;
+    if (raw === -1 || raw === images.length - 1) return -1;
+    return 2;
   };
 
   return (
@@ -54,7 +68,6 @@ export default function Gallery() {
         onMouseEnter={() => setIsAutoPlaying(false)}
         onMouseLeave={() => setIsAutoPlaying(true)}
       >
-        {/* Coverflow carousel */}
         <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] flex items-center justify-center [perspective:1200px] overflow-hidden sm:overflow-visible">
           {images.map((img, index) => {
             const offset = getOffset(index);
@@ -89,7 +102,6 @@ export default function Gallery() {
                   priority={isActive}
                 />
                 
-                {/* Dark overlay for inactive slides */}
                 {!isActive && (
                   <div className="absolute inset-0 bg-black/30 pointer-events-none transition-opacity duration-500" />
                 )}
@@ -98,7 +110,6 @@ export default function Gallery() {
           })}
         </div>
 
-        {/* View Gallery Button */}
         <div className="mt-16 md:mt-24 z-40">
           <Link 
             href="/gallery" 

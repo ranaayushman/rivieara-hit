@@ -1,29 +1,44 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { CalendarDays, MapPin, User, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 
-const infoCards = [
-  {
-    icon: CalendarDays,
-    label: "March 25–28",
-    sublabel: "2026",
-  },
-  {
-    icon: MapPin,
-    label: "HIT Campus",
-    sublabel: "Haldia",
-  },
-  {
-    icon: User,
-    label: "Open for All",
-    sublabel: "Students",
-  },
+interface InfoCard {
+  icon: typeof CalendarDays;
+  label: string;
+  sublabel: string;
+}
+
+const defaultCards: InfoCard[] = [
+  { icon: CalendarDays, label: "March 25–28", sublabel: "2026" },
+  { icon: MapPin, label: "HIT Campus", sublabel: "Haldia" },
+  { icon: User, label: "Open for All", sublabel: "Students" },
 ];
 
 export default function RegistrationSection() {
+  const [infoCards, setInfoCards] = useState<InfoCard[]>(defaultCards);
+
+  useEffect(() => {
+    fetch("/api/public/settings")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.settings) {
+          const s = data.settings as Record<string, string>;
+          if (s.event_dates || s.event_venue) {
+            setInfoCards([
+              { icon: CalendarDays, label: s.event_dates || "March 25–28", sublabel: "2026" },
+              { icon: MapPin, label: s.event_venue || "HIT Campus", sublabel: "Haldia" },
+              { icon: User, label: "Open for All", sublabel: "Students" },
+            ]);
+          }
+        }
+      })
+      .catch(() => { /* keep fallback */ });
+  }, []);
+
   return (
     <SectionWrapper>
       <div className="text-center max-w-3xl mx-auto mb-16 relative z-10">
@@ -49,7 +64,6 @@ export default function RegistrationSection() {
         </motion.p>
       </div>
 
-      {/* Info cards matching screenshot style */}
       <div className="flex flex-col sm:flex-row gap-4 md:gap-6 max-w-4xl mx-auto mb-16 relative z-10">
         {infoCards.map((card, index) => {
           const Icon = card.icon;
@@ -62,10 +76,7 @@ export default function RegistrationSection() {
               transition={{ delay: 0.2 + index * 0.1 }}
               className="flex-1 px-6 py-5 rounded-2xl border border-white/10 bg-white/[0.02] flex items-center gap-4 hover:bg-white/[0.04] transition-colors"
             >
-              <Icon
-                size={20}
-                className="text-white/60"
-              />
+              <Icon size={20} className="text-white/60" />
               <div className="flex flex-col text-left">
                  <span className="text-white/80 text-sm font-medium">{card.label}</span>
                  <span className="text-white/40 text-xs">{card.sublabel}</span>
@@ -75,7 +86,6 @@ export default function RegistrationSection() {
         })}
       </div>
 
-      {/* CTA Button matching screenshot */}
       <motion.div 
         className="flex justify-center relative z-10"
         initial={{ opacity: 0, y: 20 }}

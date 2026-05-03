@@ -3,9 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut, User } from "lucide-react";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -16,16 +16,41 @@ const NAV_LINKS = [
   { label: "Contact", href: "/contact" },
 ] as const;
 
+interface UserInfo {
+  name: string;
+  email: string;
+}
+
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [user, setUser] = useState<UserInfo | null>(null);
 
   /* Track scroll for navbar transparency */
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /* Check user login state from localStorage */
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("user");
+      if (stored) setUser(JSON.parse(stored));
+    } catch { /* ignore */ }
+
+    // Listen for storage changes (login/logout in other tabs)
+    const handleStorage = () => {
+      try {
+        const stored = localStorage.getItem("user");
+        setUser(stored ? JSON.parse(stored) : null);
+      } catch { setUser(null); }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   /* Lock body scroll when mobile menu is open */
@@ -43,6 +68,13 @@ export default function Navbar() {
     if (href === "/") return pathname === "/";
     return pathname.startsWith(href.replace("/#", "/"));
   };
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    router.push("/");
+  }
 
   return (
     <>
@@ -104,18 +136,22 @@ export default function Navbar() {
 
           {/* ── Desktop Actions ── */}
           <div className="hidden lg:flex items-center gap-3">
-            <Link
-              href="/register"
-              className="btn-primary !py-2.5 !px-6 !text-sm"
-            >
-              Register
-            </Link>
-            <Link
-              href="/login"
-              className="btn-outline !py-2.5 !px-5 !text-sm"
-            >
-              Log in
-            </Link>
+            {user ? (
+              <>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/[0.04] border border-white/10">
+                  <User size={16} className="text-[var(--clr-primary)]" />
+                  <span className="text-sm text-white/80 font-medium max-w-[120px] truncate">{user.name}</span>
+                </div>
+                <button onClick={handleLogout} className="btn-outline !py-2.5 !px-4 !text-sm flex items-center gap-2">
+                  <LogOut size={14} /> Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/register" className="btn-primary !py-2.5 !px-6 !text-sm">Register</Link>
+                <Link href="/login" className="btn-outline !py-2.5 !px-5 !text-sm">Log in</Link>
+              </>
+            )}
           </div>
 
           {/* ── Mobile Toggle ── */}
@@ -126,23 +162,11 @@ export default function Navbar() {
           >
             <AnimatePresence mode="wait">
               {mobileOpen ? (
-                <motion.span
-                  key="close"
-                  initial={{ rotate: -90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: 90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
+                <motion.span key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
                   <X size={22} />
                 </motion.span>
               ) : (
-                <motion.span
-                  key="open"
-                  initial={{ rotate: 90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: -90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
+                <motion.span key="open" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
                   <Menu size={22} />
                 </motion.span>
               )}
@@ -154,65 +178,36 @@ export default function Navbar() {
       {/* ── Mobile Menu Overlay ── */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
-            className="fixed inset-0 z-40 lg:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {/* Backdrop */}
-            <div
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-              onClick={() => setMobileOpen(false)}
-            />
-
-            {/* Panel */}
-            <motion.div
-              className="absolute top-[4.5rem] inset-x-0 bg-[var(--clr-surface)] border-b border-white/[0.08] shadow-2xl"
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -20, opacity: 0 }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            >
+          <motion.div className="fixed inset-0 z-40 lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
+            <motion.div className="absolute top-[4.5rem] inset-x-0 bg-[var(--clr-surface)] border-b border-white/[0.08] shadow-2xl" initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
               <div className="section-container py-6 flex flex-col gap-2">
                 {NAV_LINKS.map((link, i) => (
-                  <motion.div
-                    key={link.href}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                  >
-                    <Link
-                      href={link.href}
-                      onClick={() => setMobileOpen(false)}
-                      className={`block px-4 py-3 rounded-xl text-base font-medium transition-colors ${
-                        isActive(link.href)
-                          ? "text-white bg-white/[0.06]"
-                          : "text-[var(--clr-text-muted)] hover:text-white hover:bg-white/[0.04]"
-                      }`}
-                    >
+                  <motion.div key={link.href} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}>
+                    <Link href={link.href} onClick={() => setMobileOpen(false)}
+                      className={`block px-4 py-3 rounded-xl text-base font-medium transition-colors ${isActive(link.href) ? "text-white bg-white/[0.06]" : "text-[var(--clr-text-muted)] hover:text-white hover:bg-white/[0.04]"}`}>
                       {link.label}
                     </Link>
                   </motion.div>
                 ))}
 
-                {/* Mobile Actions */}
                 <div className="flex gap-3 mt-4 pt-4 border-t border-white/[0.06]">
-                  <Link
-                    href="/register"
-                    onClick={() => setMobileOpen(false)}
-                    className="btn-primary flex-1 justify-center !text-sm"
-                  >
-                    Register
-                  </Link>
-                  <Link
-                    href="/login"
-                    onClick={() => setMobileOpen(false)}
-                    className="btn-outline flex-1 justify-center !text-sm"
-                  >
-                    Log in
-                  </Link>
+                  {user ? (
+                    <>
+                      <div className="flex-1 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-white/80">
+                        <User size={16} className="text-[var(--clr-primary)]" />
+                        <span className="truncate">{user.name}</span>
+                      </div>
+                      <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="btn-outline !text-sm flex items-center gap-2 px-4">
+                        <LogOut size={14} /> Logout
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/register" onClick={() => setMobileOpen(false)} className="btn-primary flex-1 justify-center !text-sm">Register</Link>
+                      <Link href="/login" onClick={() => setMobileOpen(false)} className="btn-outline flex-1 justify-center !text-sm">Log in</Link>
+                    </>
+                  )}
                 </div>
               </div>
             </motion.div>
