@@ -5,6 +5,7 @@ import { Code, Music, Gamepad2, Cpu, Palette, Trophy, Camera, BookOpen, Mic2, Ro
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { usePerformanceMode } from "@/hooks/usePerformanceMode";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -96,6 +97,8 @@ export default function Activities() {
       .catch(() => { /* keep fallback */ });
   }, []);
 
+  const { isLowPower, isMounted } = usePerformanceMode();
+
   // GSAP Cinematic Reveal & Floating Motion
   useEffect(() => {
     if (!sectionRef.current) return;
@@ -123,31 +126,35 @@ export default function Activities() {
             scrollTrigger: { trigger: sectionRef.current, start: "top 60%" }
           }
         );
-        gsap.to(".constellation-path", {
-          stroke: "rgba(255, 230, 150, 0.5)",
-          duration: 4,
-          yoyo: true,
-          repeat: -1,
-          ease: "sine.inOut"
-        });
+        if (!isLowPower) {
+          gsap.to(".constellation-path", {
+            stroke: "rgba(255, 230, 150, 0.5)",
+            duration: 4,
+            yoyo: true,
+            repeat: -1,
+            ease: "sine.inOut"
+          });
+        }
       }
 
-      // 3. Float individual portals
-      gsap.utils.toArray(".portal-card").forEach((card: any, i) => {
-        gsap.to(card, {
-          y: i % 2 === 0 ? -12 : 12,
-          duration: 3 + Math.random() * 2,
-          ease: "sine.inOut",
-          yoyo: true,
-          repeat: -1,
-          delay: Math.random() * 2,
+      // 3. Float individual portals (disabled on mobile for battery)
+      if (!isLowPower) {
+        gsap.utils.toArray(".portal-card").forEach((card: any, i) => {
+          gsap.to(card, {
+            y: i % 2 === 0 ? -12 : 12,
+            duration: 3 + Math.random() * 2,
+            ease: "sine.inOut",
+            yoyo: true,
+            repeat: -1,
+            delay: Math.random() * 2,
+          });
         });
-      });
+      }
 
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [activities]);
+  }, [activities, isLowPower]);
 
   return (
     <section

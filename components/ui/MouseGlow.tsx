@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { usePerformanceMode } from "@/hooks/usePerformanceMode";
 
 /**
  * Magical Arabian lantern-inspired cursor system.
@@ -11,6 +12,7 @@ import { gsap } from "gsap";
  * - Ember trail particles with fade
  * - Click ripple burst
  * GPU-accelerated via GSAP transforms.
+ * Unmounts completely on mobile/low-power to preserve battery.
  */
 export default function MouseGlow() {
   const coreRef = useRef<HTMLDivElement>(null);
@@ -24,9 +26,13 @@ export default function MouseGlow() {
   const innerPos = useRef({ x: -200, y: -200 });
   const [isHovering, setIsHovering] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
+  
+  const { isLowPower, isMounted } = usePerformanceMode();
 
   // GSAP-powered smooth cursor interpolation
   useEffect(() => {
+    if (!isMounted || isLowPower) return;
+
     let raf: number;
     const trailPositions = Array.from({ length: 6 }, () => ({ x: -200, y: -200 }));
 
@@ -42,7 +48,6 @@ export default function MouseGlow() {
 
     const handleDown = () => {
       setIsClicking(true);
-      // Click ripple burst
       if (rippleRef.current) {
         gsap.fromTo(
           rippleRef.current,
@@ -57,19 +62,13 @@ export default function MouseGlow() {
       const mx = mousePos.current.x;
       const my = mousePos.current.y;
 
-      // Core — tight follow (lerp 0.25)
       corePos.current.x += (mx - corePos.current.x) * 0.25;
       corePos.current.y += (my - corePos.current.y) * 0.25;
-
-      // Inner glow — medium follow (lerp 0.15)
       innerPos.current.x += (mx - innerPos.current.x) * 0.15;
       innerPos.current.y += (my - innerPos.current.y) * 0.15;
-
-      // Aura — lazy cinematic follow (lerp 0.08)
       auraPos.current.x += (mx - auraPos.current.x) * 0.08;
       auraPos.current.y += (my - auraPos.current.y) * 0.08;
 
-      // Update trail positions (chain follow)
       for (let i = trailPositions.length - 1; i > 0; i--) {
         trailPositions[i].x += (trailPositions[i - 1].x - trailPositions[i].x) * 0.3;
         trailPositions[i].y += (trailPositions[i - 1].y - trailPositions[i].y) * 0.3;
@@ -77,40 +76,11 @@ export default function MouseGlow() {
       trailPositions[0].x += (corePos.current.x - trailPositions[0].x) * 0.4;
       trailPositions[0].y += (corePos.current.y - trailPositions[0].y) * 0.4;
 
-      // Apply transforms via GSAP (GPU accelerated)
-      if (coreRef.current) {
-        gsap.set(coreRef.current, {
-          x: corePos.current.x - 4,
-          y: corePos.current.y - 4,
-          force3D: true,
-        });
-      }
+      if (coreRef.current) gsap.set(coreRef.current, { x: corePos.current.x - 4, y: corePos.current.y - 4, force3D: true });
+      if (innerRef.current) gsap.set(innerRef.current, { x: innerPos.current.x - 100, y: innerPos.current.y - 100, force3D: true });
+      if (auraRef.current) gsap.set(auraRef.current, { x: auraPos.current.x - 175, y: auraPos.current.y - 175, force3D: true });
+      if (rippleRef.current) gsap.set(rippleRef.current, { x: corePos.current.x - 20, y: corePos.current.y - 20, force3D: true });
 
-      if (innerRef.current) {
-        gsap.set(innerRef.current, {
-          x: innerPos.current.x - 100,
-          y: innerPos.current.y - 100,
-          force3D: true,
-        });
-      }
-
-      if (auraRef.current) {
-        gsap.set(auraRef.current, {
-          x: auraPos.current.x - 175,
-          y: auraPos.current.y - 175,
-          force3D: true,
-        });
-      }
-
-      if (rippleRef.current) {
-        gsap.set(rippleRef.current, {
-          x: corePos.current.x - 20,
-          y: corePos.current.y - 20,
-          force3D: true,
-        });
-      }
-
-      // Trail particles
       trailRefs.current.forEach((el, i) => {
         if (el) {
           gsap.set(el, {
@@ -136,37 +106,28 @@ export default function MouseGlow() {
       window.removeEventListener("mousedown", handleDown);
       cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [isLowPower, isMounted]);
 
-  // Animate core size on hover/click
   useEffect(() => {
-    if (!coreRef.current) return;
+    if (!coreRef.current || isLowPower) return;
     const size = isClicking ? 14 : isHovering ? 10 : 8;
-    gsap.to(coreRef.current, {
-      width: size,
-      height: size,
-      duration: 0.2,
-      ease: "power2.out",
-    });
-  }, [isHovering, isClicking]);
+    gsap.to(coreRef.current, { width: size, height: size, duration: 0.2, ease: "power2.out" });
+  }, [isHovering, isClicking, isLowPower]);
 
-  // Animate aura size on hover
   useEffect(() => {
-    if (!auraRef.current) return;
+    if (!auraRef.current || isLowPower) return;
     gsap.to(auraRef.current, {
       width: isHovering ? 420 : 350,
       height: isHovering ? 420 : 350,
       duration: 0.4,
       ease: "power2.out",
     });
-  }, [isHovering]);
+  }, [isHovering, isLowPower]);
+
+  if (!isMounted || isLowPower) return null;
 
   return (
-    <div
-      className="pointer-events-none fixed inset-0 z-[50] hidden md:block"
-      aria-hidden="true"
-    >
-      {/* ── Ember trail particles ── */}
+    <div className="pointer-events-none fixed inset-0 z-[50] hidden md:block" aria-hidden="true">
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
@@ -182,7 +143,6 @@ export default function MouseGlow() {
         />
       ))}
 
-      {/* ── Outer aura glow ── */}
       <div
         ref={auraRef}
         className="absolute rounded-full will-change-transform"
@@ -193,7 +153,6 @@ export default function MouseGlow() {
         }}
       />
 
-      {/* ── Inner warm glow ── */}
       <div
         ref={innerRef}
         className="absolute rounded-full will-change-transform"
@@ -204,7 +163,6 @@ export default function MouseGlow() {
         }}
       />
 
-      {/* ── Lantern core ── */}
       <div
         ref={coreRef}
         className="absolute rounded-full will-change-transform"
@@ -218,7 +176,6 @@ export default function MouseGlow() {
         }}
       />
 
-      {/* ── Click ripple ── */}
       <div
         ref={rippleRef}
         className="absolute rounded-full will-change-transform"

@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Sparkles, Stars, Aperture } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { usePerformanceMode } from "@/hooks/usePerformanceMode";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -27,6 +28,8 @@ export default function Gallery() {
   const sectionRef = useRef<HTMLElement>(null);
   const fogRef = useRef<HTMLDivElement>(null);
   const particlesRef = useRef<HTMLDivElement>(null);
+  
+  const { isLowPower, isMounted } = usePerformanceMode();
 
   useEffect(() => {
     fetch("/api/public/gallery")
@@ -75,12 +78,15 @@ export default function Gallery() {
 
   // Cinematic Scattered Positions
   const getPosition = (offset: number) => {
+    // Drop heavy blurs on mobile
+    const getBlur = (val: string) => isLowPower ? "blur(0px)" : val;
+    
     if (offset === 0) return { x: "-50%", y: "-50%", scale: 1, zIndex: 50, opacity: 1, rotate: 0, filter: "blur(0px)" };
-    if (offset === 1) return { x: "10%", y: "-75%", scale: 0.65, zIndex: 30, opacity: 0.8, rotate: 4, filter: "blur(2px)" };
-    if (offset === -1) return { x: "-110%", y: "-20%", scale: 0.6, zIndex: 20, opacity: 0.7, rotate: -6, filter: "blur(3px)" };
-    if (offset === 2) return { x: "-15%", y: "-10%", scale: 0.45, zIndex: 15, opacity: 0.5, rotate: -8, filter: "blur(5px)" };
-    if (offset === -2) return { x: "-85%", y: "-85%", scale: 0.4, zIndex: 10, opacity: 0.4, rotate: 8, filter: "blur(6px)" };
-    return { x: "-50%", y: "-50%", scale: 0, zIndex: 0, opacity: 0, rotate: 0, filter: "blur(10px)" };
+    if (offset === 1) return { x: "10%", y: "-75%", scale: 0.65, zIndex: 30, opacity: 0.8, rotate: 4, filter: getBlur("blur(2px)") };
+    if (offset === -1) return { x: "-110%", y: "-20%", scale: 0.6, zIndex: 20, opacity: 0.7, rotate: -6, filter: getBlur("blur(3px)") };
+    if (offset === 2) return { x: "-15%", y: "-10%", scale: 0.45, zIndex: 15, opacity: 0.5, rotate: -8, filter: getBlur("blur(5px)") };
+    if (offset === -2) return { x: "-85%", y: "-85%", scale: 0.4, zIndex: 10, opacity: 0.4, rotate: 8, filter: getBlur("blur(6px)") };
+    return { x: "-50%", y: "-50%", scale: 0, zIndex: 0, opacity: 0, rotate: 0, filter: "blur(0px)" };
   };
 
   // GSAP Environmental Motion
@@ -99,24 +105,26 @@ export default function Gallery() {
         }
       });
 
-      // Ambient Drifting memory wrappers
-      gsap.utils.toArray(".memory-drifter").forEach((drifter: any, i) => {
-        gsap.to(drifter, {
-          y: i % 2 === 0 ? -20 : 20,
-          x: i % 3 === 0 ? 15 : -15,
-          rotationZ: i % 2 === 0 ? 2 : -2,
-          duration: 4 + (i % 3),
-          ease: "sine.inOut",
-          yoyo: true,
-          repeat: -1,
-          delay: i * 0.5,
+      // Ambient Drifting memory wrappers (disable on low power)
+      if (!isLowPower) {
+        gsap.utils.toArray(".memory-drifter").forEach((drifter: any, i) => {
+          gsap.to(drifter, {
+            y: i % 2 === 0 ? -20 : 20,
+            x: i % 3 === 0 ? 15 : -15,
+            rotationZ: i % 2 === 0 ? 2 : -2,
+            duration: 4 + (i % 3),
+            ease: "sine.inOut",
+            yoyo: true,
+            repeat: -1,
+            delay: i * 0.5,
+          });
         });
-      });
+      }
 
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [images]);
+  }, [images, isLowPower]);
 
   return (
     <section

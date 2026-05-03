@@ -2,35 +2,44 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
+import { usePerformanceMode } from "@/hooks/usePerformanceMode";
 
 /**
  * Floating gold particles — ambient atmosphere layer.
- * Creates drifting embers that float upward across the viewport.
  * Uses canvas for GPU performance, with GSAP for ambient glow breathing.
+ * Implements mobile-first performance reduction.
  */
 export default function ParticleLayer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { isLowPower, isMounted } = usePerformanceMode();
 
   useEffect(() => {
+    if (!isMounted) return;
+    
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // GSAP glow breathing for the entire canvas
-    const ctxGsap = gsap.context(() => {
-      gsap.to(canvas, {
-        opacity: 0.8,
-        duration: 3.5,
-        ease: "sine.inOut",
-        yoyo: true,
-        repeat: -1,
+    // Only apply heavy GSAP canvas breathing if NOT in low power mode
+    let ctxGsap: gsap.Context | undefined;
+    if (!isLowPower) {
+      ctxGsap = gsap.context(() => {
+        gsap.to(canvas, {
+          opacity: 0.8,
+          duration: 3.5,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+        });
       });
-    });
+    }
 
     let animationId: number;
     let particles: Particle[] = [];
+    const targetParticleCount = isLowPower ? 12 : 120; // Massive reduction for mobile
+    const spawnRate = isLowPower ? 0.05 : 0.15; // Slower spawning
 
     interface Particle {
       x: number;
@@ -55,8 +64,8 @@ export default function ParticleLayer() {
       return {
         x: Math.random() * (canvas?.width || window.innerWidth),
         y: (canvas?.height || window.innerHeight) + 20,
-        size: Math.random() * 2.5 + 0.8,
-        speedY: -(Math.random() * 0.8 + 0.2), // slightly faster
+        size: isLowPower ? Math.random() * 1.5 + 0.5 : Math.random() * 2.5 + 0.8,
+        speedY: -(Math.random() * 0.8 + 0.2), 
         speedX: (Math.random() - 0.5) * 0.4,
         opacity: 0,
         life: 0,
@@ -70,8 +79,7 @@ export default function ParticleLayer() {
       if (!ctx || !canvas) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Denser ember system
-      if (particles.length < 120 && Math.random() < 0.15) {
+      if (particles.length < targetParticleCount && Math.random() < spawnRate) {
         particles.push(createParticle());
       }
 
@@ -80,10 +88,10 @@ export default function ParticleLayer() {
         p.y += p.speedY;
         p.life++;
 
-        // Add subtle sine wave to X for natural drift
-        p.x += Math.sin(p.life * 0.02) * 0.2;
+        if (!isLowPower) {
+          p.x += Math.sin(p.life * 0.02) * 0.2;
+        }
 
-        // Fade in and out
         const progress = p.life / p.maxLife;
         if (progress < 0.1) {
           p.opacity = progress / 0.1;
@@ -91,26 +99,22 @@ export default function ParticleLayer() {
           p.opacity = (1 - progress) / 0.2;
         }
 
-        // Individual glow breathing
-        const currentGlow = Math.abs(Math.sin(p.life * p.glowSpeed)) * p.glowIntensity;
-
-        const computedOpacity = getComputedStyle(document.documentElement)
-          .getPropertyValue("--particle-opacity").trim();
+        const currentGlow = isLowPower ? 1 : Math.abs(Math.sin(p.life * p.glowSpeed)) * p.glowIntensity;
+        const computedOpacity = getComputedStyle(document.documentElement).getPropertyValue("--particle-opacity").trim();
         const baseOpacity = computedOpacity ? parseFloat(computedOpacity) : 0.6;
-
         const finalOpacity = p.opacity * baseOpacity;
 
-        // Core particle
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 215, 0, ${finalOpacity * 0.8})`; // brighter core
+        ctx.fillStyle = `rgba(255, 215, 0, ${finalOpacity * 0.8})`; 
         ctx.fill();
 
-        // Dynamic Glow
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * (3 + currentGlow * 2), 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(212, 160, 23, ${finalOpacity * 0.15 * currentGlow})`;
-        ctx.fill();
+        if (!isLowPower) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * (3 + currentGlow * 2), 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(212, 160, 23, ${finalOpacity * 0.15 * currentGlow})`;
+          ctx.fill();
+        }
 
         return p.life < p.maxLife;
       });
@@ -125,9 +129,9 @@ export default function ParticleLayer() {
     return () => {
       window.removeEventListener("resize", resize);
       cancelAnimationFrame(animationId);
-      ctxGsap.revert();
+      ctxGsap?.revert();
     };
-  }, []);
+  }, [isLowPower, isMounted]);
 
   return (
     <canvas

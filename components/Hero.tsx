@@ -7,6 +7,7 @@ import Link from "next/link";
 import { easing, duration } from "@/lib/motionPresets";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { usePerformanceMode } from "@/hooks/usePerformanceMode";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -42,6 +43,8 @@ export default function Hero() {
     offset: ["start start", "end start"],
   });
 
+  const { isLowPower, isMounted } = usePerformanceMode();
+
   const moonY = useTransform(scrollYProgress, [0, 1], [0, 100]);
   const palaceY = useTransform(scrollYProgress, [0, 1], [0, 40]);
   const contentY = useTransform(scrollYProgress, [0, 1], [0, -50]);
@@ -72,54 +75,38 @@ export default function Hero() {
 
   // GSAP cinematic atmosphere system
   useEffect(() => {
+    if (!isMounted) return;
+    
     const ctx = gsap.context(() => {
-      // Moon aura breathing — GSAP owns scale+opacity on aura element
-      if (moonAuraRef.current) {
-        gsap.to(moonAuraRef.current, {
-          scale: 1.15,
-          opacity: 0.9,
-          duration: 4,
-          ease: "sine.inOut",
-          yoyo: true,
-          repeat: -1,
-        });
+      // Disable heavy ambient breathing on mobile
+      if (!isLowPower) {
+        // Moon aura breathing
+        if (moonAuraRef.current) {
+          gsap.to(moonAuraRef.current, { scale: 1.15, opacity: 0.9, duration: 4, ease: "sine.inOut", yoyo: true, repeat: -1 });
+        }
+        // Ambient glow breathing
+        if (ambientGlowRef.current) {
+          gsap.to(ambientGlowRef.current, { scale: 1.1, opacity: 0.8, duration: 5, ease: "sine.inOut", yoyo: true, repeat: -1 });
+        }
+        // Hero fog organic drift
+        if (heroFogRef.current) {
+          gsap.fromTo(heroFogRef.current, { opacity: 0 }, { opacity: 1, duration: 3, delay: 0.2, ease: "power2.out" });
+          gsap.to(heroFogRef.current, { x: "5%", duration: 20, ease: "sine.inOut", yoyo: true, repeat: -1 });
+        }
+      } else {
+        // Just fade in fog without movement on mobile
+        if (heroFogRef.current) {
+          gsap.fromTo(heroFogRef.current, { opacity: 0 }, { opacity: 0.8, duration: 2, ease: "power2.out" });
+        }
       }
 
-      // Palace cinematic entrance — GSAP owns opacity on palace
+      // Palace cinematic entrance (keep on all devices)
       if (palaceRef.current) {
         gsap.fromTo(
           palaceRef.current,
           { opacity: 0 },
           { opacity: 1, duration: 2.5, delay: 0.5, ease: "power4.out" }
         );
-      }
-
-      // Hero fog organic drift — GSAP owns x + opacity on fog
-      if (heroFogRef.current) {
-        gsap.fromTo(
-          heroFogRef.current,
-          { opacity: 0 },
-          { opacity: 1, duration: 3, delay: 0.2, ease: "power2.out" }
-        );
-        gsap.to(heroFogRef.current, {
-          x: "5%",
-          duration: 20,
-          ease: "sine.inOut",
-          yoyo: true,
-          repeat: -1,
-        });
-      }
-
-      // Ambient glow breathing
-      if (ambientGlowRef.current) {
-        gsap.to(ambientGlowRef.current, {
-          scale: 1.1,
-          opacity: 0.8,
-          duration: 5,
-          ease: "sine.inOut",
-          yoyo: true,
-          repeat: -1,
-        });
       }
 
       // Scroll-driven glow intensity modulation
@@ -130,22 +117,19 @@ export default function Hero() {
           end: "bottom top",
           onUpdate: (self) => {
             const intensity = 1 - self.progress * 0.5;
-            document.documentElement.style.setProperty(
-              "--glow-intensity",
-              String(intensity.toFixed(2))
-            );
+            document.documentElement.style.setProperty("--glow-intensity", String(intensity.toFixed(2)));
           },
         });
       }
     });
 
     return () => ctx.revert();
-  }, []);
+  }, [isLowPower, isMounted]);
 
   // Stars — stable across renders
   const stars = useMemo(
     () =>
-      Array.from({ length: 60 }, (_, i) => ({
+      Array.from({ length: isLowPower ? 20 : 60 }, (_, i) => ({
         id: i,
         x: `${(i * 17 + 3) % 100}%`,
         y: `${(i * 13 + 7) % 75}%`,
@@ -154,9 +138,10 @@ export default function Hero() {
         dur: 3 + ((i * 7) % 5),
         delay: (i * 0.3) % 5,
       })),
-    []
+    [isLowPower]
   );
 
+  const activeLanterns = isLowPower ? LANTERNS.slice(0, 2) : LANTERNS;
   const mainVisible = introPhase >= 4;
 
   return (
@@ -495,7 +480,7 @@ export default function Hero() {
           </motion.div>
 
           {/* ── Floating Lanterns ── */}
-          {LANTERNS.map((l, i) => (
+          {activeLanterns.map((l, i) => (
             <motion.div
               key={i}
               className="absolute z-[8]"
@@ -571,7 +556,7 @@ export default function Hero() {
           </motion.div>
 
           {/* ── Floating embers (right side) ── */}
-          {Array.from({ length: 8 }).map((_, i) => (
+          {Array.from({ length: isLowPower ? 2 : 8 }).map((_, i) => (
             <motion.div
               key={`ember-${i}`}
               className="absolute rounded-full z-[6]"
