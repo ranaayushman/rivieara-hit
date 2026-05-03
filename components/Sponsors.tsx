@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import SectionHeading from "@/components/ui/SectionHeading";
 
 interface SponsorData {
   id: string;
@@ -71,12 +72,12 @@ export default function Sponsors() {
     : null;
 
   return (
-    <SectionWrapper id="sponsors" className="!bg-[#150505]">
-      <div className="text-center mb-16 md:mb-20">
-        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white">
-          Our <span className="text-red-500">Sponsors</span>
-        </h2>
-      </div>
+    <SectionWrapper id="sponsors">
+      <SectionHeading
+        text="Our"
+        accent="Sponsors"
+        arabianText="✦ Royal Patrons ✦"
+      />
 
       <div className="max-w-[700px] mx-auto w-full px-4 sm:px-6 mb-20">
         <div className="relative w-full aspect-[5/4] sm:aspect-[4/3] mx-auto">
@@ -92,10 +93,21 @@ export default function Sponsors() {
                     initial={false}
                     animate={{ left: layout.left, top: layout.top, width: layout.width, height: layout.height }}
                     transition={{ type: "spring", stiffness: 120, damping: 18, mass: 1 }}
-                    className="absolute rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/10"
-                    style={{ backgroundColor: sponsor.bg_color }}
+                    className="absolute overflow-hidden shadow-2xl group"
+                    style={{
+                      backgroundColor: sponsor.bg_color,
+                      borderRadius: "var(--radius-luxury)",
+                      border: "1px solid var(--border-gold)",
+                    }}
                   >
-                    <a href={sponsor.website_url || "#"} target="_blank" rel="noopener noreferrer" className="w-full h-full absolute inset-0">
+                    {/* Gold shimmer on hover */}
+                    <div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
+                      style={{
+                        background: "linear-gradient(135deg, rgba(212, 160, 23, 0.1), transparent 50%)",
+                      }}
+                    />
+                    <a href={sponsor.website_url || "#"} target="_blank" rel="noopener noreferrer" className="w-full h-full absolute inset-0 z-20">
                       <Image src={sponsor.logo_url} alt={`${sponsor.name} logo`} fill className="object-contain p-6 sm:p-8 hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 50vw, 33vw" />
                     </a>
                   </motion.div>
@@ -112,8 +124,19 @@ export default function Sponsors() {
                     initial={false}
                     animate={{ left: layout.left, top: layout.top, width: layout.width, height: layout.height }}
                     transition={{ type: "spring", stiffness: 120, damping: 18, mass: 1 }}
-                    className={`absolute rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/10 ${sponsor.bg}`}
+                    className={`absolute overflow-hidden shadow-2xl ring-1 ring-black/10 group ${sponsor.bg}`}
+                    style={{
+                      borderRadius: "var(--radius-luxury)",
+                      border: "1px solid var(--border-gold)",
+                    }}
                   >
+                    {/* Gold shimmer on hover */}
+                    <div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
+                      style={{
+                        background: "linear-gradient(135deg, rgba(212, 160, 23, 0.15), transparent 50%)",
+                      }}
+                    />
                     <div className="w-full h-full absolute inset-0">{sponsor.fallback}</div>
                   </motion.div>
                 );

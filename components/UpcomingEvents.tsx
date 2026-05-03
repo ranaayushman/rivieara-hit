@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, MousePointerClick } from "lucide-react";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import SectionHeading from "@/components/ui/SectionHeading";
+import { easing, duration } from "@/lib/motionPresets";
 
 interface EventData {
   title: string;
@@ -14,7 +15,6 @@ interface EventData {
   tag: string;
 }
 
-// Fallback data used when API returns nothing
 const fallbackEvents: EventData[] = [
   {
     title: "AI Workshop",
@@ -70,7 +70,6 @@ export default function UpcomingEvents() {
     });
   }, [events.length]);
 
-  // Auto-play interval for rotating animations
   useEffect(() => {
     if (!isAutoPlaying) return;
     const timer = setInterval(() => navigate(1), 3500);
@@ -85,14 +84,15 @@ export default function UpcomingEvents() {
   };
 
   return (
-    <SectionWrapper id="events">
+    <SectionWrapper id="events" withPattern>
       <SectionHeading
         text="Upcoming"
         accent="Events"
+        arabianText="✦ Discover ✦"
         subtitle="Discover the most anticipated events of Riviera 2026"
       />
 
-      <div 
+      <div
         className="relative max-w-6xl mx-auto flex items-center justify-center -mt-4 md:-mt-8"
         onMouseEnter={() => setIsAutoPlaying(false)}
         onMouseLeave={() => setIsAutoPlaying(true)}
@@ -116,36 +116,70 @@ export default function UpcomingEvents() {
                   zIndex: offset === 0 ? 30 : 10,
                 }}
                 transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] as const }}
-                className={`absolute w-[85%] sm:w-[65%] md:w-[55%] lg:w-[45%] h-[300px] sm:h-[340px] md:h-[380px] rounded-[2rem] border ${isActive ? "border-[var(--clr-primary)]/50" : "border-white/10"} bg-gradient-to-br from-[#1a0000] via-[var(--clr-surface)] to-[var(--clr-bg)] backdrop-blur-xl overflow-hidden cursor-pointer`}
+                className="absolute w-[85%] sm:w-[65%] md:w-[55%] lg:w-[45%] h-[300px] sm:h-[340px] md:h-[380px] rounded-[2rem] backdrop-blur-xl overflow-hidden cursor-pointer"
                 style={{
-                  boxShadow: isActive 
-                    ? "0 0 60px rgba(239, 68, 68, 0.2), 0 20px 40px rgba(0,0,0,0.6)" 
-                    : "0 10px 30px rgba(0,0,0,0.4)",
+                  border: `1px solid ${isActive ? "var(--border-hover)" : "var(--border-gold)"}`,
+                  background: "var(--gradient-card)",
+                  boxShadow: isActive
+                    ? "0 0 60px rgba(212, 160, 23, 0.15), 0 20px 40px rgba(0,0,0,0.5)"
+                    : "0 10px 30px rgba(0,0,0,0.3)",
                 }}
                 onClick={() => {
                   if (offset !== 0) navigate(offset);
                 }}
               >
                 {/* Inner radial glow */}
-                <div className={`absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(239,68,68,0.2),transparent_60%)] transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-30'}`} />
+                <div
+                  className="absolute inset-0 transition-opacity duration-500"
+                  style={{
+                    background: "radial-gradient(circle at 30% 20%, rgba(212, 160, 23, 0.12), transparent 60%)",
+                    opacity: isActive ? 1 : 0.3,
+                  }}
+                />
+
+                {/* Gold shimmer border on active */}
+                {isActive && (
+                  <div
+                    className="absolute inset-0 rounded-[2rem]"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(212, 160, 23, 0.1), transparent 50%)",
+                    }}
+                  />
+                )}
 
                 <div className="relative h-full flex flex-col justify-between p-6 sm:p-8">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <p className={`text-[10px] uppercase tracking-[0.35em] mb-2 font-medium ${isActive ? 'text-red-300' : 'text-zinc-500'}`}>
+                      <p
+                        className="text-[10px] uppercase tracking-[0.35em] mb-2 font-medium"
+                        style={{
+                          color: isActive ? "var(--gold-primary)" : "var(--text-dim)",
+                          fontFamily: "var(--font-arabian)",
+                        }}
+                      >
                         {isActive ? "Featured Event" : isNext ? "Next Up" : "Previous"}
                       </p>
-                      <h3 className={`text-xl sm:text-2xl md:text-3xl font-bold tracking-tight ${isActive ? 'text-white' : 'text-zinc-300'}`}>
+                      <h3
+                        className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight"
+                        style={{
+                          color: isActive ? "var(--text-primary)" : "var(--text-muted)",
+                          fontFamily: "var(--font-heading)",
+                        }}
+                      >
                         {event.title}
                       </h3>
                     </div>
-                    
-                    {/* Image thumbnail in top right */}
-                    <motion.div 
-                      className={`relative flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full overflow-hidden border-[4px] shadow-2xl transition-all duration-500 ${isActive ? 'border-[var(--clr-primary)]/60 shadow-[0_0_30px_rgba(239,68,68,0.4)]' : 'border-white/10 shadow-none'}`}
+
+                    {/* Image thumbnail */}
+                    <motion.div
+                      className="relative flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full overflow-hidden shadow-2xl transition-all duration-500"
+                      style={{
+                        border: `3px solid ${isActive ? "var(--gold-primary)" : "var(--border-gold)"}`,
+                        boxShadow: isActive ? "var(--shadow-glow-gold-md)" : "none",
+                      }}
                       animate={{
-                         rotate: isActive ? 0 : offset === 1 ? -15 : 15,
-                         scale: isActive ? 1 : 0.9
+                        rotate: isActive ? 0 : offset === 1 ? -15 : 15,
+                        scale: isActive ? 1 : 0.9,
                       }}
                       transition={{ duration: 0.7 }}
                     >
@@ -159,23 +193,23 @@ export default function UpcomingEvents() {
                     </motion.div>
                   </div>
 
-                  <p className={`text-sm sm:text-base leading-relaxed line-clamp-3 ${isActive ? 'text-[var(--clr-text-muted)]' : 'text-zinc-500'}`}>
+                  <p
+                    className="text-sm sm:text-base leading-relaxed line-clamp-3"
+                    style={{ color: isActive ? "var(--text-muted)" : "var(--text-dim)" }}
+                  >
                     {event.desc}
                   </p>
 
                   <div className="flex items-center justify-between mt-4">
                     {isActive ? (
-                      <button className="btn-primary !py-2.5 !px-6 !text-sm group">
+                      <button className="btn-gold !py-2.5 !px-6 !text-sm group">
                         Register Now
-                        <ArrowRight
-                          size={16}
-                          className="transition-transform group-hover:translate-x-1"
-                        />
+                        <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                       </button>
                     ) : (
-                       <span className="flex items-center gap-2 text-xs uppercase tracking-wider text-[var(--clr-text-dim)] font-medium">
-                         <MousePointerClick size={14} /> Click to View
-                       </span>
+                      <span className="flex items-center gap-2 text-xs uppercase tracking-wider font-medium" style={{ color: "var(--text-dim)" }}>
+                        <MousePointerClick size={14} /> Click to View
+                      </span>
                     )}
                   </div>
                 </div>
@@ -188,7 +222,12 @@ export default function UpcomingEvents() {
         <button
           onClick={() => navigate(-1)}
           aria-label="Previous event"
-          className="absolute left-2 sm:left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-[var(--clr-primary)] hover:border-[var(--clr-primary)] transition-all duration-300 shadow-lg hover:shadow-[var(--shadow-glow-sm)]"
+          className="absolute left-2 sm:left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full backdrop-blur-md flex items-center justify-center transition-all duration-300 shadow-lg"
+          style={{
+            background: "var(--surface-glass)",
+            border: "1px solid var(--border-gold)",
+            color: "var(--gold-primary)",
+          }}
         >
           <ArrowLeft size={20} />
         </button>
@@ -196,7 +235,12 @@ export default function UpcomingEvents() {
         <button
           onClick={() => navigate(1)}
           aria-label="Next event"
-          className="absolute right-2 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-[var(--clr-primary)] hover:border-[var(--clr-primary)] transition-all duration-300 shadow-lg hover:shadow-[var(--shadow-glow-sm)]"
+          className="absolute right-2 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 w-12 h-12 rounded-full backdrop-blur-md flex items-center justify-center transition-all duration-300 shadow-lg"
+          style={{
+            background: "var(--surface-glass)",
+            border: "1px solid var(--border-gold)",
+            color: "var(--gold-primary)",
+          }}
         >
           <ArrowRight size={20} />
         </button>

@@ -7,22 +7,22 @@ interface SectionWrapperProps {
   id?: string;
   children: React.ReactNode;
   className?: string;
-  /** Show the radial glow background */
+  /** Show Arabian gold aura glow */
   withGlow?: boolean;
-  /** Show the grid pattern overlay */
-  withGrid?: boolean;
+  /** Show geometric pattern overlay */
+  withPattern?: boolean;
 }
 
 /**
- * Reusable section wrapper providing consistent padding,
- * background effects, and scroll-triggered entrance animation.
+ * Reusable section wrapper — consistent Arabian-themed spacing,
+ * atmospheric effects, and scroll-triggered entrance animation.
  */
 export default function SectionWrapper({
   id,
   children,
   className = "",
   withGlow = true,
-  withGrid = false,
+  withPattern = false,
 }: SectionWrapperProps) {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
@@ -31,11 +31,26 @@ export default function SectionWrapper({
     <section
       id={id}
       ref={ref}
-      className={`relative overflow-hidden bg-[var(--clr-bg)] text-white ${className}`}
+      className={`relative overflow-hidden ${className}`}
+      style={{ background: "var(--bg-primary)" }}
     >
-      {/* Background effects */}
-      {withGlow && <div className="bg-glow" />}
-      {withGrid && <div className="bg-grid" />}
+      {/* Atmospheric glow */}
+      {withGlow && <div className="bg-glow-arabian" />}
+
+      {/* Islamic geometric pattern */}
+      {withPattern && <div className="bg-pattern-arabian" />}
+
+      {/* Film noise texture */}
+      <div className="absolute inset-0 bg-noise" aria-hidden="true" />
+
+      {/* Section divider — gold gradient line at top */}
+      <div
+        className="absolute inset-x-0 top-0 h-px"
+        style={{
+          background: "linear-gradient(90deg, transparent, var(--gold-dim), var(--gold-subtle), transparent)",
+        }}
+        aria-hidden="true"
+      />
 
       {/* Content with entrance animation */}
       <motion.div

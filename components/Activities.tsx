@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import SectionHeading from "@/components/ui/SectionHeading";
 import GlassCard from "@/components/ui/GlassCard";
+import { easing, duration } from "@/lib/motionPresets";
 
 interface ActivityItem {
   title: string;
@@ -45,25 +46,46 @@ export default function Activities() {
   }, []);
 
   return (
-    <SectionWrapper id="activities">
-      <SectionHeading text="Fest" accent="Activities" subtitle="From coding battles to cultural nights — there's something for everyone" />
+    <SectionWrapper id="activities" withPattern>
+      <SectionHeading
+        text="Fest"
+        accent="Activities"
+        arabianText="✦ Enchanted Arts ✦"
+        subtitle="From coding battles to cultural nights — there's something for everyone"
+      />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
         {activities.map((activity, index) => {
           const Icon = iconMap[activity.iconName] || Code;
 
           return (
-            <GlassCard key={activity.title} index={index} className="group">
+            <GlassCard key={activity.title} index={index} premium className="group">
               <motion.div
-                className="w-14 h-14 rounded-xl bg-[var(--clr-primary-dim)] flex items-center justify-center mb-6 group-hover:bg-[var(--clr-primary)] transition-colors duration-300"
-                whileHover={{ rotate: [0, -10, 10, 0] }}
+                className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 transition-all duration-300"
+                style={{
+                  background: "var(--gold-dim)",
+                }}
+                whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
                 transition={{ duration: 0.4 }}
               >
-                <Icon size={26} className="text-[var(--clr-primary)] group-hover:text-white transition-colors duration-300" />
+                <Icon size={26} style={{ color: "var(--gold-primary)" }} className="group-hover:scale-110 transition-transform duration-300" />
               </motion.div>
-              <h3 className="text-lg md:text-xl font-bold mb-3 tracking-tight">{activity.title}</h3>
-              <p className="text-[var(--clr-text-muted)] text-sm leading-relaxed">{activity.desc}</p>
-              <div className="mt-6 h-0.5 w-0 bg-gradient-to-r from-[var(--clr-primary)] to-red-400 group-hover:w-full transition-all duration-500 rounded-full" />
+
+              <h3
+                className="text-lg md:text-xl font-bold mb-3 tracking-tight"
+                style={{ color: "var(--text-primary)", fontFamily: "var(--font-heading)" }}
+              >
+                {activity.title}
+              </h3>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>
+                {activity.desc}
+              </p>
+
+              {/* Animated gold line */}
+              <div
+                className="mt-6 h-[2px] w-0 rounded-full group-hover:w-full transition-all duration-500"
+                style={{ background: "var(--gradient-gold)" }}
+              />
             </GlassCard>
           );
         })}

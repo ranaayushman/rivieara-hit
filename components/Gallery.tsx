@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import SectionWrapper from "@/components/ui/SectionWrapper";
+import SectionHeading from "@/components/ui/SectionHeading";
 
 const fallbackImages = ["/gallery1.jpg", "/gallery2.jpg", "/gallery3.jpg", "/gallery4.jpg"];
 
@@ -19,7 +20,6 @@ export default function Gallery() {
       .then((r) => r.json())
       .then((data) => {
         if (data.albums && data.albums.length > 0) {
-          // Collect all image URLs from all albums
           const allImages: string[] = [];
           for (const album of data.albums) {
             for (const img of album.gallery_images || []) {
@@ -56,14 +56,14 @@ export default function Gallery() {
   };
 
   return (
-    <SectionWrapper id="gallery">
-      <div className="text-center mb-16 md:mb-20">
-        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white tracking-tight">
-          Gallery
-        </h2>
-      </div>
+    <SectionWrapper id="gallery" withGlow>
+      <SectionHeading
+        text="Our"
+        accent="Gallery"
+        arabianText="✦ Memories ✦"
+      />
 
-      <div 
+      <div
         className="relative max-w-[1400px] mx-auto flex flex-col items-center justify-center"
         onMouseEnter={() => setIsAutoPlaying(false)}
         onMouseLeave={() => setIsAutoPlaying(true)}
@@ -84,9 +84,11 @@ export default function Gallery() {
                   zIndex: isActive ? 30 : isHidden ? 0 : 10,
                 }}
                 transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] as const }}
-                className="absolute w-[75%] sm:w-[55%] md:w-[45%] lg:w-[40%] aspect-[4/3] rounded-3xl overflow-hidden cursor-pointer shadow-2xl"
+                className="absolute w-[75%] sm:w-[55%] md:w-[45%] lg:w-[40%] aspect-[4/3] overflow-hidden cursor-pointer shadow-2xl"
                 style={{
-                  boxShadow: isActive ? "0 0 80px rgba(239, 68, 68, 0.35)" : "none",
+                  borderRadius: "var(--radius-luxury)",
+                  border: isActive ? "2px solid var(--border-hover)" : "1px solid var(--border-gold)",
+                  boxShadow: isActive ? "var(--shadow-glow-gold-lg)" : "none",
                   pointerEvents: isHidden ? "none" : "auto",
                 }}
                 onClick={() => {
@@ -101,25 +103,51 @@ export default function Gallery() {
                   sizes="(max-width: 768px) 75vw, 50vw"
                   priority={isActive}
                 />
-                
+
+                {/* Inactive overlay */}
                 {!isActive && (
-                  <div className="absolute inset-0 bg-black/30 pointer-events-none transition-opacity duration-500" />
+                  <div
+                    className="absolute inset-0 pointer-events-none transition-opacity duration-500"
+                    style={{ background: "rgba(5, 5, 5, 0.3)" }}
+                  />
+                )}
+
+                {/* Gold vignette on active */}
+                {isActive && (
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background: "linear-gradient(to top, rgba(5, 5, 5, 0.4) 0%, transparent 40%)",
+                    }}
+                  />
                 )}
               </motion.div>
             );
           })}
         </div>
 
+        {/* View Gallery CTA */}
         <div className="mt-16 md:mt-24 z-40">
-          <Link 
-            href="/gallery" 
-            className="inline-flex items-center gap-6 pl-8 pr-2 py-2 rounded-full border border-red-500/30 bg-[#110505] hover:bg-[#1a0505] hover:border-red-500/60 transition-all duration-300 group shadow-xl"
+          <Link
+            href="/gallery"
+            className="group relative inline-flex items-center gap-6 pl-8 pr-2 py-2 rounded-full overflow-hidden transition-all duration-300 shadow-xl"
+            style={{
+              border: "1px solid var(--border-gold)",
+              background: "var(--gold-subtle)",
+            }}
           >
-            <span className="text-white/90 font-medium tracking-wide text-sm sm:text-base">
+            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--gold-dim)] to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+            <span className="font-medium tracking-wide text-sm sm:text-base relative z-10" style={{ color: "var(--text-primary)" }}>
               View Gallery
             </span>
-            <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.4)] group-hover:shadow-[0_0_25px_rgba(239,68,68,0.6)] transition-all">
-              <ArrowRight size={18} className="text-white group-hover:translate-x-0.5 transition-transform" />
+            <div
+              className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center group-hover:scale-110 transition-all"
+              style={{
+                background: "var(--gradient-gold)",
+                boxShadow: "var(--shadow-glow-gold-md)",
+              }}
+            >
+              <ArrowRight size={18} className="text-[#0a0805] group-hover:translate-x-0.5 transition-transform" />
             </div>
           </Link>
         </div>
