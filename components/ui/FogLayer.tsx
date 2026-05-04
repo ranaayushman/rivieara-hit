@@ -85,7 +85,7 @@ export default function FogLayer() {
         style={{
           background: "radial-gradient(ellipse at center, rgba(212, 160, 23, calc(0.03 * var(--glow-intensity, 1))), transparent 60%)",
           filter: getBlur("blur(120px)"),
-          opacity: isLowPower ? 0.3 : 0, // In low power mode, the GSAP reveal doesn't run, so default to visible
+          opacity: 0, // Initially hidden; GSAP reveals on desktop after mount
         }}
       />
     </div>

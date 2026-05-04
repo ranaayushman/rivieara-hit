@@ -164,7 +164,7 @@ export default function Gallery() {
         </motion.p>
         
         <motion.div
-          className="relative inline-block"
+          className=""
           initial={{ opacity: 0, filter: "blur(10px)", scale: 0.95 }}
           whileInView={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
           viewport={{ once: true, margin: "-100px" }}

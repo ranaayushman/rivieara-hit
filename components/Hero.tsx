@@ -217,11 +217,11 @@ export default function Hero() {
               opacity: s.opacity,
             }}
             animate={
-              isLowPower
-                ? {}
-                : {
+              isMounted && !isLowPower
+                ? {
                   opacity: [0.3, 1, 0.3],
                 }
+                : {}
             }
             transition={{
               duration: s.dur,
