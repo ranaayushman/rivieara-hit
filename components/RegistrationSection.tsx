@@ -14,7 +14,7 @@ interface InfoCard {
 }
 
 const defaultCards: InfoCard[] = [
-  { icon: CalendarDays, label: "March 25–28", sublabel: "2026" },
+  { icon: CalendarDays, label: "May 19–20", sublabel: "2026" },
   { icon: MapPin, label: "HIT Campus", sublabel: "Haldia" },
   { icon: User, label: "Open for All", sublabel: "Students" },
 ];
@@ -30,7 +30,7 @@ export default function RegistrationSection() {
           const s = data.settings as Record<string, string>;
           if (s.event_dates || s.event_venue) {
             setInfoCards([
-              { icon: CalendarDays, label: s.event_dates || "March 25–28", sublabel: "2026" },
+              { icon: CalendarDays, label: s.event_dates || "May 19–20", sublabel: "2026" },
               { icon: MapPin, label: s.event_venue || "HIT Campus", sublabel: "Haldia" },
               { icon: User, label: "Open for All", sublabel: "Students" },
             ]);

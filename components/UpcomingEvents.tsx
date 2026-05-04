@@ -161,19 +161,19 @@ export default function UpcomingEvents() {
       {/* ================= BACKGROUND LAYERS ================= */}
       {/* 1. Deep Arabian Night Sky */}
       <div className="absolute inset-0 z-0" style={{ background: "radial-gradient(ellipse at top center, var(--bg-deep) 0%, var(--bg-primary) 80%)" }} />
-      
+
       {/* 2. Giant Glowing Moon */}
-      <div 
+      <div
         className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] md:w-[800px] md:h-[800px] rounded-full opacity-15 blur-3xl pointer-events-none z-0"
         style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }}
       />
-      <div 
+      <div
         className="absolute top-[5%] right-[5%] w-[150px] h-[150px] md:w-[250px] md:h-[250px] rounded-full pointer-events-none z-0 pulse-slow"
         style={{ background: "radial-gradient(circle, var(--moon-light) 0%, transparent 60%)", filter: "blur(40px)", opacity: 0.2 }}
       />
 
       {/* 3. Volumetric Light Rays (CSS Magic) */}
-      <div 
+      <div
         className="absolute inset-0 z-0 opacity-20 pointer-events-none mix-blend-screen"
         style={{
           background: "conic-gradient(from 180deg at 50% -20%, var(--moon-dim) 0deg, transparent 40deg, var(--moon-subtle) 80deg, transparent 120deg, var(--moon-dim) 160deg, transparent 360deg)",
@@ -181,7 +181,7 @@ export default function UpcomingEvents() {
       />
 
       {/* 4. Desert Horizon Gradient */}
-      <div 
+      <div
         className="absolute bottom-0 inset-x-0 h-[40%] z-0 pointer-events-none"
         style={{
           background: "linear-gradient(to top, var(--bg-primary) 0%, var(--surface-glass) 30%, transparent 100%)",
@@ -189,7 +189,7 @@ export default function UpcomingEvents() {
       />
 
       {/* 5. GSAP Cinematic Fog Reveal Layer */}
-      <div 
+      <div
         ref={fogRef}
         className="absolute inset-0 z-20 pointer-events-none"
         style={{ background: "linear-gradient(180deg, var(--bg-primary) 0%, var(--surface-glass) 100%)" }}
@@ -225,9 +225,9 @@ export default function UpcomingEvents() {
         >
           ✦ Discover The Realm ✦
         </motion.p>
-        
+
         <motion.div
-          className="relative inline-block"
+          className=""
           initial={{ opacity: 0, filter: "blur(10px)", scale: 0.9 }}
           whileInView={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -235,10 +235,10 @@ export default function UpcomingEvents() {
         >
           <h2
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight relative z-10"
-            style={{ 
-              fontFamily: "var(--font-heading)", 
-              color: "var(--text-primary)", 
-              textShadow: "0 0 40px rgba(212,160,23,0.5), 0 4px 10px rgba(0,0,0,0.8)" 
+            style={{
+              fontFamily: "var(--font-heading)",
+              color: "var(--text-primary)",
+              textShadow: "0 0 40px rgba(212,160,23,0.5), 0 4px 10px rgba(0,0,0,0.8)"
             }}
           >
             Upcoming Events
@@ -276,11 +276,11 @@ export default function UpcomingEvents() {
                     opacity: offset === 0 ? 1 : 0.3,
                     zIndex: offset === 0 ? 40 : 10,
                   }}
-                  whileHover={isActive ? { 
-                    y: -15, 
+                  whileHover={isActive ? {
+                    y: -15,
                     rotateX: 6, // Tilt up on hover
                     scale: 1.03,
-                    boxShadow: "0 50px 80px rgba(0,0,0,0.9), 0 0 80px rgba(212,160,23,0.3)" 
+                    boxShadow: "0 50px 80px rgba(0,0,0,0.9), 0 0 80px rgba(212,160,23,0.3)"
                   } : undefined}
                   transition={{ duration: 0.8, ease: [0.25, 0.8, 0.25, 1] }}
                   onClick={() => { if (!isActive) navigate(offset); }}
@@ -298,7 +298,7 @@ export default function UpcomingEvents() {
                   {/* === Carpet Ornamental Layers === */}
                   <div className="absolute inset-2 border border-[rgba(212,160,23,0.2)] rounded-xl pointer-events-none" />
                   <div className="absolute inset-4 border border-[rgba(212,160,23,0.1)] rounded-lg pointer-events-none bg-pattern-arabian opacity-15 mix-blend-overlay" />
-                  
+
                   {/* Corner Gold Ornaments */}
                   <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-[rgba(212,160,23,0.5)] rounded-tl-lg" />
                   <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-[rgba(212,160,23,0.5)] rounded-tr-lg" />
@@ -306,22 +306,22 @@ export default function UpcomingEvents() {
                   <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-[rgba(212,160,23,0.5)] rounded-br-lg" />
 
                   {/* Hover Shimmer Sweep */}
-                  {isActive && (
+                  {/* {isActive && (
                     <div className="absolute inset-0 z-0 bg-gradient-to-r from-transparent via-[rgba(212,160,23,0.15)] to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-[2s] ease-in-out pointer-events-none rounded-[20px]" />
-                  )}
+                  )} */}
 
                   {/* === Floating Cinematic Content === */}
-                  <div 
+                  <div
                     className="relative z-10 w-full h-full p-6 sm:p-8 flex flex-col items-center text-center justify-between"
                     style={{ transform: "translateZ(40px)" }} // 3D floating pop effect
                   >
                     {/* Holographic Image Panel */}
                     <div className="relative w-full h-[45%] md:h-[50%] mb-4 rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.8)] group-hover:shadow-[0_20px_60px_rgba(212,160,23,0.3)] transition-all duration-500 border border-[rgba(212,160,23,0.4)]">
-                      <Image 
-                        src={event.image} 
-                        alt={event.title} 
-                        fill 
-                        className="object-cover group-hover:scale-110 group-hover:rotate-1 transition-transform duration-700 ease-out" 
+                      <Image
+                        src={event.image}
+                        alt={event.title}
+                        fill
+                        className="object-cover group-hover:scale-110 group-hover:rotate-1 transition-transform duration-700 ease-out"
                       />
                       {/* Magical Vignette Overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-[var(--surface-glass)] to-transparent z-10" />
@@ -334,14 +334,14 @@ export default function UpcomingEvents() {
                       <div className="px-4 py-1.5 mb-3 rounded-full border border-[rgba(212,160,23,0.4)] bg-[rgba(212,160,23,0.1)] text-[10px] sm:text-xs uppercase tracking-widest text-[var(--gold-light)] backdrop-blur-md shadow-[0_0_15px_rgba(212,160,23,0.2)]">
                         {event.tag}
                       </div>
-                      
-                      <h3 
-                        className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-white group-hover:text-[var(--gold-light)] transition-colors duration-300" 
+
+                      <h3
+                        className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-white group-hover:text-[var(--gold-light)] transition-colors duration-300"
                         style={{ fontFamily: "var(--font-heading)", textShadow: "0 4px 20px rgba(0,0,0,0.9)" }}
                       >
                         {event.title}
                       </h3>
-                      
+
                       <p className="text-xs sm:text-sm text-gray-300 line-clamp-2 mb-4 max-w-[95%] leading-relaxed font-light">
                         {event.desc}
                       </p>
@@ -350,7 +350,7 @@ export default function UpcomingEvents() {
                       {isActive && (
                         <div className="mt-auto">
                           <button className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-[rgba(212,160,23,0.1)] to-[rgba(139,94,0,0.2)] border border-[rgba(212,160,23,0.6)] text-[var(--gold-light)] text-sm font-semibold hover:bg-[rgba(212,160,23,0.3)] hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(212,160,23,0.3)] group/btn">
-                            <Sparkles size={16} className="group-hover/btn:animate-pulse" /> 
+                            <Sparkles size={16} className="group-hover/btn:animate-pulse" />
                             <span>Enter Experience</span>
                           </button>
                         </div>
