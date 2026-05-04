@@ -6,7 +6,6 @@ import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, LogOut, User } from "lucide-react";
-import ThemeToggle from "@/components/ui/ThemeToggle";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -24,7 +23,7 @@ interface UserInfo {
 
 /**
  * Floating cinematic glass navbar with Arabian gold accents,
- * animated active indicator, theme toggle, and premium mobile menu.
+ * animated active indicator, and premium mobile menu.
  */
 export default function Navbar() {
   const pathname = usePathname();
@@ -161,9 +160,7 @@ export default function Navbar() {
           </div>
 
           {/* ── Desktop Actions ── */}
-          <div className="hidden lg:flex items-center gap-3">
-            <ThemeToggle />
-
+          <div className="hidden lg:flex items-center gap-4 border-l border-[rgba(212,160,23,0.2)] pl-6 ml-2">
             {user ? (
               <>
                 <div
@@ -190,8 +187,7 @@ export default function Navbar() {
           </div>
 
           {/* ── Mobile Toggle ── */}
-          <div className="lg:hidden flex items-center gap-2">
-            <ThemeToggle />
+          <div className="lg:hidden flex items-center gap-3">
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="relative w-10 h-10 flex items-center justify-center rounded-full transition-colors"

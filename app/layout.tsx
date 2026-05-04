@@ -4,7 +4,6 @@ import { Cinzel } from "next/font/google";
 import { El_Messiri } from "next/font/google";
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
-import { ThemeProvider } from "@/lib/theme";
 import ParticleLayer from "@/components/ui/ParticleLayer";
 import FogLayer from "@/components/ui/FogLayer";
 import MouseGlow from "@/components/ui/MouseGlow";
@@ -59,7 +58,6 @@ export default function RootLayout({
           fontFamily: "var(--font-body)",
         }}
       >
-        <ThemeProvider>
           {/* Global atmospheric layers */}
           <FogLayer />
           <ParticleLayer />
@@ -67,7 +65,6 @@ export default function RootLayout({
 
           <Navbar />
           <main className="overflow-x-hidden relative z-10">{children}</main>
-        </ThemeProvider>
       </body>
     </html>
   );

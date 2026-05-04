@@ -33,8 +33,6 @@ export default function Hero() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [introPhase, setIntroPhase] = useState(0); // 0-3 (lines), then 4 = main
   const containerRef = useRef<HTMLDivElement>(null);
-  const moonAuraRef = useRef<HTMLDivElement>(null);
-  const palaceRef = useRef<HTMLDivElement>(null);
   const heroFogRef = useRef<HTMLDivElement>(null);
   const ambientGlowRef = useRef<HTMLDivElement>(null);
 
@@ -45,8 +43,6 @@ export default function Hero() {
 
   const { isLowPower, isMounted } = usePerformanceMode();
 
-  const moonY = useTransform(scrollYProgress, [0, 1], [0, 100]);
-  const palaceY = useTransform(scrollYProgress, [0, 1], [0, 40]);
   const contentY = useTransform(scrollYProgress, [0, 1], [0, -50]);
   const rightY = useTransform(scrollYProgress, [0, 1], [0, 30]);
   const fadeOut = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
@@ -80,10 +76,6 @@ export default function Hero() {
     const ctx = gsap.context(() => {
       // Disable heavy ambient breathing on mobile
       if (!isLowPower) {
-        // Moon aura breathing
-        if (moonAuraRef.current) {
-          gsap.to(moonAuraRef.current, { scale: 1.15, opacity: 0.9, duration: 4, ease: "sine.inOut", yoyo: true, repeat: -1 });
-        }
         // Ambient glow breathing
         if (ambientGlowRef.current) {
           gsap.to(ambientGlowRef.current, { scale: 1.1, opacity: 0.8, duration: 5, ease: "sine.inOut", yoyo: true, repeat: -1 });
@@ -98,15 +90,6 @@ export default function Hero() {
         if (heroFogRef.current) {
           gsap.fromTo(heroFogRef.current, { opacity: 0 }, { opacity: 0.8, duration: 2, ease: "power2.out" });
         }
-      }
-
-      // Palace cinematic entrance (keep on all devices)
-      if (palaceRef.current) {
-        gsap.fromTo(
-          palaceRef.current,
-          { opacity: 0 },
-          { opacity: 1, duration: 2.5, delay: 0.5, ease: "power4.out" }
-        );
       }
 
       // Scroll-driven glow intensity modulation
@@ -208,45 +191,6 @@ export default function Hero() {
 
       {/* Geometric overlay — subtle Islamic pattern */}
       <div className="bg-pattern-arabian" aria-hidden="true" />
-
-      {/* ═══════════ PALACE SILHOUETTE — FULL WIDTH ═══════════ */}
-      <motion.div
-        ref={palaceRef}
-        className="absolute bottom-0 inset-x-0 h-[180px] md:h-[300px] z-[3]"
-        style={{ y: palaceY }}
-        aria-hidden="true"
-      >
-        <svg viewBox="0 0 1440 300" className="w-full h-full" preserveAspectRatio="xMidYMax slice">
-          <defs>
-            <linearGradient id="palGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--gold-primary)" stopOpacity="0.25" />
-              <stop offset="60%" stopColor="var(--gold-deep)" stopOpacity="0.08" />
-              <stop offset="100%" stopColor="var(--bg-primary)" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M0,300 L0,240 L60,240 L60,200 L70,160 C75,140 85,140 90,160 L100,200 L100,240
-               L180,240 L180,185 C200,110 240,110 260,185 L260,240
-               L340,240 L340,210 L350,170 C355,150 365,150 370,170 L380,210 L380,240
-               L480,240 L480,175 C505,90 545,90 570,175 L570,240
-               L650,240 L650,220 L660,180 C665,160 675,160 680,180 L690,220 L690,240
-               L770,240 L770,195 C800,120 840,120 870,195 L870,240
-               L950,240 L950,215 L960,175 C965,155 975,155 980,175 L990,215 L990,240
-               L1070,240 L1070,185 C1100,110 1140,110 1170,185 L1170,240
-               L1250,240 L1250,220 L1260,180 C1265,160 1275,160 1280,180 L1290,220 L1290,240
-               L1370,240 L1370,200 L1380,160 C1385,140 1395,140 1400,160 L1410,200 L1410,240
-               L1440,240 L1440,300 Z"
-            fill="url(#palGrad)"
-          />
-        </svg>
-        {/* Gold edge glow on palace tops */}
-        <div
-          className="absolute inset-x-0 top-0 h-[2px]"
-          style={{
-            background: "linear-gradient(90deg, transparent 5%, var(--gold-dim) 30%, var(--gold-subtle) 50%, var(--gold-dim) 70%, transparent 95%)",
-          }}
-        />
-      </motion.div>
 
       {/* Bottom fade to next section */}
       <div
@@ -438,46 +382,6 @@ export default function Hero() {
           animate={mainVisible ? { opacity: 1 } : {}}
           transition={{ duration: 1, delay: 0.3 }}
         >
-          {/* ── Crescent Moon ── */}
-          <motion.div
-            className="absolute z-10"
-            style={{ y: moonY, right: "5%", top: "2%" }}
-          >
-            {/* Outer aura */}
-            <div
-              className="absolute -inset-16 md:-inset-24 rounded-full"
-              style={{
-                background: "radial-gradient(circle, rgba(212, 160, 23, 0.12) 0%, rgba(212, 160, 23, 0.03) 40%, transparent 70%)",
-              }}
-            />
-            {/* Middle glow ring */}
-            {/* Moon aura — GSAP breathing (scale+opacity) */}
-            <div
-              ref={moonAuraRef}
-              className="absolute -inset-8 md:-inset-12 rounded-full"
-              style={{ background: "radial-gradient(circle, rgba(240, 208, 120, 0.08) 0%, transparent 70%)" }}
-            />
-            {/* Moon SVG */}
-            <svg
-              viewBox="0 0 100 100"
-              className="w-28 h-28 md:w-44 md:h-44 lg:w-56 lg:h-56 relative z-10"
-              style={{ filter: "drop-shadow(0 0 25px rgba(212, 160, 23, 0.35))" }}
-            >
-              <defs>
-                <linearGradient id="hmGrad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="var(--gold-light)" />
-                  <stop offset="100%" stopColor="var(--gold-primary)" />
-                </linearGradient>
-                <radialGradient id="hmInner" cx="0.4" cy="0.35">
-                  <stop offset="0%" stopColor="var(--gold-light)" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="var(--gold-primary)" stopOpacity="0" />
-                </radialGradient>
-              </defs>
-              <circle cx="50" cy="50" r="42" fill="url(#hmGrad)" />
-              <circle cx="50" cy="50" r="42" fill="url(#hmInner)" />
-              <circle cx="68" cy="38" r="34" fill="var(--bg-primary)" />
-            </svg>
-          </motion.div>
 
           {/* ── Floating Lanterns ── */}
           {activeLanterns.map((l, i) => (
