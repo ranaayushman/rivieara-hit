@@ -7,6 +7,8 @@ import Navbar from "@/components/Navbar";
 import ParticleLayer from "@/components/ui/ParticleLayer";
 import FogLayer from "@/components/ui/FogLayer";
 import MouseGlow from "@/components/ui/MouseGlow";
+import ConditionalNavbar from "@/components/ConditionalNavbar";
+import ConditionalMain from "@/components/ConditionalMain";
 
 const inter = Inter({
   subsets: ["latin"],

@@ -17,23 +17,20 @@ export default function FogLayer() {
   const { isLowPower, isMounted } = usePerformanceMode();
 
   useEffect(() => {
-    if (!isMounted || isLowPower) return; // Disable heavy fog animations on mobile
+    if (!isMounted || isLowPower) return;
 
     const ctx = gsap.context(() => {
       if (fog1Ref.current) {
         gsap.to(fog1Ref.current, { x: "10%", y: "-3%", duration: 22, ease: "sine.inOut", yoyo: true, repeat: -1 });
         gsap.to(fog1Ref.current, { opacity: 0.6, duration: 8, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 2 });
       }
-
       if (fog2Ref.current) {
         gsap.to(fog2Ref.current, { x: "-8%", y: "4%", duration: 25, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 3 });
         gsap.to(fog2Ref.current, { opacity: 0.5, duration: 10, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 5 });
       }
-
       if (fog3Ref.current) {
         gsap.to(fog3Ref.current, { x: "6%", duration: 30, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 1 });
       }
-
       if (fog4Ref.current) {
         gsap.fromTo(fog4Ref.current, { opacity: 0 }, { opacity: 1, duration: 4, ease: "power2.out" });
         gsap.to(fog4Ref.current, { x: "-12%", y: "2%", duration: 28, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 6 });
@@ -43,8 +40,17 @@ export default function FogLayer() {
     return () => ctx.revert();
   }, [isLowPower, isMounted]);
 
-  // Massive blurs kill mobile GPU. Reduce blur dynamically.
-  const getBlur = (desktopBlur: string) => isLowPower ? 'blur(20px)' : desktopBlur;
+  // ─── KEY FIX ───────────────────────────────────────────────────────────────
+  // Before mount, isMounted=false so isLowPower is unreliable.
+  // Always use the DESKTOP defaults for SSR/initial render so server
+  // and client HTML match exactly. GSAP will take over after hydration.
+  const getBlur = (desktopBlur: string) =>
+    isMounted && isLowPower ? "blur(20px)" : desktopBlur;
+
+  // fog4 opacity: on desktop GSAP animates it from 0→visible,
+  // on low-power we show it at 0.3 statically. Before mount → 0 (desktop default).
+  const fog4Opacity = isMounted && isLowPower ? 0.3 : 0;
+  // ──────────────────────────────────────────────────────────────────────────
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[1] overflow-hidden" aria-hidden="true">
@@ -85,7 +91,11 @@ export default function FogLayer() {
         style={{
           background: "radial-gradient(ellipse at center, rgba(212, 160, 23, calc(0.03 * var(--glow-intensity, 1))), transparent 60%)",
           filter: getBlur("blur(120px)"),
+<<<<<<< HEAD
           opacity: 0, // Initially hidden; GSAP reveals on desktop after mount
+=======
+          opacity: fog4Opacity,
+>>>>>>> b5eda83 (home page improved ang register section)
         }}
       />
     </div>
