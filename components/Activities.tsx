@@ -161,14 +161,14 @@ export default function Activities() {
       ref={sectionRef}
       id="activities"
       className="relative min-h-screen overflow-hidden py-24 sm:py-32 flex flex-col items-center"
-      style={{ background: "#020104" }}
+      style={{ background: "var(--bg-primary)" }}
     >
       {/* ================= BACKGROUND LAYERS ================= */}
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,rgba(25,15,5,1)_0%,rgba(2,1,4,1)_100%)]" />
+      <div className="absolute inset-0 z-0" style={{ background: "radial-gradient(circle at center, var(--bg-deep) 0%, var(--bg-primary) 100%)" }} />
       
       {/* Deep Magical Aura Orbs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(212,160,23,0.15)_0%,transparent_60%)] rounded-full blur-[40px] pointer-events-none z-0 animate-[glow-pulse_8s_infinite]" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(212,160,23,0.1)_0%,transparent_60%)] rounded-full blur-[50px] pointer-events-none z-0 animate-[glow-pulse_10s_infinite_reverse]" />
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full blur-[40px] pointer-events-none z-0 animate-[glow-pulse_8s_infinite]" style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }} />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full blur-[50px] pointer-events-none z-0 animate-[glow-pulse_10s_infinite_reverse]" style={{ background: "radial-gradient(circle, var(--gold-glow) 0%, transparent 60%)" }} />
 
       {/* Constellation SVG Network */}
       <svg ref={constellationRef} className="absolute inset-0 w-full h-[150%] pointer-events-none z-0 opacity-50" preserveAspectRatio="none" viewBox="0 0 1000 1000">
@@ -181,7 +181,7 @@ export default function Activities() {
       </svg>
 
       <div className="absolute inset-0 z-0 opacity-[0.06] pointer-events-none mix-blend-overlay bg-noise" />
-      <div ref={fogRef} className="absolute inset-0 z-20 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(2,1,4,1) 0%, rgba(2,1,4,0.4) 100%)" }} />
+      <div ref={fogRef} className="absolute inset-0 z-20 pointer-events-none" style={{ background: "linear-gradient(180deg, var(--bg-primary) 0%, var(--surface-glass) 100%)" }} />
 
       {/* ================= LUXURY HEADING ================= */}
       <div className="relative z-30 text-center mb-20 md:mb-32 px-4 w-full">
@@ -249,16 +249,16 @@ export default function Activities() {
                   whileHover={{ 
                     y: -12,
                     scale: 1.02,
-                    boxShadow: "0 30px 60px rgba(0,0,0,0.9), inset 0 0 60px rgba(212,160,23,0.3)" 
+                    boxShadow: "0 30px 60px rgba(0,0,0,0.9), inset 0 0 60px var(--gold-glow)" 
                   }}
                   className="group relative cursor-pointer overflow-hidden backdrop-blur-xl transition-all duration-700 w-full flex flex-col items-center text-center"
                   style={{
                     // Arabian Palace Arch Window Silhouette
                     borderRadius: "140px 140px 24px 24px",
-                    background: "linear-gradient(180deg, rgba(25,15,5,0.9) 0%, rgba(10,5,0,0.95) 100%)",
-                    border: "1px solid rgba(212,160,23,0.2)",
-                    borderTop: "2px solid rgba(212,160,23,0.6)",
-                    borderBottom: "8px solid rgba(160,110,10,0.8)",
+                    background: "var(--gradient-card)",
+                    border: "1px solid var(--border-gold)",
+                    borderTop: "2px solid var(--gold-primary)",
+                    borderBottom: "8px solid var(--gold-deep)",
                     boxShadow: "0 20px 40px rgba(0,0,0,0.8), inset 0 0 40px rgba(0,0,0,0.4)",
                     transformStyle: "preserve-3d",
                     padding: "50px 24px 40px 24px",
@@ -282,7 +282,7 @@ export default function Activities() {
                        <div className="absolute inset-[-12px] border border-[rgba(212,160,23,0.1)] rounded-full animate-[spin-slow_15s_linear_infinite_reverse]" />
                        
                        {/* Core Plate */}
-                       <div className="absolute inset-0 bg-[rgba(20,10,5,0.95)] rounded-full border-2 border-[rgba(212,160,23,0.8)] shadow-[0_0_20px_rgba(212,160,23,0.5)] group-hover:shadow-[0_0_40px_rgba(212,160,23,0.8)] group-hover:bg-[rgba(40,20,5,0.95)] transition-all duration-500" />
+                       <div className="absolute inset-0 bg-[var(--surface-primary)] rounded-full border-2 border-[var(--gold-primary)] shadow-[0_0_20px_var(--gold-glow)] group-hover:shadow-[0_0_40px_var(--gold-dim)] transition-all duration-500" />
                        
                        <Icon 
                           size={32} 

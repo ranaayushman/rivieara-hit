@@ -123,16 +123,16 @@ export default function Schedule() {
       ref={sectionRef}
       id="schedule"
       className="relative min-h-screen overflow-hidden py-24 sm:py-32"
-      style={{ background: "#010103" }}
+      style={{ background: "var(--bg-primary)" }}
     >
       {/* ================= BACKGROUND LAYERS ================= */}
       {/* 1. Deep Arabian Night Atmosphere */}
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,rgba(15,10,5,1)_0%,rgba(1,1,3,1)_80%)]" />
+      <div className="absolute inset-0 z-0" style={{ background: "radial-gradient(ellipse at center, var(--bg-deep) 0%, var(--bg-primary) 80%)" }} />
       
       {/* 2. Giant Moonlight Aura */}
       <div 
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] md:w-[800px] md:h-[800px] rounded-full opacity-20 blur-3xl pointer-events-none z-0 animate-[glow-pulse_6s_infinite]"
-        style={{ background: "radial-gradient(circle, rgba(212,160,23,0.4) 0%, transparent 60%)" }}
+        style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }}
       />
       
       {/* 3. Ancient Map Texture & Overlays */}
@@ -143,14 +143,14 @@ export default function Schedule() {
       <div 
         ref={fogRef}
         className="absolute inset-0 z-20 pointer-events-none"
-        style={{ background: "linear-gradient(180deg, rgba(1,1,3,1) 0%, rgba(1,1,3,0.8) 100%)" }}
+        style={{ background: "linear-gradient(180deg, var(--bg-primary) 0%, var(--surface-glass) 100%)" }}
       />
 
       {/* 5. Volumetric Golden Light Rays */}
       <div 
         className="absolute inset-0 z-0 opacity-15 pointer-events-none mix-blend-screen"
         style={{
-          background: "conic-gradient(from 180deg at 50% 0%, rgba(212,160,23,0.1) 0deg, transparent 30deg, rgba(212,160,23,0.1) 60deg, transparent 90deg, rgba(212,160,23,0.1) 120deg, transparent 360deg)",
+          background: "conic-gradient(from 180deg at 50% 0%, var(--gold-dim) 0deg, transparent 30deg, var(--gold-dim) 60deg, transparent 90deg, var(--gold-dim) 120deg, transparent 360deg)",
         }}
       />
 
@@ -211,9 +211,9 @@ export default function Schedule() {
               className="group relative px-6 sm:px-8 py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-500 overflow-hidden"
               style={{
                 color: isActive ? "var(--bg-primary)" : "var(--gold-light)",
-                border: isActive ? "1px solid transparent" : "1px solid rgba(212,160,23,0.4)",
-                background: isActive ? "transparent" : "rgba(20,10,0,0.4)",
-                boxShadow: isActive ? "0 0 30px rgba(212,160,23,0.5)" : "none",
+                border: isActive ? "1px solid transparent" : "1px solid var(--border-gold)",
+                background: isActive ? "transparent" : "var(--surface-glass)",
+                boxShadow: isActive ? "0 0 30px var(--gold-glow)" : "none",
               }}
             >
               {/* Active Golden Glow Background */}
@@ -299,10 +299,12 @@ export default function Schedule() {
 
                   {/* === MAGICAL CHECKPOINT (Lantern Marker) === */}
                   <div className="absolute left-[14px] md:left-1/2 -translate-x-1/2 z-20 magical-checkpoint">
-                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center relative bg-[rgba(15,8,0,0.95)] border-2 border-[rgba(212,160,23,0.6)] shadow-[0_0_30px_rgba(212,160,23,0.5)] cursor-pointer group hover:border-[rgba(255,230,150,0.8)] transition-colors duration-300">
+                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center relative border-2 transition-colors duration-300"
+                         style={{ background: "var(--surface-primary)", borderColor: "var(--border-gold)", boxShadow: "0 0 30px var(--gold-glow)" }}>
                       <Sparkles className="text-[var(--gold-light)] w-5 h-5 md:w-6 md:h-6 animate-[glow-pulse_3s_infinite] group-hover:scale-125 transition-transform" />
                       {/* Magical Checkpoint Aura */}
-                      <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(212,160,23,0.4)_0%,transparent_70%)] blur-[10px] rounded-full group-hover:bg-[radial-gradient(circle,rgba(255,230,150,0.6)_0%,transparent_70%)] transition-colors duration-500" />
+                      <div className="absolute inset-0 blur-[10px] rounded-full transition-colors duration-500" 
+                           style={{ background: "radial-gradient(circle, var(--gold-glow) 0%, transparent 70%)" }} />
                     </div>
                   </div>
 
@@ -311,9 +313,9 @@ export default function Schedule() {
                     <motion.div 
                       className="relative p-6 md:p-8 rounded-[24px] backdrop-blur-xl group cursor-pointer"
                       style={{
-                        background: "linear-gradient(145deg, rgba(30,20,10,0.85) 0%, rgba(10,5,0,0.95) 100%)",
-                        border: "1px solid rgba(212,160,23,0.3)",
-                        borderBottom: "4px solid rgba(160,110,10,0.8)",
+                        background: "var(--gradient-card)",
+                        border: "1px solid var(--border-gold)",
+                        borderBottom: "4px solid var(--gold-deep)",
                         boxShadow: "0 15px 35px rgba(0,0,0,0.8)",
                         transformStyle: "preserve-3d"
                       }}

@@ -136,9 +136,9 @@ export default function MouseGlow() {
           style={{
             width: 3 + i * 0.4,
             height: 3 + i * 0.4,
-            background: "var(--gold-light)",
+            background: "var(--moon-light)",
             opacity: 0,
-            boxShadow: "0 0 6px rgba(212, 160, 23, 0.3)",
+            boxShadow: "0 0 6px var(--moon-glow)",
           }}
         />
       ))}
@@ -149,7 +149,7 @@ export default function MouseGlow() {
         style={{
           width: 350,
           height: 350,
-          background: `radial-gradient(circle, rgba(212, 160, 23, ${isHovering ? 0.08 : 0.04}) 0%, transparent 70%)`,
+          background: `radial-gradient(circle, rgba(147, 197, 253, ${isHovering ? 0.08 : 0.04}) 0%, transparent 70%)`,
         }}
       />
 
@@ -159,7 +159,7 @@ export default function MouseGlow() {
         style={{
           width: 200,
           height: 200,
-          background: "radial-gradient(circle, rgba(139, 94, 0, 0.06) 0%, transparent 70%)",
+          background: "radial-gradient(circle, var(--moon-subtle) 0%, transparent 70%)",
         }}
       />
 
@@ -169,10 +169,10 @@ export default function MouseGlow() {
         style={{
           width: 8,
           height: 8,
-          background: "var(--gold-light)",
+          background: "var(--moon-light)",
           boxShadow: isHovering
-            ? "0 0 20px rgba(212, 160, 23, 0.6), 0 0 40px rgba(212, 160, 23, 0.25)"
-            : "0 0 12px rgba(212, 160, 23, 0.45), 0 0 25px rgba(212, 160, 23, 0.15)",
+            ? "0 0 20px var(--moon-glow), 0 0 40px var(--moon-dim)"
+            : "0 0 12px var(--moon-dim), 0 0 25px var(--moon-subtle)",
         }}
       />
 
@@ -182,7 +182,7 @@ export default function MouseGlow() {
         style={{
           width: 40,
           height: 40,
-          border: "1.5px solid rgba(212, 160, 23, 0.4)",
+          border: "1.5px solid var(--moon-glow)",
           opacity: 0,
         }}
       />

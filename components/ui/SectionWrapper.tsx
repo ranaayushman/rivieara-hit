@@ -94,7 +94,7 @@ export default function SectionWrapper({
         ref={fogOverlayRef}
         className="absolute inset-0 z-[1] pointer-events-none"
         style={{
-          background: "linear-gradient(180deg, rgba(5, 5, 5, 0.6) 0%, transparent 40%, transparent 60%, rgba(5, 5, 5, 0.4) 100%)",
+          background: "linear-gradient(180deg, var(--bg-primary) 0%, transparent 40%, transparent 60%, var(--bg-primary) 100%)",
         }}
         aria-hidden="true"
       />

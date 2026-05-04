@@ -157,17 +157,17 @@ export default function Hero() {
         ref={ambientGlowRef}
         className="absolute left-[-10%] top-[20%] w-[600px] h-[600px] rounded-full"
         style={{
-          background: "radial-gradient(circle, rgba(212, 160, 23, 0.06) 0%, transparent 70%)",
+          background: "radial-gradient(circle, var(--gold-dim) 0%, transparent 70%)",
           filter: "blur(80px)",
         }}
         aria-hidden="true"
       />
 
-      {/* Ambient glow — right side purple */}
+      {/* Ambient glow — right side moonlight/purple */}
       <div
         className="absolute right-[-5%] top-[10%] w-[500px] h-[500px] rounded-full"
         style={{
-          background: "radial-gradient(circle, rgba(106, 13, 173, 0.05) 0%, transparent 70%)",
+          background: "radial-gradient(circle, var(--accent-purple-dim) 0%, transparent 70%)",
           filter: "blur(80px)",
         }}
         aria-hidden="true"
@@ -177,7 +177,7 @@ export default function Hero() {
       <div
         className="pointer-events-none absolute w-[600px] h-[600px] rounded-full hidden md:block will-change-transform"
         style={{
-          background: "radial-gradient(circle, rgba(212, 160, 23, 0.05) 0%, transparent 70%)",
+          background: "radial-gradient(circle, var(--moon-subtle) 0%, transparent 70%)",
           left: `${mousePos.x * 100}%`,
           top: `${mousePos.y * 100}%`,
           transform: "translate(-50%, -50%)",
@@ -407,15 +407,15 @@ export default function Hero() {
                   className="rounded-full"
                   style={{
                     width: l.size, height: l.size * 1.3,
-                    background: "radial-gradient(ellipse, rgba(255, 200, 80, 0.9) 0%, rgba(212, 160, 23, 0.6) 60%, transparent 100%)",
-                    boxShadow: `0 0 ${l.size * 2}px rgba(212, 160, 23, 0.4), 0 0 ${l.size * 4}px rgba(212, 160, 23, 0.15)`,
+                    background: "radial-gradient(ellipse, #FFC857 0%, var(--gold-primary) 60%, transparent 100%)",
+                    boxShadow: `0 0 ${l.size * 2}px var(--gold-glow), 0 0 ${l.size * 4}px var(--gold-dim)`,
                   }}
                 />
                 {/* Lantern glow halo */}
                 <div
                   className="absolute -inset-2 rounded-full"
                   style={{
-                    background: "radial-gradient(circle, rgba(255, 200, 80, 0.15) 0%, transparent 70%)",
+                    background: "radial-gradient(circle, var(--gold-subtle) 0%, transparent 70%)",
                   }}
                 />
               </div>
@@ -431,8 +431,8 @@ export default function Hero() {
             <div
               className="w-full h-full"
               style={{
-                background: "radial-gradient(ellipse at 50% 80%, rgba(212, 160, 23, 0.04) 0%, transparent 70%)",
-                filter: "blur(40px)",
+                background: "radial-gradient(ellipse at 50% 80%, var(--accent-purple-subtle) 0%, transparent 70%)",
+                filter: "blur(60px)",
               }}
             />
           </div>

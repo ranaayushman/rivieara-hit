@@ -156,27 +156,27 @@ export default function UpcomingEvents() {
       ref={sectionRef}
       id="events"
       className="relative min-h-screen overflow-hidden flex flex-col items-center justify-center py-24 sm:py-32"
-      style={{ background: "#020104" }}
+      style={{ background: "var(--bg-primary)" }}
     >
       {/* ================= BACKGROUND LAYERS ================= */}
       {/* 1. Deep Arabian Night Sky */}
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top_center,rgba(15,10,5,1)_0%,rgba(2,1,4,1)_80%)]" />
+      <div className="absolute inset-0 z-0" style={{ background: "radial-gradient(ellipse at top center, var(--bg-deep) 0%, var(--bg-primary) 80%)" }} />
       
       {/* 2. Giant Glowing Moon */}
       <div 
         className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] md:w-[800px] md:h-[800px] rounded-full opacity-15 blur-3xl pointer-events-none z-0"
-        style={{ background: "radial-gradient(circle, rgba(212,160,23,0.5) 0%, transparent 60%)" }}
+        style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }}
       />
       <div 
-        className="absolute top-[5%] right-[5%] w-[150px] h-[150px] md:w-[250px] md:h-[250px] rounded-full opacity-30 pointer-events-none z-0 pulse-slow"
-        style={{ background: "radial-gradient(circle, rgba(255,240,200,0.8) 0%, transparent 60%)", filter: "blur(20px)" }}
+        className="absolute top-[5%] right-[5%] w-[150px] h-[150px] md:w-[250px] md:h-[250px] rounded-full pointer-events-none z-0 pulse-slow"
+        style={{ background: "radial-gradient(circle, var(--moon-light) 0%, transparent 60%)", filter: "blur(40px)", opacity: 0.2 }}
       />
 
       {/* 3. Volumetric Light Rays (CSS Magic) */}
       <div 
         className="absolute inset-0 z-0 opacity-20 pointer-events-none mix-blend-screen"
         style={{
-          background: "conic-gradient(from 180deg at 50% -20%, rgba(212,160,23,0.1) 0deg, transparent 40deg, rgba(212,160,23,0.05) 80deg, transparent 120deg, rgba(212,160,23,0.1) 160deg, transparent 360deg)",
+          background: "conic-gradient(from 180deg at 50% -20%, var(--moon-dim) 0deg, transparent 40deg, var(--moon-subtle) 80deg, transparent 120deg, var(--moon-dim) 160deg, transparent 360deg)",
         }}
       />
 
@@ -184,7 +184,7 @@ export default function UpcomingEvents() {
       <div 
         className="absolute bottom-0 inset-x-0 h-[40%] z-0 pointer-events-none"
         style={{
-          background: "linear-gradient(to top, rgba(10,5,0,1) 0%, rgba(15,10,0,0.8) 30%, transparent 100%)",
+          background: "linear-gradient(to top, var(--bg-primary) 0%, var(--surface-glass) 30%, transparent 100%)",
         }}
       />
 
@@ -192,7 +192,7 @@ export default function UpcomingEvents() {
       <div 
         ref={fogRef}
         className="absolute inset-0 z-20 pointer-events-none"
-        style={{ background: "linear-gradient(180deg, rgba(2,1,4,1) 0%, rgba(2,1,4,0.9) 100%)" }}
+        style={{ background: "linear-gradient(180deg, var(--bg-primary) 0%, var(--surface-glass) 100%)" }}
       />
 
       {/* 6. Foreground Hanging Lanterns */}
@@ -202,11 +202,11 @@ export default function UpcomingEvents() {
             {/* Chain */}
             <div className="w-[2px] h-[120px] md:h-[180px] bg-gradient-to-b from-black to-[rgba(212,160,23,0.4)] mx-auto" />
             {/* Lantern Body */}
-            <div className="w-8 h-12 md:w-10 md:h-14 rounded-lg relative flex items-center justify-center shadow-[0_0_20px_rgba(212,160,23,0.4)]" style={{ background: "rgba(20,10,0,0.8)", border: "1px solid rgba(212,160,23,0.6)" }}>
+            <div className="w-8 h-12 md:w-10 md:h-14 rounded-lg relative flex items-center justify-center shadow-[0_0_20px_var(--gold-glow)]" style={{ background: "var(--surface-glass)", border: "1px solid var(--border-gold)" }}>
               {/* Flame */}
-              <div className="w-3 h-5 md:w-4 md:h-6 bg-[rgba(255,220,100,0.9)] rounded-full blur-[2px] animate-[glow-pulse_2s_infinite]" />
+              <div className="w-3 h-5 md:w-4 md:h-6 bg-[var(--gold-light)] rounded-full blur-[2px] animate-[glow-pulse_2s_infinite]" />
               {/* Ambient Glow Cast */}
-              <div className="absolute inset-0 rounded-full blur-[40px] bg-[rgba(212,160,23,0.3)] w-[120px] h-[120px] md:w-[200px] md:h-[200px] -left-[44px] -top-[44px] md:-left-[80px] md:-top-[80px]" />
+              <div className="absolute inset-0 rounded-full blur-[40px] bg-[var(--gold-glow)] w-[120px] h-[120px] md:w-[200px] md:h-[200px] -left-[44px] -top-[44px] md:-left-[80px] md:-top-[80px]" />
             </div>
           </div>
         ))}
@@ -287,8 +287,8 @@ export default function UpcomingEvents() {
                   className="absolute w-[85%] sm:w-[60%] md:w-[45%] lg:w-[35%] aspect-[3/4] md:aspect-[4/5] flex flex-col justify-end cursor-pointer group will-change-transform"
                   style={{
                     // Carpet Material Styling
-                    background: "linear-gradient(145deg, rgba(30,20,10,0.95) 0%, rgba(10,5,0,0.95) 100%)",
-                    border: `2px solid ${isActive ? "rgba(212,160,23,0.6)" : "rgba(212,160,23,0.2)"}`,
+                    background: "var(--gradient-card)",
+                    border: `2px solid ${isActive ? "var(--gold-primary)" : "var(--border-gold)"}`,
                     borderBottom: `10px solid ${isActive ? "rgba(160,110,10,1)" : "rgba(80,50,5,1)"}`, // Thick carpet edge
                     borderRadius: "20px",
                     boxShadow: isActive ? "0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(212,160,23,0.15)" : "0 20px 40px rgba(0,0,0,0.6)",
@@ -324,7 +324,7 @@ export default function UpcomingEvents() {
                         className="object-cover group-hover:scale-110 group-hover:rotate-1 transition-transform duration-700 ease-out" 
                       />
                       {/* Magical Vignette Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0500] via-[rgba(10,5,0,0.2)] to-transparent z-10" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-[var(--surface-glass)] to-transparent z-10" />
                       {/* Top highlight */}
                       <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[rgba(212,160,23,0.8)] to-transparent z-20" />
                     </div>
@@ -373,9 +373,9 @@ export default function UpcomingEvents() {
             whileTap={{ scale: 0.9 }}
           >
             {/* Glass Background */}
-            <div className="absolute inset-0 bg-[rgba(20,10,5,0.6)] backdrop-blur-md border border-[rgba(212,160,23,0.4)] rounded-full group-hover:border-[rgba(212,160,23,0.9)] transition-colors duration-300" />
+            <div className="absolute inset-0 bg-[var(--surface-glass)] backdrop-blur-md border border-[var(--border-gold)] rounded-full group-hover:border-[var(--gold-primary)] transition-colors duration-300" />
             {/* Hover Glow */}
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-[radial-gradient(circle,rgba(212,160,23,0.4)_0%,transparent_70%)] transition-opacity duration-300" />
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-[radial-gradient(circle,var(--gold-glow)_0%,transparent_70%)] transition-opacity duration-300" />
             <Compass size={24} className="text-[var(--gold-primary)] group-hover:text-[var(--gold-light)] relative z-10 -scale-x-100 transition-colors" />
           </motion.button>
         </div>
@@ -389,9 +389,9 @@ export default function UpcomingEvents() {
             whileTap={{ scale: 0.9 }}
           >
             {/* Glass Background */}
-            <div className="absolute inset-0 bg-[rgba(20,10,5,0.6)] backdrop-blur-md border border-[rgba(212,160,23,0.4)] rounded-full group-hover:border-[rgba(212,160,23,0.9)] transition-colors duration-300" />
+            <div className="absolute inset-0 bg-[var(--surface-glass)] backdrop-blur-md border border-[var(--border-gold)] rounded-full group-hover:border-[var(--gold-primary)] transition-colors duration-300" />
             {/* Hover Glow */}
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-[radial-gradient(circle,rgba(212,160,23,0.4)_0%,transparent_70%)] transition-opacity duration-300" />
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-[radial-gradient(circle,var(--gold-glow)_0%,transparent_70%)] transition-opacity duration-300" />
             <Compass size={24} className="text-[var(--gold-primary)] group-hover:text-[var(--gold-light)] relative z-10 transition-colors" />
           </motion.button>
         </div>

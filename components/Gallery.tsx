@@ -131,23 +131,23 @@ export default function Gallery() {
       ref={sectionRef}
       id="gallery"
       className="relative min-h-screen overflow-hidden py-24 sm:py-32 flex flex-col items-center justify-center"
-      style={{ background: "#010103" }}
+      style={{ background: "var(--bg-primary)" }}
     >
       {/* ================= BACKGROUND LAYERS ================= */}
       {/* 1. Deep Arabian Night */}
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,rgba(20,15,5,1)_0%,rgba(1,1,3,1)_80%)]" />
+      <div className="absolute inset-0 z-0" style={{ background: "radial-gradient(ellipse at center, var(--bg-deep) 0%, var(--bg-primary) 80%)" }} />
       
       {/* 2. Giant Celestial Moon Aura */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(circle,rgba(212,160,23,0.15)_0%,transparent_60%)] rounded-full blur-[50px] pointer-events-none z-0 animate-[glow-pulse_8s_infinite]" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[50px] pointer-events-none z-0 animate-[glow-pulse_8s_infinite]" style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }} />
 
       {/* 3. Floating Fog Overlay */}
-      <div ref={fogRef} className="absolute inset-0 z-20 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(1,1,3,1) 0%, rgba(1,1,3,0.5) 100%)" }} />
+      <div ref={fogRef} className="absolute inset-0 z-20 pointer-events-none" style={{ background: "linear-gradient(180deg, var(--bg-primary) 0%, var(--surface-glass) 100%)" }} />
 
       {/* 4. Ancient Parchment Texture */}
       <div className="absolute inset-0 z-0 opacity-[0.05] pointer-events-none mix-blend-overlay bg-noise" />
 
       {/* 5. Volumetric Light Beams */}
-      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none mix-blend-screen" style={{ background: "conic-gradient(from 180deg at 50% 50%, rgba(212,160,23,0.1) 0deg, transparent 40deg, rgba(212,160,23,0.05) 80deg, transparent 120deg, rgba(212,160,23,0.1) 160deg, transparent 360deg)" }} />
+      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none mix-blend-screen" style={{ background: "conic-gradient(from 180deg at 50% 50%, var(--moon-dim) 0deg, transparent 40deg, var(--moon-subtle) 80deg, transparent 120deg, var(--moon-dim) 160deg, transparent 360deg)" }} />
 
 
       {/* ================= TITLE AREA ================= */}
@@ -172,7 +172,7 @@ export default function Gallery() {
         >
           <h2
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight relative z-10"
-            style={{ fontFamily: "var(--font-heading)", color: "var(--text-primary)", textShadow: "0 0 50px rgba(212,160,23,0.5), 0 5px 15px rgba(0,0,0,0.9)" }}
+            style={{ fontFamily: "var(--font-heading)", color: "var(--text-primary)", textShadow: "0 0 50px var(--gold-glow), 0 5px 15px rgba(0,0,0,0.9)" }}
           >
             The Memory Vault
           </h2>
@@ -203,15 +203,15 @@ export default function Gallery() {
                   filter: pos.filter,
                 }}
                 transition={{ duration: 1.2, ease: [0.25, 0.8, 0.25, 1] }}
-                className={`relative w-full h-full rounded-2xl cursor-pointer group shadow-[0_20px_50px_rgba(0,0,0,0.8)] transform-gpu ${isActive ? 'ring-1 ring-[rgba(212,160,23,0.5)]' : ''}`}
+                className={`relative w-full h-full rounded-2xl cursor-pointer group shadow-[0_20px_50px_rgba(0,0,0,0.8)] transform-gpu ${isActive ? 'ring-1 ring-[var(--gold-primary)]' : ''}`}
                 onClick={() => { if (!isActive) navigate(offset); }}
                 whileHover={isActive ? { scale: 1.05, filter: "brightness(1.1)" } : undefined}
               >
                 {/* Ancient Border Frame */}
-                <div className="absolute inset-[-6px] border border-[rgba(212,160,23,0.3)] rounded-[20px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                <div className="absolute inset-[-6px] border border-[var(--border-gold)] rounded-[20px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                 
                 {/* Image Container */}
-                <div className="relative w-full h-full rounded-2xl overflow-hidden border border-[rgba(212,160,23,0.2)] bg-[rgba(10,5,0,0.8)]">
+                <div className="relative w-full h-full rounded-2xl overflow-hidden border border-[var(--border-gold)] bg-[var(--surface-primary)]">
                   <Image 
                     src={img} 
                     alt={`Memory Fragment ${index + 1}`} 
@@ -222,11 +222,11 @@ export default function Gallery() {
                   />
                   
                   {/* Atmospheric Depth Vignette */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[rgba(5,2,0,0.9)] via-[rgba(10,5,0,0.2)] to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-[var(--surface-glass)] to-transparent pointer-events-none" />
                   
                   {/* Magical Cinematic Aura on Hover */}
                   {isActive && (
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,160,23,0.25)_0%,transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-screen pointer-events-none" />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-screen pointer-events-none" style={{ background: "radial-gradient(circle at center, var(--gold-glow) 0%, transparent 70%)" }} />
                   )}
                 </div>
 
@@ -240,7 +240,7 @@ export default function Gallery() {
                       transition={{ delay: 0.4, duration: 0.6 }}
                       className="absolute bottom-5 left-5 right-5 flex items-center justify-between pointer-events-none"
                     >
-                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[rgba(10,5,0,0.6)] backdrop-blur-md border border-[rgba(212,160,23,0.3)] shadow-[0_0_15px_rgba(212,160,23,0.2)]">
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--surface-glass)] backdrop-blur-md border border-[var(--border-gold)] shadow-[0_0_15px_var(--gold-glow)]">
                         <Aperture className="text-[var(--gold-primary)] w-3 h-3 md:w-4 md:h-4 animate-[spin-slow_6s_linear_infinite]" />
                         <span className="text-[var(--gold-light)] font-medium tracking-[0.2em] text-[10px] md:text-xs uppercase" style={{ fontFamily: "var(--font-arabian)" }}>
                           Memory Fragment
@@ -260,21 +260,21 @@ export default function Gallery() {
       <div className="relative z-40 mt-8 md:mt-16">
         <Link href="/gallery" className="group relative inline-flex items-center justify-center w-[220px] h-[56px] rounded-full overflow-hidden transition-transform duration-300 hover:scale-105">
           {/* Button Background Layers */}
-          <div className="absolute inset-0 bg-[rgba(20,10,0,0.8)] backdrop-blur-md border border-[rgba(212,160,23,0.5)] rounded-full transition-colors duration-500 group-hover:bg-[rgba(40,20,0,0.9)] group-hover:border-[rgba(255,230,150,0.8)]" />
+          <div className="absolute inset-0 bg-[var(--surface-primary)] backdrop-blur-md border border-[var(--border-gold)] rounded-full transition-colors duration-500 group-hover:bg-[var(--surface-glass)] group-hover:border-[var(--gold-primary)]" />
           
           {/* Shimmer Sweep Effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[rgba(212,160,23,0.3)] to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--gold-dim)] to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
           
           {/* Internal Glow */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(212,160,23,0.4)_0%,transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-md" />
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-md" style={{ background: "radial-gradient(circle, var(--gold-glow) 0%, transparent 70%)" }} />
 
           {/* Button Content */}
           <div className="relative z-10 flex items-center gap-3">
             <span className="font-semibold tracking-[0.15em] text-sm text-[var(--gold-light)] uppercase" style={{ fontFamily: "var(--font-heading)" }}>
               Open Chronicle
             </span>
-            <div className="w-8 h-8 rounded-full bg-[rgba(212,160,23,0.2)] flex items-center justify-center border border-[rgba(212,160,23,0.4)] group-hover:bg-[var(--gold-primary)] transition-colors duration-500">
-              <ArrowRight size={14} className="text-[var(--gold-light)] group-hover:text-[#0a0500] transition-colors duration-500 group-hover:translate-x-0.5" />
+            <div className="w-8 h-8 rounded-full bg-[var(--gold-dim)] flex items-center justify-center border border-[var(--border-gold)] group-hover:bg-[var(--gold-primary)] transition-colors duration-500">
+              <ArrowRight size={14} className="text-[var(--gold-light)] group-hover:text-[var(--bg-primary)] transition-colors duration-500 group-hover:translate-x-0.5" />
             </div>
           </div>
         </Link>
