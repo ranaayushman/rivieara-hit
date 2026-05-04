@@ -37,7 +37,8 @@ const getRealmType = (title: string, icon: string) => {
 };
 
 // Extremely Premium Atmospheric Backgrounds for the Portals
-const RealmAtmosphere = ({ type }: { type: string }) => {
+const RealmAtmosphere = ({ type, isLowPower }: { type: string, isLowPower?: boolean }) => {
+  if (isLowPower) return null;
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[inherit] z-0">
       {type === "tech" && (
@@ -167,8 +168,8 @@ export default function Activities() {
       <div className="absolute inset-0 z-0" style={{ background: "radial-gradient(circle at center, var(--bg-deep) 0%, var(--bg-primary) 100%)" }} />
       
       {/* Deep Magical Aura Orbs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full blur-[40px] pointer-events-none z-0 animate-[glow-pulse_8s_infinite]" style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }} />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full blur-[50px] pointer-events-none z-0 animate-[glow-pulse_10s_infinite_reverse]" style={{ background: "radial-gradient(circle, var(--gold-glow) 0%, transparent 60%)" }} />
+      <div className={`absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full blur-[40px] pointer-events-none z-0 ${!isLowPower ? 'animate-[glow-pulse_8s_infinite]' : ''}`} style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }} />
+      <div className={`absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full blur-[50px] pointer-events-none z-0 ${!isLowPower ? 'animate-[glow-pulse_10s_infinite_reverse]' : ''}`} style={{ background: "radial-gradient(circle, var(--gold-glow) 0%, transparent 60%)" }} />
 
       {/* Constellation SVG Network */}
       <svg ref={constellationRef} className="absolute inset-0 w-full h-[150%] pointer-events-none z-0 opacity-50" preserveAspectRatio="none" viewBox="0 0 1000 1000">
@@ -176,7 +177,7 @@ export default function Activities() {
         <path className="constellation-path" d="M250 100 L150 650" stroke="rgba(212,160,23,0.2)" strokeWidth="1" fill="none" />
         <path className="constellation-path" d="M450 350 L950 550" stroke="rgba(212,160,23,0.2)" strokeWidth="1" fill="none" />
         {[ [50,150], [250,100], [450,350], [750,200], [950,550], [650,750], [150,650], [350,150], [650,450], [250,550] ].map(([cx, cy], i) => (
-          <circle key={i} cx={cx} cy={cy} r="3" fill="var(--gold-primary)" className="animate-pulse" style={{ animationDelay: `${i * 0.5}s` }} />
+          <circle key={i} cx={cx} cy={cy} r="3" fill="var(--gold-primary)" className={!isLowPower ? "animate-pulse" : ""} style={{ animationDelay: `${i * 0.5}s` }} />
         ))}
       </svg>
 
@@ -270,7 +271,7 @@ export default function Activities() {
                   <div className="absolute inset-[24px] border border-[rgba(212,160,23,0.08)] rounded-[120px_120px_12px_12px] pointer-events-none bg-pattern-arabian opacity-10 mix-blend-overlay" />
                   
                   {/* Dynamic Realm Atmosphere Background */}
-                  <RealmAtmosphere type={realmType} />
+                  <RealmAtmosphere type={realmType} isLowPower={isLowPower} />
 
                   {/* === Content (Popping out in 3D) === */}
                   <div className="relative z-20 flex flex-col h-full items-center w-full" style={{ transform: "translateZ(30px)" }}>
@@ -278,8 +279,8 @@ export default function Activities() {
                     {/* Keystone Medallion Icon */}
                     <div className="w-20 h-20 rounded-full flex items-center justify-center mb-8 relative group-hover:scale-110 transition-transform duration-500">
                        {/* Spinning Magic Ring */}
-                       <div className="absolute inset-[-6px] border-[2px] border-dashed border-[rgba(212,160,23,0.4)] rounded-full animate-[spin-slow_10s_linear_infinite]" />
-                       <div className="absolute inset-[-12px] border border-[rgba(212,160,23,0.1)] rounded-full animate-[spin-slow_15s_linear_infinite_reverse]" />
+                       <div className={`absolute inset-[-6px] border-[2px] border-dashed border-[rgba(212,160,23,0.4)] rounded-full ${!isLowPower ? 'animate-[spin-slow_10s_linear_infinite]' : ''}`} />
+                       <div className={`absolute inset-[-12px] border border-[rgba(212,160,23,0.1)] rounded-full ${!isLowPower ? 'animate-[spin-slow_15s_linear_infinite_reverse]' : ''}`} />
                        
                        {/* Core Plate */}
                        <div className="absolute inset-0 bg-[var(--surface-primary)] rounded-full border-2 border-[var(--gold-primary)] shadow-[0_0_20px_var(--gold-glow)] group-hover:shadow-[0_0_40px_var(--gold-dim)] transition-all duration-500" />

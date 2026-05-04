@@ -146,7 +146,7 @@ export default function Hero() {
               left: s.x, top: s.y,
               background: "var(--gold-primary)",
               opacity: s.opacity,
-              animation: `glow-pulse ${s.dur}s ease-in-out ${s.delay}s infinite`,
+              animation: isLowPower ? "none" : `glow-pulse ${s.dur}s ease-in-out ${s.delay}s infinite`,
             }}
           />
         ))}
@@ -389,12 +389,12 @@ export default function Hero() {
               key={i}
               className="absolute z-[8]"
               style={{ left: l.x, bottom: "30%" }}
-              animate={{
+              animate={isLowPower ? { y: -150, opacity: 0.6 } : {
                 y: [0, -120 - i * 30, -250 - i * 20],
                 x: [0, (i % 2 === 0 ? 15 : -15), (i % 2 === 0 ? -10 : 20)],
                 opacity: [0, 0.85, 0],
               }}
-              transition={{
+              transition={isLowPower ? { duration: 1 } : {
                 duration: l.dur,
                 repeat: Infinity,
                 delay: l.delay,
@@ -460,7 +460,7 @@ export default function Hero() {
           </motion.div>
 
           {/* ── Floating embers (right side) ── */}
-          {Array.from({ length: isLowPower ? 2 : 8 }).map((_, i) => (
+          {!isLowPower && Array.from({ length: 8 }).map((_, i) => (
             <motion.div
               key={`ember-${i}`}
               className="absolute rounded-full z-[6]"
@@ -494,7 +494,7 @@ export default function Hero() {
         animate={mainVisible ? { opacity: 1 } : {}}
         transition={{ delay: 2, duration: 1 }}
       >
-        <motion.div
+        {/* <motion.div
           className="w-6 h-10 rounded-full flex items-start justify-center pt-2"
           style={{ border: "1px solid var(--border-gold)" }}
           animate={{ opacity: [0.4, 1, 0.4] }}
@@ -506,7 +506,7 @@ export default function Hero() {
             animate={{ y: [0, 12, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           />
-        </motion.div>
+        </motion.div> */}
       </motion.div>
     </section>
   );
