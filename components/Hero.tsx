@@ -359,7 +359,7 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 1.2 }}
           >
             {[
-              { label: "March 25–28", sub: "2026" },
+              { label: "May 19–20", sub: "2026" },
               { label: "HIT Campus", sub: "Haldia" },
             ].map((b) => (
               <div
