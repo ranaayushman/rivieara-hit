@@ -168,7 +168,7 @@ export default function Schedule() {
         </motion.p>
         
         <motion.div
-          className="relative inline-block"
+          className=""
           initial={{ opacity: 0, filter: "blur(10px)", scale: 0.9 }}
           whileInView={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -331,7 +331,7 @@ export default function Schedule() {
                       }}
                     >
                       {/* Hover Shimmer Overlay */}
-                      <div className="absolute inset-0 rounded-[24px] bg-gradient-to-r from-transparent via-[rgba(212,160,23,0.15)] to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-[1.5s] ease-in-out pointer-events-none" />
+                      <div className="" />
                       
                       {/* Ancient Map Texture Overlay */}
                       <div className="absolute inset-0 rounded-[24px] bg-noise opacity-[0.08] pointer-events-none mix-blend-overlay" />

@@ -89,7 +89,7 @@ export default function UpcomingEvents() {
 
   useEffect(() => {
     if (!isAutoPlaying) return;
-    const timer = setInterval(() => navigate(1), 4000);
+    const timer = setInterval(() => navigate(1), 5000);
     return () => clearInterval(timer);
   }, [isAutoPlaying, navigate]);
 
@@ -122,8 +122,8 @@ export default function UpcomingEvents() {
       // 2. Continuous Carpet Container Floating
       if (carouselRef.current) {
         gsap.to(carouselRef.current, {
-          y: "-15px",
-          duration: 4,
+          y: "-8px",
+          duration: 6,
           ease: "sine.inOut",
           yoyo: true,
           repeat: -1,
@@ -134,9 +134,9 @@ export default function UpcomingEvents() {
       if (lanternsRef.current?.children) {
         gsap.utils.toArray(lanternsRef.current.children).forEach((lantern: any, i) => {
           gsap.to(lantern, {
-            rotation: i % 2 === 0 ? 4 : -4,
-            x: i % 2 === 0 ? 6 : -6,
-            duration: 3 + i * 0.5,
+            rotation: i % 2 === 0 ? 2.5 : -2.5,
+            x: i % 2 === 0 ? 3 : -3,
+            duration: 5 + i * 0.8,
             ease: "sine.inOut",
             yoyo: true,
             repeat: -1,
@@ -259,6 +259,8 @@ export default function UpcomingEvents() {
           <AnimatePresence mode="popLayout">
             {events.map((event, index) => {
               const offset = getOffset(index);
+              if (Math.abs(offset) > 1) return null;
+
               const isActive = offset === 0;
 
               return (
@@ -267,22 +269,30 @@ export default function UpcomingEvents() {
                   layout
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{
-                    x: offset === 0 ? "0%" : offset === 1 ? "55%" : "-55%",
-                    y: offset === 0 ? "0%" : "8%",
-                    scale: offset === 0 ? 1 : 0.75,
-                    rotateY: offset === 0 ? 0 : offset === 1 ? -25 : 25,
-                    rotateX: isActive ? 12 : 20, // 3D Carpet tilt backward
-                    rotateZ: offset === 0 ? 0 : offset === 1 ? 3 : -3,
-                    opacity: offset === 0 ? 1 : 0.3,
-                    zIndex: offset === 0 ? 40 : 10,
+                    x: offset === 0 ? "0%" : offset === 1 ? "56%" : "-56%",
+                    y: isActive ? [0, -8, 0] : [28, 22, 28],
+                    scale: offset === 0 ? 1 : 0.82,
+                    rotateY: offset === 0 ? 0 : offset === 1 ? -16 : 16,
+                    rotateX: isActive ? 10 : 15,
+                    rotateZ: offset === 0 ? 0 : offset === 1 ? 2 : -2,
+                    opacity: offset === 0 ? 1 : 0.68,
+                    zIndex: offset === 0 ? 40 : 20,
                   }}
                   whileHover={isActive ? {
-                    y: -15,
-                    rotateX: 6, // Tilt up on hover
+                    y: -10,
+                    rotateX: 7,
                     scale: 1.03,
                     boxShadow: "0 50px 80px rgba(0,0,0,0.9), 0 0 80px rgba(212,160,23,0.3)"
                   } : undefined}
-                  transition={{ duration: 0.8, ease: [0.25, 0.8, 0.25, 1] }}
+                  transition={{
+                    x: { type: "spring", stiffness: 105, damping: 18, mass: 0.9 },
+                    y: { duration: isActive ? 4.8 : 5.8, ease: "easeInOut", repeat: Infinity },
+                    scale: { type: "spring", stiffness: 120, damping: 20 },
+                    rotateY: { type: "spring", stiffness: 95, damping: 18 },
+                    rotateX: { type: "spring", stiffness: 95, damping: 18 },
+                    rotateZ: { type: "spring", stiffness: 90, damping: 18 },
+                    opacity: { duration: 0.45, ease: "easeOut" },
+                  }}
                   onClick={() => { if (!isActive) navigate(offset); }}
                   className="absolute w-[85%] sm:w-[60%] md:w-[45%] lg:w-[35%] aspect-[3/4] md:aspect-[4/5] flex flex-col justify-end cursor-pointer group will-change-transform"
                   style={{
