@@ -46,7 +46,7 @@
 
 //   return (
 //     <section className="relative min-h-screen pt-28 pb-12 flex items-center justify-center bg-[#150505] overflow-hidden px-4 sm:px-6">
-      
+
 //       {/* Decorative outer dark pad with subtle top-left red highlight */}
 //       <div
 //         className="absolute w-[500px] h-[800px] rounded-[2rem] bg-[#0f0404]/80 border border-white/5 shadow-2xl hidden md:block"
@@ -93,7 +93,7 @@
 //                 required
 //                 className="w-full px-6 py-3.5 rounded-full bg-white text-black text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 transition-shadow font-medium"
 //               />
-              
+
 //               <input
 //                 type="text"
 //                 placeholder="College/University Name"
@@ -230,7 +230,7 @@ export default function RegisterForm() {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #050505;
+          background: var(--bg-primary);
           position: relative;
           overflow: hidden;
           padding: 100px 16px 32px;
@@ -392,13 +392,13 @@ export default function RegisterForm() {
         ] as React.CSSProperties[]).map((pos, i) => (
           <div key={i} className="riv-lantern" style={pos}>
             <svg width="22" height="44" viewBox="0 0 28 52" fill="none">
-              <line x1="14" y1="0" x2="14" y2="8" stroke="#D4A017" strokeWidth="1.5"/>
-              <ellipse cx="14" cy="11" rx="7" ry="3" fill="#8B5E00"/>
-              <rect x="6" y="11" width="16" height="28" rx="4" fill="#1a0f00" stroke="#D4A017" strokeWidth="1"/>
-              <rect x="8" y="13" width="12" height="24" rx="3" fill="rgba(212,160,23,.18)"/>
-              <line x1="14" y1="14" x2="14" y2="36" stroke="#D4A017" strokeWidth="0.5" opacity="0.4"/>
-              <ellipse cx="14" cy="39" rx="7" ry="3" fill="#8B5E00"/>
-              <ellipse cx="14" cy="25" rx="3" ry="5" fill="rgba(255,180,30,.35)"/>
+              <line x1="14" y1="0" x2="14" y2="8" stroke="#D4A017" strokeWidth="1.5" />
+              <ellipse cx="14" cy="11" rx="7" ry="3" fill="#8B5E00" />
+              <rect x="6" y="11" width="16" height="28" rx="4" fill="#1a0f00" stroke="#D4A017" strokeWidth="1" />
+              <rect x="8" y="13" width="12" height="24" rx="3" fill="rgba(212,160,23,.18)" />
+              <line x1="14" y1="14" x2="14" y2="36" stroke="#D4A017" strokeWidth="0.5" opacity="0.4" />
+              <ellipse cx="14" cy="39" rx="7" ry="3" fill="#8B5E00" />
+              <ellipse cx="14" cy="25" rx="3" ry="5" fill="rgba(255,180,30,.35)" />
             </svg>
           </div>
         ))}
@@ -406,15 +406,15 @@ export default function RegisterForm() {
         {/* Moon */}
         <div className="riv-moon">
           <svg width="60" height="60" viewBox="0 0 70 70" fill="none">
-            <path d="M45 15 C28 15 15 28 15 45 C15 55 20 63 28 67 C18 62 12 52 12 40 C12 22 27 8 45 8 C50 8 55 10 59 13 C54 13 49 15 45 15Z" fill="#F0D078" opacity="0.9"/>
+            <path d="M45 15 C28 15 15 28 15 45 C15 55 20 63 28 67 C18 62 12 52 12 40 C12 22 27 8 45 8 C50 8 55 10 59 13 C54 13 49 15 45 15Z" fill="#F0D078" opacity="0.9" />
           </svg>
         </div>
 
         {/* Desert */}
         <div className="riv-desert">
           <svg viewBox="0 0 1440 140" fill="none" preserveAspectRatio="none" width="100%" height="100">
-            <path d="M0 140 L0 90 Q60 80 120 85 Q200 55 280 65 Q360 38 420 48 Q480 18 540 32 Q580 8 620 22 Q660 0 700 14 Q740 0 780 16 Q820 0 860 14 Q940 18 1020 22 Q1100 8 1220 28 L1440 35 L1440 140 Z" fill="rgba(212,160,23,.2)"/>
-            <path d="M0 140 L0 108 Q200 92 400 100 Q600 82 800 95 Q1000 105 1200 98 L1440 102 L1440 140 Z" fill="rgba(139,94,0,.25)"/>
+            <path d="M0 140 L0 90 Q60 80 120 85 Q200 55 280 65 Q360 38 420 48 Q480 18 540 32 Q580 8 620 22 Q660 0 700 14 Q740 0 780 16 Q820 0 860 14 Q940 18 1020 22 Q1100 8 1220 28 L1440 35 L1440 140 Z" fill="rgba(212,160,23,.2)" />
+            <path d="M0 140 L0 108 Q200 92 400 100 Q600 82 800 95 Q1000 105 1200 98 L1440 102 L1440 140 Z" fill="rgba(139,94,0,.25)" />
           </svg>
         </div>
 
@@ -437,10 +437,10 @@ export default function RegisterForm() {
             ] as Array<{ rotate: number } & React.CSSProperties>).map(({ rotate, ...pos }, i) => (
               <div key={i} className="riv-corner" style={{ ...pos, transform: `rotate(${rotate}deg)` }}>
                 <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
-                  <path d="M0 0 L40 0 L0 40 Z" fill="rgba(212,160,23,.08)"/>
-                  <path d="M0 0 L30 0 L0 30 Z" fill="rgba(212,160,23,.12)"/>
-                  <path d="M2 0 L2 20 M0 2 L20 2" stroke="#D4A017" strokeWidth="0.8" opacity="0.5"/>
-                  <circle cx="2" cy="2" r="1.5" fill="#D4A017" opacity="0.6"/>
+                  <path d="M0 0 L40 0 L0 40 Z" fill="rgba(212,160,23,.08)" />
+                  <path d="M0 0 L30 0 L0 30 Z" fill="rgba(212,160,23,.12)" />
+                  <path d="M2 0 L2 20 M0 2 L20 2" stroke="#D4A017" strokeWidth="0.8" opacity="0.5" />
+                  <circle cx="2" cy="2" r="1.5" fill="#D4A017" opacity="0.6" />
                 </svg>
               </div>
             ))}
@@ -512,10 +512,10 @@ export default function RegisterForm() {
 
               <a href="/api/auth/google" className="riv-google">
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
-                  <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/>
-                  <path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
-                  <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+                  <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4" />
+                  <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853" />
+                  <path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05" />
+                  <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335" />
                 </svg>
                 Register with Google
               </a>
