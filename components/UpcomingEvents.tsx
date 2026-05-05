@@ -323,13 +323,12 @@ export default function UpcomingEvents() {
               return (
                 <motion.article
                   key={index}
-                  layout
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{
-                    x: offset === 0 ? "0%" : offset === 1 ? "56%" : "-56%",
-                    y: isActive ? [0, -8, 0] : [28, 22, 28],
-                    scale: offset === 0 ? 1 : 0.82,
-                    rotateY: offset === 0 ? 0 : offset === 1 ? -16 : 16,
+                    x: offset === 0 ? 0 : offset === 1 ? "110%" : "-110%",
+                    y: isActive ? [0, -8, 0] : [20, 15, 20],
+                    scale: offset === 0 ? 1 : 0.85,
+                    rotateY: offset === 0 ? 0 : offset === 1 ? -12 : 12,
                     rotateX: isActive ? 10 : 15,
                     rotateZ: offset === 0 ? 0 : offset === 1 ? 2 : -2,
                     opacity: offset === 0 ? 1 : 0.68,
@@ -351,7 +350,7 @@ export default function UpcomingEvents() {
                     opacity: { duration: 0.45, ease: "easeOut" },
                   }}
                   onClick={() => { if (!isActive) navigate(offset); }}
-                  className="absolute w-[85%] sm:w-[60%] md:w-[45%] lg:w-[35%] aspect-[3/4] md:aspect-[4/5] flex flex-col justify-end cursor-pointer group will-change-transform"
+                  className="absolute w-[80%] sm:w-[55%] md:w-[40%] lg:w-[32%] aspect-[3/4] md:aspect-[4/5] flex flex-col justify-end cursor-pointer group will-change-transform"
                   style={{
                     // Carpet Material Styling
                     background: "var(--gradient-card)",
