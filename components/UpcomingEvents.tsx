@@ -121,15 +121,8 @@ export default function UpcomingEvents() {
       });
 
       // 2. Continuous Carpet Container Floating
-      if (carouselRef.current) {
-        gsap.to(carouselRef.current, {
-          y: "-8px",
-          duration: 6,
-          ease: "sine.inOut",
-          yoyo: true,
-          repeat: -1,
-        });
-      }
+      // Removed parent GSAP floating because Framer Motion already floats the individual child cards. 
+      // Nested floating transformations cause unnecessary GPU recalculations.
 
       // 3. Hanging Lanterns Swaying
       if (lanternsRef.current?.children) {
@@ -179,12 +172,12 @@ export default function UpcomingEvents() {
 
       {/* 2. Giant Glowing Moon */}
       <div
-        className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] md:w-[800px] md:h-[800px] rounded-full opacity-15 blur-3xl pointer-events-none z-0"
+        className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] md:w-[800px] md:h-[800px] rounded-full opacity-15 pointer-events-none z-0"
         style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }}
       />
       <div
         className="absolute top-[5%] right-[5%] w-[150px] h-[150px] md:w-[250px] md:h-[250px] rounded-full pointer-events-none z-0 pulse-slow"
-        style={{ background: "radial-gradient(circle, var(--moon-light) 0%, transparent 60%)", filter: "blur(40px)", opacity: 0.2 }}
+        style={{ background: "radial-gradient(circle, var(--moon-light) 0%, transparent 60%)", opacity: 0.2 }}
       />
 
       {/* 3. Volumetric Light Rays (CSS Magic) */}
@@ -263,7 +256,7 @@ export default function UpcomingEvents() {
               {/* Flame */}
               <div className="w-3 h-5 md:w-4 md:h-6 bg-[var(--gold-light)] rounded-full blur-[2px] animate-[glow-pulse_2s_infinite]" />
               {/* Ambient Glow Cast */}
-              <div className="absolute inset-0 rounded-full blur-[40px] bg-[var(--gold-glow)] w-[120px] h-[120px] md:w-[200px] md:h-[200px] -left-[44px] -top-[44px] md:-left-[80px] md:-top-[80px]" />
+              <div className="absolute inset-0 rounded-full w-[120px] h-[120px] md:w-[200px] md:h-[200px] -left-[44px] -top-[44px] md:-left-[80px] md:-top-[80px]" style={{ background: "radial-gradient(circle, rgba(212,160,23,0.3) 0%, transparent 60%)" }} />
             </div>
           </div>
         ))}
@@ -285,8 +278,8 @@ export default function UpcomingEvents() {
 
         <motion.div
           className=""
-          initial={{ opacity: 0, filter: "blur(10px)", scale: 0.9 }}
-          whileInView={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1.2, delay: 0.2 }}
         >
