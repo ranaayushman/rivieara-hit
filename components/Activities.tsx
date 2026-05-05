@@ -50,8 +50,8 @@ const RealmAtmosphere = ({ type, isLowPower }: { type: string, isLowPower?: bool
       )}
       {type === "cultural" && (
         <div className="absolute inset-0 opacity-30 group-hover:opacity-80 transition-opacity duration-700 mix-blend-screen">
-          <div className="absolute bottom-0 left-[20%] w-24 h-24 bg-[rgba(255,100,0,0.5)] rounded-full blur-[30px] animate-[float-up_4s_ease-in_infinite]" />
-          <div className="absolute bottom-0 right-[20%] w-16 h-16 bg-[rgba(255,200,0,0.4)] rounded-full blur-[20px] animate-[float-up_5s_ease-in_infinite_1s]" />
+          <div className="absolute bottom-0 left-[20%] w-32 h-32 rounded-full animate-[float-up_4s_ease-in_infinite]" style={{ background: "radial-gradient(circle, rgba(255,100,0,0.5) 0%, transparent 70%)" }} />
+          <div className="absolute bottom-0 right-[20%] w-24 h-24 rounded-full animate-[float-up_5s_ease-in_infinite_1s]" style={{ background: "radial-gradient(circle, rgba(255,200,0,0.4) 0%, transparent 70%)" }} />
         </div>
       )}
       {type === "gaming" && (
@@ -156,19 +156,9 @@ export default function Activities() {
         }
       }
 
-      // 3. Float individual portals (disabled on mobile for battery)
-      if (!isLowPower) {
-        gsap.utils.toArray(".portal-card").forEach((card: any, i) => {
-          gsap.to(card, {
-            y: i % 2 === 0 ? -12 : 12,
-            duration: 3 + Math.random() * 2,
-            ease: "sine.inOut",
-            yoyo: true,
-            repeat: -1,
-            delay: Math.random() * 2,
-          });
-        });
-      }
+      // Removed: Float individual portals. 
+      // Animating 4 heavy cards with complex box-shadows continuously on the Y-axis murders the scroll FPS.
+      // Hover animations via Framer Motion handle the interaction much more efficiently.
 
     }, sectionRef);
 
@@ -185,9 +175,9 @@ export default function Activities() {
       {/* ================= BACKGROUND LAYERS ================= */}
       <div className="absolute inset-0 z-0" style={{ background: "radial-gradient(circle at center, var(--bg-deep) 0%, var(--bg-primary) 100%)" }} />
       
-      {/* Deep Magical Aura Orbs */}
-      <div className={`absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full blur-[40px] pointer-events-none z-0 ${!isLowPower ? 'animate-[glow-pulse_8s_infinite]' : ''}`} style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }} />
-      <div className={`absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full blur-[50px] pointer-events-none z-0 ${!isLowPower ? 'animate-[glow-pulse_10s_infinite_reverse]' : ''}`} style={{ background: "radial-gradient(circle, var(--gold-glow) 0%, transparent 60%)" }} />
+      {/* Deep Magical Aura Orbs - removed redundant CSS blurs since they are radial gradients */}
+      <div className={`absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full pointer-events-none z-0 ${!isLowPower ? 'animate-[glow-pulse_8s_infinite]' : ''}`} style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }} />
+      <div className={`absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none z-0 ${!isLowPower ? 'animate-[glow-pulse_10s_infinite_reverse]' : ''}`} style={{ background: "radial-gradient(circle, var(--gold-glow) 0%, transparent 60%)" }} />
 
       {/* Constellation SVG Network */}
       <svg ref={constellationRef} className="absolute inset-0 w-full h-[150%] pointer-events-none z-0 opacity-50" preserveAspectRatio="none" viewBox="0 0 1000 1000">
@@ -308,7 +298,7 @@ export default function Activities() {
                     scale: 1.02,
                     boxShadow: "0 30px 60px rgba(0,0,0,0.9), inset 0 0 60px var(--gold-glow)" 
                   }}
-                  className="group relative cursor-pointer overflow-hidden backdrop-blur-xl transition-all duration-700 w-full flex flex-col items-center text-center"
+                  className="group relative cursor-pointer overflow-hidden transition-all duration-700 w-full flex flex-col items-center text-center"
                   style={{
                     // Arabian Palace Arch Window Silhouette
                     borderRadius: "140px 140px 24px 24px",
