@@ -245,8 +245,8 @@ export default function Activities() {
         
         <motion.div
           className=""
-          initial={{ opacity: 0, filter: "blur(12px)", scale: 0.95 }}
-          whileInView={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1.2, delay: 0.2 }}
         >
@@ -298,7 +298,7 @@ export default function Activities() {
                     scale: 1.02,
                     boxShadow: "0 30px 60px rgba(0,0,0,0.9), inset 0 0 60px var(--gold-glow)" 
                   }}
-                  className="group relative cursor-pointer overflow-hidden transition-all duration-700 w-full flex flex-col items-center text-center"
+                  className="group relative cursor-pointer overflow-hidden w-full flex flex-col items-center text-center"
                   style={{
                     // Arabian Palace Arch Window Silhouette
                     borderRadius: "140px 140px 24px 24px",

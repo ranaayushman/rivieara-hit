@@ -130,7 +130,7 @@ export default function RegistrationSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 + index * stagger.base }}
-              className="flex-1 px-6 py-5 rounded-2xl flex items-center gap-4 transition-all duration-300 group"
+              className="flex-1 px-6 py-5 rounded-2xl flex items-center gap-4 group"
               style={{
                 border: "1px solid var(--border-gold)",
                 background: "var(--gold-subtle)",
