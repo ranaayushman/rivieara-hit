@@ -1,8 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { easing, duration } from "@/lib/motionPresets";
-
 interface SectionHeadingProps {
   /** Plain text part of the heading */
   text: string;
@@ -18,7 +15,7 @@ interface SectionHeadingProps {
 
 /**
  * Cinematic section heading with Cinzel font, gold gradient accent,
- * and optional El Messiri decorative text.
+ * and optional El Messiri decorative text. (Static Version)
  */
 export default function SectionHeading({
   text,
@@ -31,30 +28,22 @@ export default function SectionHeading({
     <div className="text-center mb-16 md:mb-20">
       {/* Decorative Arabian text above heading */}
       {arabianText && (
-        <motion.p
+        <p
           className="text-sm md:text-base tracking-[0.3em] uppercase mb-4"
           style={{
             fontFamily: "var(--font-arabian)",
             color: "var(--gold-primary)",
             opacity: 0.6,
           }}
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 0.6, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: duration.medium, ease: easing.expoOut }}
         >
           {arabianText}
-        </motion.p>
+        </p>
       )}
 
       {/* Main heading — Cinzel font */}
-      <motion.h2
+      <h2
         className="section-heading"
         style={{ fontFamily: "var(--font-heading)" }}
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-60px" }}
-        transition={{ duration: duration.slow, ease: easing.expoOut }}
       >
         {accentFirst ? (
           <>
@@ -65,32 +54,25 @@ export default function SectionHeading({
             {text} <span className="accent">{accent}</span>
           </>
         )}
-      </motion.h2>
+      </h2>
 
       {/* Decorative gold line */}
-      <motion.div
+      <div
         className="mx-auto mt-4 mb-2 h-[2px] rounded-full"
         style={{
           background: "var(--gradient-gold)",
-          width: 0,
+          width: 80,
         }}
-        whileInView={{ width: 80 }}
-        viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: duration.slow, delay: 0.2, ease: easing.expoOut }}
       />
 
       {/* Subtitle */}
       {subtitle && (
-        <motion.p
+        <p
           className="text-base md:text-lg max-w-2xl mx-auto leading-relaxed mt-6"
           style={{ color: "var(--text-muted)" }}
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: duration.medium, delay: 0.15, ease: easing.expoOut }}
         >
           {subtitle}
-        </motion.p>
+        </p>
       )}
     </div>
   );

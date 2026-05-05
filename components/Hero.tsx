@@ -1,34 +1,8 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  AnimatePresence,
-} from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { easing } from "@/lib/motionPresets";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePerformanceMode } from "@/hooks/usePerformanceMode";
-import {
-  generateStars,
-  generateEmbers,
-  getLanterns,
-  getPerformanceAdjustedParticles,
-} from "@/lib/particleAnimations";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
-const INTRO_LINES = [
-  "Beyond the dunes...",
-  "Where technology meets mysticism...",
-  "A new world awakens...",
-];
 
 const LANTERNS = [
   { x: "62%", delay: 0, size: 18, dur: 7 },
@@ -44,8 +18,6 @@ const STARS = Array.from({ length: 40 }, (_, i) => ({
   y:       `${(i * 13 + 7) % 75}%`,
   size:    ((i * 7) % 3) + 1,
   opacity: ((i * 11) % 25 + 8) / 100,
-  dur:     3 + ((i * 7) % 5),
-  delay:   (i * 0.3) % 5,
 }));
 
 function HITBuilding() {
@@ -285,16 +257,13 @@ function HITBuilding() {
 }
 
 function InfoCard({
-  label, title, sub, delay, mainVisible, titleSize = "text-lg",
+  label, title, sub, titleSize = "text-lg",
 }: {
   label: string; title: string; sub: string;
-  delay: number; mainVisible: boolean; titleSize?: string;
+  titleSize?: string;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={mainVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.7, delay }}
+    <div
       className="rounded-xl px-5 py-4 backdrop-blur-sm"
       style={{
         background: "rgba(10, 6, 28, 0.72)",
@@ -313,102 +282,27 @@ function InfoCard({
         style={{ color: "rgba(212,175,55,0.55)", fontFamily: "var(--font-arabian)" }}>
         {sub}
       </p>
-    </motion.div>
+    </div>
   );
 }
 
 export default function Hero() {
-  const [mousePos,   setMousePos]   = useState({ x: 0, y: 0 });
-  const [introPhase, setIntroPhase] = useState(0);
-
-  const containerRef   = useRef<HTMLDivElement>(null);
-  const heroFogRef     = useRef<HTMLDivElement>(null);
-  const ambientGlowRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
   const { isLowPower, isMounted } = usePerformanceMode();
-
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, -50]);
-  const rightY   = useTransform(scrollYProgress, [0, 1], [0,  30]);
-  const fadeOut  = useTransform(scrollYProgress, [0, 0.5], [1,  0]);
-
-  useEffect(() => {
-    if (!isMounted || isLowPower) return;
-    const handle = (e: MouseEvent) =>
-      setMousePos({ x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight });
-    window.addEventListener("mousemove", handle, { passive: true });
-    return () => window.removeEventListener("mousemove", handle);
-  }, [isLowPower, isMounted]);
-
-  useEffect(() => {
-    if (!isMounted) return;
-    if (isLowPower) { setIntroPhase(4); return; }
-    const timers = [
-      setTimeout(() => setIntroPhase(1), 400),
-      setTimeout(() => setIntroPhase(2), 1600),
-      setTimeout(() => setIntroPhase(3), 2800),
-      setTimeout(() => setIntroPhase(4), 4200),
-    ];
-    return () => timers.forEach(clearTimeout);
-  }, [isLowPower, isMounted]);
-
-  useEffect(() => {
-    if (!isMounted) return;
-    const ctx = gsap.context(() => {
-      if (!isLowPower) {
-        if (ambientGlowRef.current)
-          gsap.to(ambientGlowRef.current, {
-            scale: 1.05, opacity: 0.75, duration: 6,
-            ease: "sine.inOut", yoyo: true, repeat: -1,
-          });
-        if (heroFogRef.current) {
-          gsap.fromTo(heroFogRef.current, { opacity: 0 }, { opacity: 1, duration: 2, ease: "power2.out" });
-          gsap.to(heroFogRef.current, { x: "4%", duration: 18, ease: "sine.inOut", yoyo: true, repeat: -1 });
-        }
-      } else {
-        if (ambientGlowRef.current) gsap.set(ambientGlowRef.current, { opacity: 0.45, scale: 1 });
-        if (heroFogRef.current)     gsap.set(heroFogRef.current,     { opacity: 0.5 });
-      }
-    });
-    return () => ctx.revert();
-  }, [isLowPower, isMounted]);
-
-  const mainVisible = introPhase >= 4;
 
   return (
     <section
-      ref={containerRef}
       className="relative min-h-screen overflow-hidden"
       style={{ background: "var(--gradient-hero)" }}
     >
       {/* Stars */}
       <div className="absolute inset-0" aria-hidden="true">
         <svg className="absolute inset-0 w-full h-full pointer-events-none">
-          <defs>
-            <style>{`
-              @keyframes star-pulse {
-                0%,100% { opacity: var(--op-lo); }
-                50%      { opacity: var(--op-hi); }
-              }
-            `}</style>
-          </defs>
           {STARS.map((s) => (
             <circle
               key={s.id}
               cx={s.x} cy={s.y} r={s.size}
               fill="var(--gold-primary)"
-              style={{
-                "--op-lo": s.opacity,
-                "--op-hi": Math.min(s.opacity * 3, 1),
-                opacity: s.opacity,
-                animation: isMounted && !isLowPower
-                  ? `star-pulse ${s.dur}s ${s.delay}s ease-in-out infinite`
-                  : "none",
-                willChange: "opacity",
-              } as React.CSSProperties}
+              style={{ opacity: s.opacity }}
             />
           ))}
         </svg>
@@ -416,11 +310,9 @@ export default function Hero() {
 
       {/* Ambient glow */}
       <div
-        ref={ambientGlowRef}
         className="absolute left-[-10%] top-[20%] w-[500px] h-[500px] rounded-full opacity-50"
         style={{
           background: "radial-gradient(circle, rgba(212,160,23,0.15) 0%, transparent 70%)",
-          willChange: "transform, opacity",
         }}
       />
 
@@ -436,11 +328,9 @@ export default function Hero() {
             className="pointer-events-none absolute w-[500px] h-[500px] rounded-full hidden md:block"
             style={{
               background: "radial-gradient(circle, var(--moon-subtle) 0%, transparent 70%)",
-              left: `${mousePos.x * 100}%`,
-              top:  `${mousePos.y * 100}%`,
+              left: "50%",
+              top: "50%",
               transform: "translate(-50%, -50%)",
-              transition: "left 250ms linear, top 250ms linear",
-              willChange: "transform",
             }}
           />
         </>
@@ -452,56 +342,22 @@ export default function Hero() {
         style={{ background: "linear-gradient(to top, var(--bg-primary), transparent)" }}
       />
 
-      {/* Cinematic intro */}
-      {isMounted && !isLowPower && (
-        <AnimatePresence>
-          {introPhase < 4 && (
-            <motion.div
-              className="absolute inset-0 z-30 flex items-center justify-center"
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.8, ease: easing.cinematic }}
-            >
-              <div className="text-center">
-                {INTRO_LINES.map((line, i) => (
-                  <motion.p
-                    key={i}
-                    className="text-lg md:text-2xl lg:text-3xl font-light tracking-widest mb-4"
-                    style={{ fontFamily: "var(--font-arabian)", color: "var(--gold-primary)" }}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={
-                      introPhase > i
-                        ? { opacity: introPhase === i + 1 ? 1 : 0.3, y: 0 }
-                        : { opacity: 0, y: 20 }
-                    }
-                  >
-                    {line}
-                  </motion.p>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      )}
-
       {/* Main content */}
-      <motion.div
+      <div
         className="relative z-10 section-container min-h-auto lg:min-h-screen flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0 px-4 sm:px-6 pt-24 pb-16 sm:pt-32 sm:pb-24 lg:pb-28"
-        style={{ y: contentY, opacity: fadeOut }}
       >
         {/* Left — text content, button removed from here */}
-        <motion.div
+        <div
           className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left max-w-2xl"
-          initial={{ opacity: 0 }}
-          animate={mainVisible ? { opacity: 1 } : { opacity: 0 }}
         >
-          <motion.p
+          <p
             className="text-[10px] md:text-xs tracking-[0.5em] uppercase mb-5"
             style={{ fontFamily: "var(--font-arabian)", color: "var(--gold-primary)" }}
           >
             ✦ The Mystical Techno-Cultural Festival ✦
-          </motion.p>
+          </p>
 
-          <motion.h1
+          <h1
             className="text-[3.5rem] sm:text-[4.5rem] md:text-[5.5rem] lg:text-[7rem] font-extrabold leading-[0.9] tracking-tighter"
             style={{ fontFamily: "var(--font-heading)" }}
           >
@@ -513,49 +369,29 @@ export default function Hero() {
             >
               2026
             </span>
-          </motion.h1>
+          </h1>
 
-          <motion.h2
-            className="text-xl md:text-2xl lg:text-3xl mt-4 tracking-[0.2em] arabian-pulse"
+          <h2
+            className="text-xl md:text-2xl lg:text-3xl mt-4 tracking-[0.2em]"
             style={{ fontFamily: "var(--font-arabian)", color: "var(--gold-primary)" }}
           >
             Arabian Nights
-          </motion.h2>
+          </h2>
 
-          <motion.p
+          <p
             className="text-sm md:text-base lg:text-lg mt-6 max-w-lg leading-relaxed"
             style={{ color: "var(--text-muted)" }}
           >
             Where innovation awakens beneath the moonlight —
             a mystical fusion of culture, technology, and imagination.
-          </motion.p>
+          </p>
 
           {/* CTA Button — below description, center aligned */}
-          <motion.div
-            className="mt-10 flex justify-center lg:justify-start w-full"
-            initial={{ opacity: 0, y: 20 }}
-            animate={mainVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.8, delay: 1.4 }}
-          >
-            {/* Glow pulse ring around button */}
+          <div className="mt-10 flex justify-center lg:justify-start w-full">
             <div className="relative inline-flex">
-              {/* Animated glow ring — performance guarded */}
-              {isMounted && !isLowPower && (
-                <motion.span
-                  className="absolute inset-0 rounded-full pointer-events-none"
-                  animate={{
-                    boxShadow: [
-                      "0 0 0px 0px rgba(212,160,23,0)",
-                      "0 0 18px 6px rgba(212,160,23,0.35)",
-                      "0 0 0px 0px rgba(212,160,23,0)",
-                    ],
-                  }}
-                  transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                />
-              )}
               <Link
                 href="/register"
-                className="group relative inline-flex items-center gap-4 px-8 py-4 rounded-full overflow-hidden border shimmer-sweep"
+                className="group relative inline-flex items-center gap-4 px-8 py-4 rounded-full border"
                 style={{
                   borderColor: "var(--border-gold)",
                   background: "var(--gold-subtle)",
@@ -567,50 +403,37 @@ export default function Hero() {
                 >
                   Enter The Realm
                 </span>
-                <motion.div
+                <div
                   className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center"
-                  animate={isMounted && !isLowPower ? {
-                    boxShadow: [
-                      "0 0 8px 2px rgba(212,160,23,0.4)",
-                      "0 0 20px 6px rgba(212,160,23,0.7)",
-                      "0 0 8px 2px rgba(212,160,23,0.4)",
-                    ],
-                  } : {}}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                  whileHover={{ scale: 1.12, rotate: 15 }}
                   style={{ background: "var(--gradient-gold)" }}
                 >
                   <ArrowRight size={15} className="text-[#0a0805]" />
-                </motion.div>
+                </div>
               </Link>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
         {/* Right — info cards only, no button */}
-        <motion.div
+        <div
           className="hidden lg:flex flex-1 relative w-full min-h-[350px] flex-col items-end justify-start gap-4 pr-4 pt-4"
-          style={{ y: rightY }}
         >
           <InfoCard
             label="Venue" title="HIT Haldia"
             sub="Haldia Institute of Technology"
-            delay={1.0} mainVisible={mainVisible}
           />
           <InfoCard
             label="Edition" title="2026"
             sub="Annual Fest"
-            delay={1.2} mainVisible={mainVisible} titleSize="text-3xl"
+            titleSize="text-3xl"
           />
 
           {/* Lanterns */}
           {isMounted && (isLowPower ? LANTERNS.slice(0, 1) : LANTERNS.slice(0, 3)).map((l, i) => (
-            <motion.div
+            <div
               key={i}
-              className="absolute z-[8] lantern-layer"
+              className="absolute z-[8]"
               style={{ left: l.x, bottom: "30%" }}
-              animate={isLowPower ? {} : { y: [0, -120], opacity: [0, 0.8, 0] }}
-              transition={{ duration: l.dur, repeat: Infinity, delay: l.delay }}
             >
               <div
                 className="rounded-full"
@@ -620,14 +443,11 @@ export default function Hero() {
                   boxShadow: "0 0 20px rgba(212,160,23,0.4)",
                 }}
               />
-            </motion.div>
+            </div>
           ))}
 
           {/* Fog */}
-          <div
-            ref={heroFogRef}
-            className="absolute bottom-[10%] right-0 w-[120%] h-[40%] fog-layer"
-          >
+          <div className="absolute bottom-[10%] right-0 w-[120%] h-[40%]">
             <div
               className="w-full h-full"
               style={{
@@ -638,7 +458,7 @@ export default function Hero() {
 
           {/* Embers */}
           {isMounted && !isLowPower && Array.from({ length: 5 }).map((_, i) => (
-            <motion.div
+            <div
               key={i}
               className="absolute rounded-full z-[6]"
               style={{
@@ -646,24 +466,16 @@ export default function Hero() {
                 background: "var(--gold-light)",
                 right: `${15 + i * 10}%`,
                 bottom: `${20 + i * 7}%`,
-                willChange: "transform, opacity",
               }}
-              animate={{ y: [0, -60], opacity: [0, 0.7, 0] }}
-              transition={{ duration: 5 + i, repeat: Infinity, delay: i * 0.8 }}
             />
           ))}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {/* HIT Building silhouette */}
-      <motion.div
-        className="absolute bottom-0 left-0 right-0 w-full z-[3] pointer-events-none"
-        initial={{ opacity: 0 }}
-        animate={mainVisible ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 1.5, delay: 1.4 }}
-      >
+      <div className="absolute bottom-0 left-0 right-0 w-full z-[3] pointer-events-none">
         <HITBuilding />
-      </motion.div>
+      </div>
     </section>
   );
 }

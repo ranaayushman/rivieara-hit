@@ -1,14 +1,5 @@
 "use client";
 
-import { useRef, useEffect } from "react";
-import { motion, useInView } from "framer-motion";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
 interface SectionWrapperProps {
   id?: string;
   children: React.ReactNode;
@@ -21,8 +12,7 @@ interface SectionWrapperProps {
 
 /**
  * Reusable section wrapper — consistent Arabian-themed spacing,
- * atmospheric effects, GSAP ScrollTrigger fog reveal,
- * and scroll-triggered entrance animation (Framer Motion).
+ * atmospheric effects, without animations.
  */
 export default function SectionWrapper({
   id,
@@ -31,67 +21,15 @@ export default function SectionWrapper({
   withGlow = true,
   withPattern = false,
 }: SectionWrapperProps) {
-  const ref = useRef<HTMLElement>(null);
-  const fogOverlayRef = useRef<HTMLDivElement>(null);
-  const glowRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
-
-  // GSAP ScrollTrigger — fog reveal + glow intensity shift
-  useEffect(() => {
-    if (!ref.current) return;
-
-    const ctx = gsap.context(() => {
-      // Fog overlay fades out as section enters
-      if (fogOverlayRef.current) {
-        gsap.set(fogOverlayRef.current, { opacity: 0.4 });
-        ScrollTrigger.create({
-          trigger: ref.current,
-          start: "top 90%",
-          end: "top 30%",
-          scrub: 1.5,
-          onUpdate: (self) => {
-            if (fogOverlayRef.current) {
-              gsap.set(fogOverlayRef.current, {
-                opacity: 0.4 * (1 - self.progress),
-              });
-            }
-          },
-        });
-      }
-
-      // Glow intensifies as section enters viewport
-      if (glowRef.current) {
-        gsap.set(glowRef.current, { opacity: 0, scale: 0.8 });
-        ScrollTrigger.create({
-          trigger: ref.current,
-          start: "top 80%",
-          end: "top 20%",
-          scrub: 2,
-          onUpdate: (self) => {
-            if (glowRef.current) {
-              gsap.set(glowRef.current, {
-                opacity: self.progress * 0.8,
-                scale: 0.8 + self.progress * 0.2,
-              });
-            }
-          },
-        });
-      }
-    }, ref);
-
-    return () => ctx.revert();
-  }, []);
 
   return (
     <section
       id={id}
-      ref={ref}
       className={`relative overflow-hidden ${className}`}
       style={{ background: "var(--bg-primary)" }}
     >
-      {/* GSAP fog overlay — fades out on scroll reveal */}
+      {/* Fog overlay */}
       <div
-        ref={fogOverlayRef}
         className="absolute inset-0 z-[1] pointer-events-none"
         style={{
           background: "linear-gradient(180deg, var(--bg-primary) 0%, transparent 40%, transparent 60%, var(--bg-primary) 100%)",
@@ -99,9 +37,9 @@ export default function SectionWrapper({
         aria-hidden="true"
       />
 
-      {/* Atmospheric glow (GSAP scroll-driven) */}
+      {/* Atmospheric glow */}
       {withGlow && (
-        <div ref={glowRef} className="bg-glow-arabian" />
+        <div className="bg-glow-arabian" />
       )}
 
       {/* Islamic geometric pattern */}
@@ -119,15 +57,12 @@ export default function SectionWrapper({
         aria-hidden="true"
       />
 
-      {/* Content with Framer Motion entrance */}
-      <motion.div
+      {/* Content */}
+      <div
         className="relative z-10 section-container section-py"
-        initial={{ opacity: 0, y: 40 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       >
         {children}
-      </motion.div>
+      </div>
     </section>
   );
 }

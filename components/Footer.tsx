@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowUp, Mail, Phone, MapPin } from "lucide-react";
-import { motion } from "framer-motion";
 
 const quickLinks = [
   { label: "Home", href: "/" },
@@ -48,7 +47,7 @@ export default function Footer() {
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0 });
   };
 
   return (
@@ -120,11 +119,11 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm inline-flex items-center gap-1.5 group transition-colors duration-200"
+                    className="text-sm inline-flex items-center gap-1.5 group"
                     style={{ color: "var(--text-muted)" }}
                   >
                     <span
-                      className="w-0 group-hover:w-3 h-px transition-all duration-300"
+                      className="w-0 h-px"
                       style={{ background: "var(--gold-primary)" }}
                     />
                     {link.label}
@@ -168,20 +167,18 @@ export default function Footer() {
             © {new Date().getFullYear()} Riviera 2026 — Haldia Institute of Technology. All rights reserved.
           </p>
 
-          <motion.button
+          <button
             onClick={scrollToTop}
-            className="group w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300"
+            className="group w-10 h-10 rounded-full flex items-center justify-center"
             style={{
               border: "1px solid var(--border-gold)",
               color: "var(--text-dim)",
               background: "var(--gold-subtle)",
             }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
             aria-label="Scroll to top"
           >
-            <ArrowUp size={16} className="group-hover:-translate-y-0.5 transition-transform" />
-          </motion.button>
+            <ArrowUp size={16} />
+          </button>
         </div>
       </div>
     </footer>

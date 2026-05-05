@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { motion } from "framer-motion";
 import Image from "next/image";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -44,7 +43,6 @@ const layouts = [
 ];
 
 export default function Sponsors() {
-  const [offset, setOffset] = useState(0);
   const [dynamicSponsors, setDynamicSponsors] = useState<SponsorData[] | null>(null);
 
   useEffect(() => {
@@ -57,14 +55,6 @@ export default function Sponsors() {
       })
       .catch(() => { /* keep fallback */ });
   }, []);
-
-  useEffect(() => {
-    const count = dynamicSponsors ? dynamicSponsors.length : fallbackSponsors.length;
-    const timer = setInterval(() => {
-      setOffset((prev) => (prev + 1) % count);
-    }, 3000);
-    return () => clearInterval(timer);
-  }, [dynamicSponsors]);
 
   const items = dynamicSponsors
     ? dynamicSponsors.map((s) => ({
@@ -89,10 +79,10 @@ export default function Sponsors() {
         arabianText="✦ Royal Patrons ✦"
       />
 
-      {/* ── PARTICLE ANIMATIONS ── */}
+      {/* ── PARTICLE LAYERS ── */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         {stars.map((s) => (
-          <motion.div
+          <div
             key={s.id}
             className="absolute rounded-full"
             style={{
@@ -103,8 +93,6 @@ export default function Sponsors() {
               background: "var(--gold-primary)",
               opacity: s.opacity,
             }}
-            animate={{ opacity: [0.3, 1, 0.3] }}
-            transition={{ duration: s.dur, repeat: Infinity, delay: s.delay }}
           />
         ))}
       </div>
@@ -113,60 +101,46 @@ export default function Sponsors() {
         <div className="relative w-full aspect-[5/4] sm:aspect-[4/3] mx-auto">
           {items
             ? items.map((sponsor, i) => {
-                const slot = (i + offset) % items.length;
-                const layout = layouts[slot] || layouts[0];
+                const layout = layouts[i % layouts.length];
 
                 return (
-                  <motion.div
+                  <div
                     key={sponsor.id}
-                    initial={false}
-                    animate={{ left: layout.left, top: layout.top, width: layout.width, height: layout.height }}
-                    transition={{ type: "spring", stiffness: 120, damping: 18, mass: 1 }}
-                    className="absolute overflow-hidden shadow-2xl group"
+                    className="absolute overflow-hidden shadow-2xl"
                     style={{
+                      left: layout.left,
+                      top: layout.top,
+                      width: layout.width,
+                      height: layout.height,
                       backgroundColor: sponsor.bg_color,
                       borderRadius: "var(--radius-luxury)",
                       border: "1px solid var(--border-gold)",
                     }}
                   >
-                    {/* Gold shimmer on hover */}
-                    <div
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
-                      style={{
-                        background: "linear-gradient(135deg, rgba(212, 160, 23, 0.1), transparent 50%)",
-                      }}
-                    />
                     <a href={sponsor.website_url || "#"} target="_blank" rel="noopener noreferrer" className="w-full h-full absolute inset-0 z-20">
-                      <Image src={sponsor.logo_url} alt={`${sponsor.name} logo`} fill className="object-contain p-6 sm:p-8 hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 50vw, 33vw" />
+                      <Image src={sponsor.logo_url} alt={`${sponsor.name} logo`} fill className="object-contain p-6 sm:p-8" sizes="(max-width: 768px) 50vw, 33vw" />
                     </a>
-                  </motion.div>
+                  </div>
                 );
               })
             : fallbackSponsors.map((sponsor, i) => {
-                const slot = (i + offset) % fallbackSponsors.length;
-                const layout = layouts[slot];
+                const layout = layouts[i % layouts.length];
 
                 return (
-                  <motion.div
+                  <div
                     key={sponsor.id}
-                    initial={false}
-                    animate={{ left: layout.left, top: layout.top, width: layout.width, height: layout.height }}
-                    transition={{ type: "spring", stiffness: 120, damping: 18, mass: 1 }}
-                    className={`absolute overflow-hidden shadow-2xl ring-1 ring-black/10 group ${sponsor.bg}`}
+                    className={`absolute overflow-hidden shadow-2xl ring-1 ring-black/10 ${sponsor.bg}`}
                     style={{
+                      left: layout.left,
+                      top: layout.top,
+                      width: layout.width,
+                      height: layout.height,
                       borderRadius: "var(--radius-luxury)",
                       border: "1px solid var(--border-gold)",
                     }}
                   >
-                    {/* Gold shimmer on hover */}
-                    <div
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
-                      style={{
-                        background: "linear-gradient(135deg, rgba(212, 160, 23, 0.15), transparent 50%)",
-                      }}
-                    />
                     <div className="w-full h-full absolute inset-0">{sponsor.fallback}</div>
-                  </motion.div>
+                  </div>
                 );
               })}
         </div>

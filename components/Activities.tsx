@@ -1,16 +1,9 @@
 "use client";
 
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Code, Music, Gamepad2, Cpu, Palette, Trophy, Camera, BookOpen, Mic2, Rocket, Globe, Lightbulb, Sparkles, type LucideIcon } from "lucide-react";
-import { motion } from "framer-motion";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePerformanceMode } from "@/hooks/usePerformanceMode";
 import { generateStars, generateEmbers, getPerformanceAdjustedParticles } from "@/lib/particleAnimations";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 interface ActivityItem {
   title: string;
@@ -37,50 +30,43 @@ const getRealmType = (title: string, icon: string) => {
   return "expo";
 };
 
-// Extremely Premium Atmospheric Backgrounds for the Portals
+// Extremely Premium Atmospheric Backgrounds for the Portals (Fully Static)
 const RealmAtmosphere = ({ type, isLowPower }: { type: string, isLowPower?: boolean }) => {
   if (isLowPower) return null;
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[inherit] z-0">
       {type === "tech" && (
-        <div className="absolute inset-0 opacity-20 group-hover:opacity-60 transition-opacity duration-700">
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(100,200,255,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(100,200,255,0.15)_1px,transparent_1px)] bg-[size:15px_15px] [transform:perspective(500px)_rotateX(60deg)] origin-bottom animate-[tech-scroll_8s_linear_infinite]" />
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(100,200,255,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(100,200,255,0.15)_1px,transparent_1px)] bg-[size:15px_15px] [transform:perspective(500px)_rotateX(60deg)] origin-bottom" />
           <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-[rgba(0,100,150,0.5)] to-transparent" />
         </div>
       )}
       {type === "cultural" && (
-        <div className="absolute inset-0 opacity-30 group-hover:opacity-80 transition-opacity duration-700 mix-blend-screen">
-          <div className="absolute bottom-0 left-[20%] w-32 h-32 rounded-full animate-[float-up_4s_ease-in_infinite]" style={{ background: "radial-gradient(circle, rgba(255,100,0,0.5) 0%, transparent 70%)" }} />
-          <div className="absolute bottom-0 right-[20%] w-24 h-24 rounded-full animate-[float-up_5s_ease-in_infinite_1s]" style={{ background: "radial-gradient(circle, rgba(255,200,0,0.4) 0%, transparent 70%)" }} />
+        <div className="absolute inset-0 opacity-30 mix-blend-screen">
+          <div className="absolute bottom-10 left-[20%] w-32 h-32 rounded-full" style={{ background: "radial-gradient(circle, rgba(255,100,0,0.5) 0%, transparent 70%)" }} />
+          <div className="absolute bottom-20 right-[20%] w-24 h-24 rounded-full" style={{ background: "radial-gradient(circle, rgba(255,200,0,0.4) 0%, transparent 70%)" }} />
         </div>
       )}
       {type === "gaming" && (
-        <div className="absolute inset-0 opacity-30 group-hover:opacity-70 transition-opacity duration-700 mix-blend-screen">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] border-[8px] border-[rgba(200,50,50,0.05)] rounded-full animate-[spin-slow_12s_linear_infinite]" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] border-4 border-[rgba(150,0,255,0.08)] rounded-full animate-[spin-slow_8s_linear_infinite_reverse]" />
+        <div className="absolute inset-0 opacity-30 mix-blend-screen">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] border-[8px] border-[rgba(200,50,50,0.05)] rounded-full" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] border-4 border-[rgba(150,0,255,0.08)] rounded-full" />
           <div className="absolute bottom-0 inset-x-0 h-32 bg-[radial-gradient(ellipse_at_bottom,rgba(200,50,50,0.4)_0%,transparent_70%)]" />
         </div>
       )}
       {type === "expo" && (
-        <div className="absolute inset-0 opacity-20 group-hover:opacity-60 transition-opacity duration-700">
-          <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-20 h-20 border-2 border-[rgba(212,160,23,0.3)] rotate-45 animate-[spin-slow_10s_linear_infinite]" />
-          <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-20 h-20 border-2 border-[rgba(212,160,23,0.1)] rotate-0 animate-[spin-slow_15s_linear_infinite_reverse]" />
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-20 h-20 border-2 border-[rgba(212,160,23,0.3)] rotate-45" />
+          <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-20 h-20 border-2 border-[rgba(212,160,23,0.1)] rotate-0" />
           <div className="absolute bottom-0 inset-x-0 h-full bg-gradient-to-t from-[rgba(212,160,23,0.15)] to-transparent mix-blend-overlay" />
         </div>
       )}
-      
-      {/* Universal Luxury Shimmer Sweep */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.15)] to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-[1.5s] ease-in-out pointer-events-none" />
     </div>
   );
 };
 
- 
 export default function Activities() {
   const [activities, setActivities] = useState<ActivityItem[]>(fallbackActivities);
-  const sectionRef = useRef<HTMLElement>(null);
-  const fogRef = useRef<HTMLDivElement>(null);
-  const constellationRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     fetch("/api/public/activities")
@@ -99,7 +85,7 @@ export default function Activities() {
       .catch(() => { /* keep fallback */ });
   }, []);
 
-  const { isLowPower, isMounted } = usePerformanceMode();
+  const { isLowPower } = usePerformanceMode();
 
   // ── PARTICLES ──
   const stars = useMemo(
@@ -118,56 +104,8 @@ export default function Activities() {
     [isLowPower]
   );
 
-  // GSAP Cinematic Reveal & Floating Motion
-  useEffect(() => {
-    if (!sectionRef.current) return;
-    
-    const ctx = gsap.context(() => {
-      // 1. Cinematic Fog part
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top 80%",
-        end: "top 20%",
-        scrub: 1.5,
-        onUpdate: (self) => {
-          if (fogRef.current) gsap.set(fogRef.current, { opacity: 1 - self.progress });
-        }
-      });
-
-      // 2. Constellation Lines Animation
-      if (constellationRef.current) {
-        gsap.fromTo(".constellation-path", 
-          { strokeDasharray: "1500", strokeDashoffset: "1500" },
-          { 
-            strokeDashoffset: "0", 
-            duration: 10, 
-            ease: "power2.inOut",
-            scrollTrigger: { trigger: sectionRef.current, start: "top 60%" }
-          }
-        );
-        if (!isLowPower) {
-          gsap.to(".constellation-path", {
-            stroke: "rgba(255, 230, 150, 0.5)",
-            duration: 4,
-            yoyo: true,
-            repeat: -1,
-            ease: "sine.inOut"
-          });
-        }
-      }
-
-      // Removed: Float individual portals. 
-      // Animating 4 heavy cards with complex box-shadows continuously on the Y-axis murders the scroll FPS.
-      // Hover animations via Framer Motion handle the interaction much more efficiently.
-
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [activities, isLowPower]);
-
   return (
     <section
-      ref={sectionRef}
       id="activities"
       className="relative min-h-screen overflow-hidden py-24 sm:py-32 flex flex-col items-center"
       style={{ background: "var(--bg-primary)" }}
@@ -175,28 +113,28 @@ export default function Activities() {
       {/* ================= BACKGROUND LAYERS ================= */}
       <div className="absolute inset-0 z-0" style={{ background: "radial-gradient(circle at center, var(--bg-deep) 0%, var(--bg-primary) 100%)" }} />
       
-      {/* Deep Magical Aura Orbs - removed redundant CSS blurs since they are radial gradients */}
-      <div className={`absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full pointer-events-none z-0 ${!isLowPower ? 'animate-[glow-pulse_8s_infinite]' : ''}`} style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }} />
-      <div className={`absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none z-0 ${!isLowPower ? 'animate-[glow-pulse_10s_infinite_reverse]' : ''}`} style={{ background: "radial-gradient(circle, var(--gold-glow) 0%, transparent 60%)" }} />
+      {/* Deep Magical Aura Orbs - Fully Static */}
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full pointer-events-none z-0" style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }} />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none z-0" style={{ background: "radial-gradient(circle, var(--gold-glow) 0%, transparent 60%)" }} />
 
-      {/* Constellation SVG Network */}
-      <svg ref={constellationRef} className="absolute inset-0 w-full h-[150%] pointer-events-none z-0 opacity-50" preserveAspectRatio="none" viewBox="0 0 1000 1000">
-        <path className="constellation-path" d="M50 150 L250 100 L450 350 L750 200 L950 550 L650 750 L150 650 Z" stroke="rgba(212,160,23,0.2)" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-        <path className="constellation-path" d="M250 100 L150 650" stroke="rgba(212,160,23,0.2)" strokeWidth="1" fill="none" />
-        <path className="constellation-path" d="M450 350 L950 550" stroke="rgba(212,160,23,0.2)" strokeWidth="1" fill="none" />
+      {/* Constellation SVG Network (Static) */}
+      <svg className="absolute inset-0 w-full h-[150%] pointer-events-none z-0 opacity-50" preserveAspectRatio="none" viewBox="0 0 1000 1000">
+        <path d="M50 150 L250 100 L450 350 L750 200 L950 550 L650 750 L150 650 Z" stroke="rgba(212,160,23,0.2)" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M250 100 L150 650" stroke="rgba(212,160,23,0.2)" strokeWidth="1" fill="none" />
+        <path d="M450 350 L950 550" stroke="rgba(212,160,23,0.2)" strokeWidth="1" fill="none" />
         {[ [50,150], [250,100], [450,350], [750,200], [950,550], [650,750], [150,650], [350,150], [650,450], [250,550] ].map(([cx, cy], i) => (
-          <circle key={i} cx={cx} cy={cy} r="3" fill="var(--gold-primary)" className={!isLowPower ? "animate-pulse" : ""} style={{ animationDelay: `${i * 0.5}s` }} />
+          <circle key={i} cx={cx} cy={cy} r="3" fill="var(--gold-primary)" />
         ))}
       </svg>
 
       <div className="absolute inset-0 z-0 opacity-[0.06] pointer-events-none mix-blend-overlay bg-noise" />
-      <div ref={fogRef} className="absolute inset-0 z-20 pointer-events-none" style={{ background: "linear-gradient(180deg, var(--bg-primary) 0%, var(--surface-glass) 100%)" }} />
+      <div className="absolute inset-0 z-20 pointer-events-none" style={{ background: "linear-gradient(180deg, var(--bg-primary) 0%, var(--surface-glass) 100%)" }} />
 
-      {/* ── PARTICLE ANIMATIONS ── */}
+      {/* ── PARTICLE LAYERS ── */}
       <div className="absolute inset-0 z-5 pointer-events-none overflow-hidden">
         {/* Stars */}
         {stars.map((s) => (
-          <motion.div
+          <div
             key={s.id}
             className="absolute rounded-full"
             style={{
@@ -207,14 +145,12 @@ export default function Activities() {
               background: "var(--gold-primary)",
               opacity: s.opacity,
             }}
-            animate={{ opacity: [0.3, 1, 0.3] }}
-            transition={{ duration: s.dur, repeat: Infinity, delay: s.delay }}
           />
         ))}
 
         {/* Embers */}
         {embers.map((ember) => (
-          <motion.div
+          <div
             key={ember.id}
             className="absolute rounded-full"
             style={{
@@ -223,33 +159,22 @@ export default function Activities() {
               background: "var(--gold-light)",
               right: `${ember.right}%`,
               bottom: `${ember.bottom}%`,
+              opacity: 0.7,
             }}
-            animate={{ y: [0, -60], opacity: [0, 0.7, 0] }}
-            transition={{ duration: ember.duration, repeat: Infinity, delay: ember.delay }}
           />
         ))}
       </div>
 
       {/* ================= LUXURY HEADING ================= */}
       <div className="relative z-30 text-center mb-20 md:mb-32 px-4 w-full">
-        <motion.p
+        <p
           className="text-xs md:text-sm tracking-[0.5em] uppercase mb-4 font-semibold text-[var(--gold-primary)]"
           style={{ fontFamily: "var(--font-arabian)" }}
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 1, ease: "easeOut" }}
         >
           ✦ Enchanted Realms ✦
-        </motion.p>
+        </p>
         
-        <motion.div
-          className=""
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 1.2, delay: 0.2 }}
-        >
+        <div className="">
           <h2
             className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight relative z-10"
             style={{ 
@@ -260,19 +185,14 @@ export default function Activities() {
           >
             Fest Activities
           </h2>
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.3)] to-transparent translate-x-[-100%] animate-[shimmer_5s_infinite] pointer-events-none z-20 mix-blend-overlay" />
-        </motion.div>
+        </div>
 
-        <motion.p
+        <p
           className="mt-8 text-sm md:text-base text-[var(--gold-dim)] max-w-2xl mx-auto font-light leading-relaxed"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, delay: 0.6 }}
         >
           Discover the magical worlds hidden within Riviera. 
           Each realm offers a unique trial of skill, creativity, and destiny.
-        </motion.p>
+        </p>
       </div>
 
       {/* ================= PORTAL WINDOWS GALLERY ================= */}
@@ -288,17 +208,8 @@ export default function Activities() {
 
             return (
               <div key={index} className={`portal-card relative w-full ${layoutOffset}`}>
-                <motion.div
-                  initial={{ opacity: 0, y: 60, scale: 0.9 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.8, delay: index * 0.15, ease: "easeOut" }}
-                  whileHover={{ 
-                    y: -12,
-                    scale: 1.02,
-                    boxShadow: "0 30px 60px rgba(0,0,0,0.9), inset 0 0 60px var(--gold-glow)" 
-                  }}
-                  className="group relative cursor-pointer overflow-hidden w-full flex flex-col items-center text-center"
+                <div
+                  className="group relative overflow-hidden w-full flex flex-col items-center text-center"
                   style={{
                     // Arabian Palace Arch Window Silhouette
                     borderRadius: "140px 140px 24px 24px",
@@ -323,23 +234,23 @@ export default function Activities() {
                   <div className="relative z-20 flex flex-col h-full items-center w-full" style={{ transform: "translateZ(30px)" }}>
                     
                     {/* Keystone Medallion Icon */}
-                    <div className="w-20 h-20 rounded-full flex items-center justify-center mb-8 relative group-hover:scale-110 transition-transform duration-500">
-                       {/* Spinning Magic Ring */}
-                       <div className={`absolute inset-[-6px] border-[2px] border-dashed border-[rgba(212,160,23,0.4)] rounded-full ${!isLowPower ? 'animate-[spin-slow_10s_linear_infinite]' : ''}`} />
-                       <div className={`absolute inset-[-12px] border border-[rgba(212,160,23,0.1)] rounded-full ${!isLowPower ? 'animate-[spin-slow_15s_linear_infinite_reverse]' : ''}`} />
+                    <div className="w-20 h-20 rounded-full flex items-center justify-center mb-8 relative">
+                       {/* Static Magic Ring */}
+                       <div className="absolute inset-[-6px] border-[2px] border-dashed border-[rgba(212,160,23,0.4)] rounded-full" />
+                       <div className="absolute inset-[-12px] border border-[rgba(212,160,23,0.1)] rounded-full" />
                        
                        {/* Core Plate */}
-                       <div className="absolute inset-0 bg-[var(--surface-primary)] rounded-full border-2 border-[var(--gold-primary)] shadow-[0_0_20px_var(--gold-glow)] group-hover:shadow-[0_0_40px_var(--gold-dim)] transition-all duration-500" />
+                       <div className="absolute inset-0 bg-[var(--surface-primary)] rounded-full border-2 border-[var(--gold-primary)] shadow-[0_0_20px_var(--gold-glow)]" />
                        
                        <Icon 
                           size={32} 
-                          className="text-[var(--gold-primary)] group-hover:text-[var(--gold-light)] relative z-10 drop-shadow-[0_0_15px_rgba(212,160,23,0.9)] transition-colors" 
+                          className="text-[var(--gold-primary)] relative z-10 drop-shadow-[0_0_15px_rgba(212,160,23,0.9)]" 
                         />
                     </div>
 
                     {/* Cinematic Title */}
                     <h3 
-                      className="text-2xl lg:text-3xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-300 group-hover:from-[var(--gold-light)] group-hover:to-[var(--gold-primary)] transition-all duration-500 tracking-wide drop-shadow-md" 
+                      className="text-2xl lg:text-3xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-300 tracking-wide drop-shadow-md" 
                       style={{ fontFamily: "var(--font-heading)" }}
                     >
                       {activity.title}
@@ -349,22 +260,19 @@ export default function Activities() {
                     <div className="w-12 h-[2px] bg-gradient-to-r from-transparent via-[rgba(212,160,23,0.6)] to-transparent mb-5" />
 
                     {/* Atmospheric Description */}
-                    <p className="text-gray-400 text-sm md:text-sm leading-relaxed font-light opacity-90 group-hover:opacity-100 transition-opacity flex-grow">
+                    <p className="text-gray-400 text-sm md:text-sm leading-relaxed font-light opacity-90 flex-grow">
                       {activity.desc}
                     </p>
 
                     {/* Magical Indicator Accents */}
                     <div className="mt-8 pt-6 w-full flex items-center justify-center border-t border-[rgba(212,160,23,0.15)] relative overflow-hidden">
-                      <button className="flex items-center gap-2 text-[10px] sm:text-xs tracking-[0.3em] uppercase text-[var(--gold-dim)] group-hover:text-[var(--gold-light)] transition-colors">
-                        <Sparkles size={14} className="opacity-0 group-hover:opacity-100 group-hover:animate-[glow-pulse_2s_infinite] transition-opacity duration-300" />
+                      <button className="flex items-center gap-2 text-[10px] sm:text-xs tracking-[0.3em] uppercase text-[var(--gold-dim)]">
+                        <Sparkles size={14} className="opacity-50" />
                         Unlock Portal
                       </button>
-                      
-                      {/* Hover Base Glow */}
-                      <div className="absolute bottom-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[rgba(212,160,23,0.8)] to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700 ease-out" />
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </div>
             );
           })}
