@@ -332,23 +332,8 @@ export default function Hero() {
               background: "var(--gold-primary)",
               opacity: s.opacity,
             }}
-<<<<<<< HEAD
-            animate={
-              isMounted && !isLowPower
-                ? {
-                  opacity: [0.3, 1, 0.3],
-                }
-                : {}
-            }
-            transition={{
-              duration: s.dur,
-              repeat: Infinity,
-              delay: s.delay,
-            }}
-=======
             animate={isLowPower ? {} : { opacity: [0.3, 1, 0.3] }}
             transition={{ duration: s.dur, repeat: Infinity, delay: s.delay }}
->>>>>>> b5eda83 (home page improved ang register section)
           />
         ))}
       </div>

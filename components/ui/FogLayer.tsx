@@ -91,11 +91,7 @@ export default function FogLayer() {
         style={{
           background: "radial-gradient(ellipse at center, rgba(212, 160, 23, calc(0.03 * var(--glow-intensity, 1))), transparent 60%)",
           filter: getBlur("blur(120px)"),
-<<<<<<< HEAD
-          opacity: 0, // Initially hidden; GSAP reveals on desktop after mount
-=======
           opacity: fog4Opacity,
->>>>>>> b5eda83 (home page improved ang register section)
         }}
       />
     </div>
