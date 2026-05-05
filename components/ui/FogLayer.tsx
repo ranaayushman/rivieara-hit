@@ -40,13 +40,6 @@ export default function FogLayer() {
     return () => ctx.revert();
   }, [isLowPower, isMounted]);
 
-  // ─── KEY FIX ───────────────────────────────────────────────────────────────
-  // Before mount, isMounted=false so isLowPower is unreliable.
-  // Always use the DESKTOP defaults for SSR/initial render so server
-  // and client HTML match exactly. GSAP will take over after hydration.
-  const getBlur = (desktopBlur: string) =>
-    isMounted && isLowPower ? "blur(20px)" : desktopBlur;
-
   // fog4 opacity: on desktop GSAP animates it from 0→visible,
   // on low-power we show it at 0.3 statically. Before mount → 0 (desktop default).
   const fog4Opacity = isMounted && isLowPower ? 0.3 : 0;
@@ -59,8 +52,7 @@ export default function FogLayer() {
         ref={fog1Ref}
         className="absolute w-[120%] h-[40%] -left-[10%] top-[60%] rounded-full will-change-transform"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(212, 160, 23, calc(0.06 * var(--glow-intensity, 1))), transparent 70%)",
-          filter: getBlur("blur(80px)"),
+          background: "radial-gradient(ellipse at center, rgba(212, 160, 23, calc(0.12 * var(--glow-intensity, 1))), transparent 70%)",
           opacity: 0.3,
         }}
       />
@@ -69,8 +61,7 @@ export default function FogLayer() {
         ref={fog2Ref}
         className="absolute w-[80%] h-[30%] left-[20%] top-[30%] rounded-full will-change-transform"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(106, 13, 173, calc(0.04 * var(--glow-intensity, 1))), transparent 70%)",
-          filter: getBlur("blur(100px)"),
+          background: "radial-gradient(ellipse at center, rgba(106, 13, 173, calc(0.08 * var(--glow-intensity, 1))), transparent 70%)",
           opacity: 0.25,
         }}
       />
@@ -79,8 +70,7 @@ export default function FogLayer() {
         ref={fog3Ref}
         className="absolute w-[100%] h-[20%] left-0 bottom-0 will-change-transform"
         style={{
-          background: "linear-gradient(to top, rgba(139, 94, 0, calc(0.05 * var(--glow-intensity, 1))), transparent)",
-          filter: getBlur("blur(60px)"),
+          background: "linear-gradient(to top, rgba(139, 94, 0, calc(0.1 * var(--glow-intensity, 1))), transparent)",
           opacity: 0.35,
         }}
       />
@@ -89,8 +79,7 @@ export default function FogLayer() {
         ref={fog4Ref}
         className="absolute w-[90%] h-[25%] left-[5%] top-[10%] rounded-full will-change-transform"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(212, 160, 23, calc(0.03 * var(--glow-intensity, 1))), transparent 60%)",
-          filter: getBlur("blur(120px)"),
+          background: "radial-gradient(ellipse at center, rgba(212, 160, 23, calc(0.06 * var(--glow-intensity, 1))), transparent 60%)",
           opacity: 0, // Initially hidden; GSAP reveals on desktop after mount
         }}
       />

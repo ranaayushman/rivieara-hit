@@ -419,8 +419,7 @@ export default function Hero() {
         ref={ambientGlowRef}
         className="absolute left-[-10%] top-[20%] w-[500px] h-[500px] rounded-full opacity-50"
         style={{
-          background: "radial-gradient(circle, var(--gold-dim) 0%, transparent 70%)",
-          filter: "blur(70px)",
+          background: "radial-gradient(circle, rgba(212,160,23,0.15) 0%, transparent 70%)",
           willChange: "transform, opacity",
         }}
       />
@@ -430,8 +429,7 @@ export default function Hero() {
           <div
             className="absolute right-[-5%] top-[10%] w-[400px] h-[400px] rounded-full"
             style={{
-              background: "radial-gradient(circle, var(--accent-purple-dim) 0%, transparent 70%)",
-              filter: "blur(70px)",
+              background: "radial-gradient(circle, rgba(106,13,173,0.15) 0%, transparent 70%)",
             }}
           />
           <div
@@ -633,8 +631,7 @@ export default function Hero() {
             <div
               className="w-full h-full"
               style={{
-                background: "radial-gradient(ellipse at 50% 80%, var(--accent-purple-subtle) 0%, transparent 70%)",
-                filter: "blur(50px)",
+                background: "radial-gradient(ellipse at 50% 80%, rgba(106,13,173,0.2) 0%, transparent 70%)",
               }}
             />
           </div>

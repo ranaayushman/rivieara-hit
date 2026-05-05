@@ -110,15 +110,14 @@ export default function MouseGlow() {
 
   useEffect(() => {
     if (!coreRef.current || isLowPower) return;
-    const size = isClicking ? 14 : isHovering ? 10 : 8;
-    gsap.to(coreRef.current, { width: size, height: size, duration: 0.2, ease: "power2.out" });
+    const scale = isClicking ? 1.75 : isHovering ? 1.25 : 1;
+    gsap.to(coreRef.current, { scale, duration: 0.2, ease: "power2.out" });
   }, [isHovering, isClicking, isLowPower]);
 
   useEffect(() => {
     if (!auraRef.current || isLowPower) return;
     gsap.to(auraRef.current, {
-      width: isHovering ? 420 : 350,
-      height: isHovering ? 420 : 350,
+      scale: isHovering ? 1.2 : 1,
       duration: 0.4,
       ease: "power2.out",
     });
