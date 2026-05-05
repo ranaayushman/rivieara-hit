@@ -18,9 +18,9 @@ export async function GET() {
         // Build the callback URL dynamically from the deployment URL
         const baseUrl =
             process.env.NEXT_PUBLIC_APP_URL ||
-                process.env.VERCEL_URL
+            (process.env.VERCEL_URL
                 ? `https://${process.env.VERCEL_URL}`
-                : "http://localhost:3000";
+                : "http://localhost:3000");
 
         const redirectUri = `${baseUrl}/api/auth/callback`;
 

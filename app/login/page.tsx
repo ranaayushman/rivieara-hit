@@ -34,6 +34,7 @@ export default function LoginPage() {
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      window.dispatchEvent(new Event("auth-change"));
       router.push("/");
     } catch {
       setError("Network error. Please try again.");

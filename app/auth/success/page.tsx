@@ -25,11 +25,33 @@ function AuthSuccessInner() {
 
         // Store the JWT so the frontend can use it for authenticated requests
         localStorage.setItem("token", token);
-        setStatus("success");
 
-        // Redirect to home after a brief delay so the user sees the success state
-        const timer = setTimeout(() => router.replace("/"), 2000);
-        return () => clearTimeout(timer);
+        // Fetch user profile and store it so the Navbar can display it immediately
+        (async () => {
+            try {
+                const res = await fetch("/api/auth/me", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (res.ok) {
+                    const body = await res.json();
+                    if (body?.user) {
+                        localStorage.setItem("user", JSON.stringify(body.user));
+                    }
+                }
+            } catch {
+                // Token is stored; Navbar will retry on its own
+            }
+
+            // Notify any mounted Navbar instances that auth state changed
+            window.dispatchEvent(new Event("auth-change"));
+
+            setStatus("success");
+
+            // Redirect to home after a brief delay so the user sees the success state
+            const timer = setTimeout(() => router.replace("/"), 2000);
+            // We don't return the cleanup here since we're inside an async IIFE
+            // The redirect is fire-and-forget
+        })();
     }, [searchParams, router]);
 
     return (
