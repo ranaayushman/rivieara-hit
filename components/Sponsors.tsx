@@ -119,7 +119,6 @@ export default function Sponsors() {
                 return (
                   <motion.div
                     key={sponsor.id}
-                    layout
                     initial={false}
                     animate={{ left: layout.left, top: layout.top, width: layout.width, height: layout.height }}
                     transition={{ type: "spring", stiffness: 120, damping: 18, mass: 1 }}
@@ -150,7 +149,6 @@ export default function Sponsors() {
                 return (
                   <motion.div
                     key={sponsor.id}
-                    layout
                     initial={false}
                     animate={{ left: layout.left, top: layout.top, width: layout.width, height: layout.height }}
                     transition={{ type: "spring", stiffness: 120, damping: 18, mass: 1 }}

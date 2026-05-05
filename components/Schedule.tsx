@@ -146,7 +146,7 @@ export default function Schedule() {
       
       {/* 2. Giant Moonlight Aura */}
       <div 
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] md:w-[800px] md:h-[800px] rounded-full opacity-20 blur-3xl pointer-events-none z-0 animate-[glow-pulse_6s_infinite]"
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] md:w-[800px] md:h-[800px] rounded-full opacity-20 pointer-events-none z-0 animate-[glow-pulse_6s_infinite]"
         style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }}
       />
       
@@ -226,8 +226,8 @@ export default function Schedule() {
         
         <motion.div
           className=""
-          initial={{ opacity: 0, filter: "blur(10px)", scale: 0.9 }}
-          whileInView={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1.2, delay: 0.2 }}
         >
@@ -339,9 +339,9 @@ export default function Schedule() {
         <AnimatePresence mode="wait">
           <motion.div
             key={activeDay}
-            initial={{ opacity: 0, filter: "blur(10px)", y: 20 }}
-            animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-            exit={{ opacity: 0, filter: "blur(10px)", y: -20 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.6, ease: [0.25, 0.8, 0.25, 1] }}
             className="space-y-16 md:space-y-24 relative z-10 py-10"
           >
@@ -360,7 +360,7 @@ export default function Schedule() {
                          style={{ background: "var(--surface-primary)", borderColor: "var(--border-gold)", boxShadow: "0 0 30px var(--gold-glow)" }}>
                       <Sparkles className="text-[var(--gold-light)] w-5 h-5 md:w-6 md:h-6 animate-[glow-pulse_3s_infinite] group-hover:scale-125 transition-transform" />
                       {/* Magical Checkpoint Aura */}
-                      <div className="absolute inset-0 blur-[10px] rounded-full transition-colors duration-500" 
+                      <div className="absolute inset-0 rounded-full transition-colors duration-500" 
                            style={{ background: "radial-gradient(circle, var(--gold-glow) 0%, transparent 70%)" }} />
                     </div>
                   </div>

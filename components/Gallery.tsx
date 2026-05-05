@@ -156,7 +156,7 @@ export default function Gallery() {
       <div className="absolute inset-0 z-0" style={{ background: "radial-gradient(ellipse at center, var(--bg-deep) 0%, var(--bg-primary) 80%)" }} />
       
       {/* 2. Giant Celestial Moon Aura */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[50px] pointer-events-none z-0 animate-[glow-pulse_8s_infinite]" style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full pointer-events-none z-0 animate-[glow-pulse_8s_infinite]" style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }} />
 
       {/* 3. Floating Fog Overlay */}
       <div ref={fogRef} className="absolute inset-0 z-20 pointer-events-none" style={{ background: "linear-gradient(180deg, var(--bg-primary) 0%, var(--surface-glass) 100%)" }} />
@@ -220,8 +220,8 @@ export default function Gallery() {
         
         <motion.div
           className=""
-          initial={{ opacity: 0, filter: "blur(10px)", scale: 0.95 }}
-          whileInView={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1.2, delay: 0.2 }}
         >
