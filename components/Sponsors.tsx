@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import SectionHeading from "@/components/ui/SectionHeading";
+import { generateStars, getPerformanceAdjustedParticles } from "@/lib/particleAnimations";
 
 interface SponsorData {
   id: string;
@@ -71,6 +72,15 @@ export default function Sponsors() {
       }))
     : null;
 
+  // ── PARTICLES ──
+  const stars = useMemo(
+    () => {
+      const { starCount } = getPerformanceAdjustedParticles(false);
+      return generateStars(Math.floor(starCount / 2)); // Half stars for sponsors
+    },
+    []
+  );
+
   return (
     <SectionWrapper id="sponsors">
       <SectionHeading
@@ -78,6 +88,26 @@ export default function Sponsors() {
         accent="Sponsors"
         arabianText="✦ Royal Patrons ✦"
       />
+
+      {/* ── PARTICLE ANIMATIONS ── */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        {stars.map((s) => (
+          <motion.div
+            key={s.id}
+            className="absolute rounded-full"
+            style={{
+              width: s.size,
+              height: s.size,
+              left: s.x,
+              top: s.y,
+              background: "var(--gold-primary)",
+              opacity: s.opacity,
+            }}
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: s.dur, repeat: Infinity, delay: s.delay }}
+          />
+        ))}
+      </div>
 
       <div className="max-w-[700px] mx-auto w-full px-4 sm:px-6 mb-20">
         <div className="relative w-full aspect-[5/4] sm:aspect-[4/3] mx-auto">

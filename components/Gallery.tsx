@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,6 +8,7 @@ import { ArrowRight, Sparkles, Stars, Aperture } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePerformanceMode } from "@/hooks/usePerformanceMode";
+import { generateStars, generateEmbers, getPerformanceAdjustedParticles } from "@/lib/particleAnimations";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -126,6 +127,23 @@ export default function Gallery() {
     return () => ctx.revert();
   }, [images, isLowPower]);
 
+  // ── PARTICLES ──
+  const stars = useMemo(
+    () => {
+      const { starCount } = getPerformanceAdjustedParticles(isLowPower);
+      return generateStars(starCount);
+    },
+    [isLowPower]
+  );
+
+  const embers = useMemo(
+    () => {
+      const { emberCount } = getPerformanceAdjustedParticles(isLowPower);
+      return generateEmbers(emberCount);
+    },
+    [isLowPower]
+  );
+
   return (
     <section
       ref={sectionRef}
@@ -149,6 +167,43 @@ export default function Gallery() {
       {/* 5. Volumetric Light Beams */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none mix-blend-screen" style={{ background: "conic-gradient(from 180deg at 50% 50%, var(--moon-dim) 0deg, transparent 40deg, var(--moon-subtle) 80deg, transparent 120deg, var(--moon-dim) 160deg, transparent 360deg)" }} />
 
+      {/* ── PARTICLE ANIMATIONS ── */}
+      <div className="absolute inset-0 z-5 pointer-events-none overflow-hidden">
+        {/* Stars */}
+        {stars.map((s) => (
+          <motion.div
+            key={s.id}
+            className="absolute rounded-full"
+            style={{
+              width: s.size,
+              height: s.size,
+              left: s.x,
+              top: s.y,
+              background: "var(--gold-primary)",
+              opacity: s.opacity,
+            }}
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: s.dur, repeat: Infinity, delay: s.delay }}
+          />
+        ))}
+
+        {/* Embers */}
+        {embers.map((ember) => (
+          <motion.div
+            key={ember.id}
+            className="absolute rounded-full"
+            style={{
+              width: 3,
+              height: 3,
+              background: "var(--gold-light)",
+              right: `${ember.right}%`,
+              bottom: `${ember.bottom}%`,
+            }}
+            animate={{ y: [0, -60], opacity: [0, 0.7, 0] }}
+            transition={{ duration: ember.duration, repeat: Infinity, delay: ember.delay }}
+          />
+        ))}
+      </div>
 
       {/* ================= TITLE AREA ================= */}
       <div className="relative z-30 text-center mb-16 md:mb-24 px-4 w-full">

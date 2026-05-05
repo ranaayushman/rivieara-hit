@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { Code, Music, Gamepad2, Cpu, Palette, Trophy, Camera, BookOpen, Mic2, Rocket, Globe, Lightbulb, Sparkles, type LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePerformanceMode } from "@/hooks/usePerformanceMode";
+import { generateStars, generateEmbers, getPerformanceAdjustedParticles } from "@/lib/particleAnimations";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -74,7 +75,7 @@ const RealmAtmosphere = ({ type, isLowPower }: { type: string, isLowPower?: bool
   );
 };
 
-
+ 
 export default function Activities() {
   const [activities, setActivities] = useState<ActivityItem[]>(fallbackActivities);
   const sectionRef = useRef<HTMLElement>(null);
@@ -99,6 +100,23 @@ export default function Activities() {
   }, []);
 
   const { isLowPower, isMounted } = usePerformanceMode();
+
+  // ── PARTICLES ──
+  const stars = useMemo(
+    () => {
+      const { starCount } = getPerformanceAdjustedParticles(isLowPower);
+      return generateStars(starCount);
+    },
+    [isLowPower]
+  );
+
+  const embers = useMemo(
+    () => {
+      const { emberCount } = getPerformanceAdjustedParticles(isLowPower);
+      return generateEmbers(emberCount);
+    },
+    [isLowPower]
+  );
 
   // GSAP Cinematic Reveal & Floating Motion
   useEffect(() => {
@@ -183,6 +201,44 @@ export default function Activities() {
 
       <div className="absolute inset-0 z-0 opacity-[0.06] pointer-events-none mix-blend-overlay bg-noise" />
       <div ref={fogRef} className="absolute inset-0 z-20 pointer-events-none" style={{ background: "linear-gradient(180deg, var(--bg-primary) 0%, var(--surface-glass) 100%)" }} />
+
+      {/* ── PARTICLE ANIMATIONS ── */}
+      <div className="absolute inset-0 z-5 pointer-events-none overflow-hidden">
+        {/* Stars */}
+        {stars.map((s) => (
+          <motion.div
+            key={s.id}
+            className="absolute rounded-full"
+            style={{
+              width: s.size,
+              height: s.size,
+              left: s.x,
+              top: s.y,
+              background: "var(--gold-primary)",
+              opacity: s.opacity,
+            }}
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: s.dur, repeat: Infinity, delay: s.delay }}
+          />
+        ))}
+
+        {/* Embers */}
+        {embers.map((ember) => (
+          <motion.div
+            key={ember.id}
+            className="absolute rounded-full"
+            style={{
+              width: 3,
+              height: 3,
+              background: "var(--gold-light)",
+              right: `${ember.right}%`,
+              bottom: `${ember.bottom}%`,
+            }}
+            animate={{ y: [0, -60], opacity: [0, 0.7, 0] }}
+            transition={{ duration: ember.duration, repeat: Infinity, delay: ember.delay }}
+          />
+        ))}
+      </div>
 
       {/* ================= LUXURY HEADING ================= */}
       <div className="relative z-30 text-center mb-20 md:mb-32 px-4 w-full">

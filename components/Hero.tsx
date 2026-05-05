@@ -13,6 +13,12 @@ import { easing } from "@/lib/motionPresets";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePerformanceMode } from "@/hooks/usePerformanceMode";
+import {
+  generateStars,
+  generateEmbers,
+  getLanterns,
+  getPerformanceAdjustedParticles,
+} from "@/lib/particleAnimations";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -22,14 +28,6 @@ const INTRO_LINES = [
   "Beyond the dunes...",
   "Where technology meets mysticism...",
   "A new world awakens...",
-];
-
-const LANTERNS = [
-  { x: "62%", delay: 0, size: 18, dur: 7 },
-  { x: "72%", delay: 2, size: 14, dur: 9 },
-  { x: "80%", delay: 4, size: 10, dur: 8 },
-  { x: "55%", delay: 1, size: 12, dur: 10 },
-  { x: "90%", delay: 3, size: 8, dur: 11 },
 ];
 
 // ─── HIT Building SVG ───────────────────────────────────────────────────────
@@ -294,20 +292,16 @@ export default function Hero() {
 
   /* ── STARS ── */
   const stars = useMemo(
-    () =>
-      Array.from({ length: isLowPower ? 12 : 40 }, (_, i) => ({
-        id: i,
-        x: `${(i * 17 + 3) % 100}%`,
-        y: `${(i * 13 + 7) % 75}%`,
-        size: ((i * 7) % 3) + 1,
-        opacity: ((i * 11) % 25 + 8) / 100,
-        dur: 3 + ((i * 7) % 5),
-        delay: (i * 0.3) % 5,
-      })),
+    () => {
+      const { starCount } = getPerformanceAdjustedParticles(isLowPower);
+      return generateStars(starCount);
+    },
     [isLowPower]
   );
 
-  const activeLanterns = isLowPower ? LANTERNS.slice(0, 1) : LANTERNS.slice(0, 3);
+  const activeLanterns = getLanterns(
+    getPerformanceAdjustedParticles(isLowPower).lanternCount
+  );
   const mainVisible = introPhase >= 4;
 
   return (
@@ -544,22 +538,26 @@ export default function Hero() {
           </div>
 
           {/* Embers */}
-          {!isLowPower &&
-            Array.from({ length: 5 }).map((_, i) => (
+          {(() => {
+            const { shouldRenderEmitters, emberCount } = getPerformanceAdjustedParticles(isLowPower);
+            if (!shouldRenderEmitters) return null;
+            const embers = generateEmbers(emberCount);
+            return embers.map((ember) => (
               <motion.div
-                key={i}
+                key={ember.id}
                 className="absolute rounded-full z-[6]"
                 style={{
                   width: 3,
                   height: 3,
                   background: "var(--gold-light)",
-                  right: `${15 + i * 10}%`,
-                  bottom: `${20 + i * 7}%`,
+                  right: `${ember.right}%`,
+                  bottom: `${ember.bottom}%`,
                 }}
                 animate={{ y: [0, -60], opacity: [0, 0.7, 0] }}
-                transition={{ duration: 5 + i, repeat: Infinity, delay: i * 0.8 }}
+                transition={{ duration: ember.duration, repeat: Infinity, delay: ember.delay }}
               />
-            ))}
+            ));
+          })()}
         </motion.div>
       </motion.div>
 

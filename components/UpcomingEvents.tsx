@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Compass, Sparkles } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { generateStars, getLanterns, getPerformanceAdjustedParticles } from "@/lib/particleAnimations";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -151,6 +152,20 @@ export default function UpcomingEvents() {
     return () => ctx.revert();
   }, []);
 
+  // ── PARTICLES ──
+  const stars = useMemo(
+    () => {
+      const { starCount } = getPerformanceAdjustedParticles(false);
+      return generateStars(starCount);
+    },
+    []
+  );
+
+  const activeLanterns = useMemo(
+    () => getLanterns(getPerformanceAdjustedParticles(false).lanternCount),
+    []
+  );
+
   return (
     <section
       ref={sectionRef}
@@ -194,6 +209,48 @@ export default function UpcomingEvents() {
         className="absolute inset-0 z-20 pointer-events-none"
         style={{ background: "linear-gradient(180deg, var(--bg-primary) 0%, var(--surface-glass) 100%)" }}
       />
+
+      {/* ── PARTICLE ANIMATIONS ── */}
+      <div className="absolute inset-0 z-5 pointer-events-none overflow-hidden">
+        {/* Stars */}
+        {stars.map((s) => (
+          <motion.div
+            key={s.id}
+            className="absolute rounded-full"
+            style={{
+              width: s.size,
+              height: s.size,
+              left: s.x,
+              top: s.y,
+              background: "var(--gold-primary)",
+              opacity: s.opacity,
+            }}
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: s.dur, repeat: Infinity, delay: s.delay }}
+          />
+        ))}
+
+        {/* Lanterns */}
+        {activeLanterns.map((l, i) => (
+          <motion.div
+            key={i}
+            className="absolute z-[8]"
+            style={{ left: l.x, bottom: "30%" }}
+            animate={{ y: [0, -120], opacity: [0, 0.8, 0] }}
+            transition={{ duration: l.dur, repeat: Infinity, delay: l.delay }}
+          >
+            <div
+              className="rounded-full"
+              style={{
+                width: l.size,
+                height: l.size * 1.3,
+                background: "radial-gradient(ellipse, #FFC857 0%, var(--gold-primary) 60%, transparent 100%)",
+                boxShadow: "0 0 20px rgba(212,160,23,0.4)",
+              }}
+            />
+          </motion.div>
+        ))}
+      </div>
 
       {/* 6. Foreground Hanging Lanterns */}
       <div ref={lanternsRef} className="absolute inset-0 z-10 pointer-events-none overflow-hidden">

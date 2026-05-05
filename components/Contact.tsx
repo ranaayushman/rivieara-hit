@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useMemo } from "react";
 import { ArrowRight, Mail, Phone, User, MessageSquare, Check } from "lucide-react";
 import { motion } from "framer-motion";
+import { generateStars, getPerformanceAdjustedParticles } from "@/lib/particleAnimations";
 
 interface FormFieldProps {
   label: string;
@@ -62,6 +63,30 @@ export default function Contact() {
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-[var(--clr-bg)] text-white overflow-hidden pt-24 pb-16 px-4 sm:px-6">
       <div className="bg-glow" />
+
+      {/* ── PARTICLE ANIMATIONS ── */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        {useMemo(() => {
+          const { starCount } = getPerformanceAdjustedParticles(false);
+          const stars = generateStars(Math.floor(starCount / 2));
+          return stars.map((s) => (
+            <motion.div
+              key={s.id}
+              className="absolute rounded-full"
+              style={{
+                width: s.size,
+                height: s.size,
+                left: s.x,
+                top: s.y,
+                background: "var(--gold-primary)",
+                opacity: s.opacity,
+              }}
+              animate={{ opacity: [0.3, 1, 0.3] }}
+              transition={{ duration: s.dur, repeat: Infinity, delay: s.delay }}
+            />
+          ));
+        }, [])}
+      </div>
 
       <motion.div
         className="relative z-10 w-full max-w-lg"

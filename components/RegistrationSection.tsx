@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { CalendarDays, MapPin, User, ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import SectionWrapper from "@/components/ui/SectionWrapper";
 import { easing, duration, stagger } from "@/lib/motionPresets";
+import { generateStars, getPerformanceAdjustedParticles } from "@/lib/particleAnimations";
 
 interface InfoCard {
   icon: typeof CalendarDays;
@@ -40,8 +41,37 @@ export default function RegistrationSection() {
       .catch(() => { /* keep fallback */ });
   }, []);
 
+  // ── PARTICLES ──
+  const stars = useMemo(
+    () => {
+      const { starCount } = getPerformanceAdjustedParticles(false);
+      return generateStars(Math.floor(starCount / 2));
+    },
+    []
+  );
+
   return (
     <SectionWrapper withPattern>
+      {/* ── PARTICLE ANIMATIONS ── */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        {stars.map((s) => (
+          <motion.div
+            key={s.id}
+            className="absolute rounded-full"
+            style={{
+              width: s.size,
+              height: s.size,
+              left: s.x,
+              top: s.y,
+              background: "var(--gold-primary)",
+              opacity: s.opacity,
+            }}
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: s.dur, repeat: Infinity, delay: s.delay }}
+          />
+        ))}
+      </div>
+
       <div className="text-center max-w-3xl mx-auto mb-16 relative z-10">
         {/* Decorative text */}
         <motion.p
