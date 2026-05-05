@@ -9,6 +9,7 @@ import FogLayer from "@/components/ui/FogLayer";
 import MouseGlow from "@/components/ui/MouseGlow";
 import ConditionalNavbar from "@/components/ConditionalNavbar";
 import ConditionalMain from "@/components/ConditionalMain";
+import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -50,7 +51,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`scroll-smooth theme-night ${inter.variable} ${cinzel.variable} ${elMessiri.variable}`}
+      className={`theme-night ${inter.variable} ${cinzel.variable} ${elMessiri.variable}`}
     >
       <body
         className="antialiased"
@@ -60,6 +61,7 @@ export default function RootLayout({
           fontFamily: "var(--font-body)",
         }}
       >
+        <SmoothScrollProvider>
           {/* Global atmospheric layers */}
           <FogLayer />
           <ParticleLayer />
@@ -67,6 +69,7 @@ export default function RootLayout({
 
           <Navbar />
           <main className="overflow-x-hidden relative z-10">{children}</main>
+        </SmoothScrollProvider>
       </body>
     </html>
   );
