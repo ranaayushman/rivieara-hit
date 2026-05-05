@@ -2,6 +2,7 @@
 
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { motion, useReducedMotion, Variants } from "framer-motion";
 import { usePerformanceMode } from "@/hooks/usePerformanceMode";
 
 const LANTERNS = [
@@ -18,6 +19,8 @@ const STARS = Array.from({ length: 40 }, (_, i) => ({
   y:       `${(i * 13 + 7) % 75}%`,
   size:    ((i * 7) % 3) + 1,
   opacity: ((i * 11) % 25 + 8) / 100,
+  dur:     (i % 5) + 8,
+  delay:   i % 4,
 }));
 
 function HITBuilding() {
@@ -263,7 +266,11 @@ function InfoCard({
   titleSize?: string;
 }) {
   return (
-    <div
+    <motion.div
+      variants={{
+        hidden: { opacity: 0, y: 15 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
+      }}
       className="rounded-xl px-5 py-4 backdrop-blur-sm"
       style={{
         background: "rgba(10, 6, 28, 0.72)",
@@ -282,49 +289,90 @@ function InfoCard({
         style={{ color: "rgba(212,175,55,0.55)", fontFamily: "var(--font-arabian)" }}>
         {sub}
       </p>
-    </div>
+    </motion.div>
   );
 }
 
 export default function Hero() {
   const { isLowPower, isMounted } = usePerformanceMode();
+  const shouldReduceMotion = useReducedMotion();
+  const yOffset = shouldReduceMotion ? 0 : 20;
+
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: yOffset },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: "easeOut", // Cinematic premium ease
+      },
+    },
+  };
+
+  const activeStars = isLowPower ? STARS.slice(0, 15) : STARS;
 
   return (
     <section
       className="relative min-h-screen overflow-hidden"
       style={{ background: "var(--gradient-hero)" }}
     >
-      {/* Stars */}
+      {/* ── SUBTLE PARTICLE DRIFT ── */}
       <div className="absolute inset-0" aria-hidden="true">
         <svg className="absolute inset-0 w-full h-full pointer-events-none">
-          {STARS.map((s) => (
-            <circle
+          {activeStars.map((s) => (
+            <motion.circle
               key={s.id}
               cx={s.x} cy={s.y} r={s.size}
               fill="var(--gold-primary)"
               style={{ opacity: s.opacity }}
+              animate={!shouldReduceMotion ? {
+                y: [0, -15, 0],
+                opacity: [s.opacity, s.opacity * 0.4, s.opacity],
+              } : {}}
+              transition={{
+                duration: s.dur,
+                repeat: Infinity,
+                delay: s.delay,
+                ease: "easeInOut"
+              }}
             />
           ))}
         </svg>
       </div>
 
-      {/* Ambient glow */}
-      <div
+      {/* ── SOFT AMBIENT GLOW PULSE ── */}
+      <motion.div
         className="absolute left-[-10%] top-[20%] w-[500px] h-[500px] rounded-full opacity-50"
         style={{
           background: "radial-gradient(circle, rgba(212,160,23,0.15) 0%, transparent 70%)",
         }}
+        animate={!shouldReduceMotion && !isLowPower ? { opacity: [0.3, 0.6, 0.3] } : {}}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
 
       {isMounted && !isLowPower && (
         <>
-          <div
+          <motion.div
             className="absolute right-[-5%] top-[10%] w-[400px] h-[400px] rounded-full"
             style={{
               background: "radial-gradient(circle, rgba(106,13,173,0.15) 0%, transparent 70%)",
             }}
+            animate={!shouldReduceMotion ? { opacity: [0.3, 0.5, 0.3] } : {}}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
           />
-          <div
+          <motion.div
             className="pointer-events-none absolute w-[500px] h-[500px] rounded-full hidden md:block"
             style={{
               background: "radial-gradient(circle, var(--moon-subtle) 0%, transparent 70%)",
@@ -332,10 +380,13 @@ export default function Hero() {
               top: "50%",
               transform: "translate(-50%, -50%)",
             }}
+            animate={!shouldReduceMotion ? { opacity: [0.4, 0.8, 0.4] } : {}}
+            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }}
           />
         </>
       )}
 
+      {/* Very light atmospheric depth overlay */}
       <div className="absolute inset-0 bg-noise opacity-[0.03]" />
       <div
         className="absolute bottom-0 inset-x-0 h-40 z-[4]"
@@ -346,18 +397,23 @@ export default function Hero() {
       <div
         className="relative z-10 section-container min-h-auto lg:min-h-screen flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0 px-4 sm:px-6 pt-24 pb-16 sm:pt-32 sm:pb-24 lg:pb-28"
       >
-        {/* Left — text content, button removed from here */}
-        <div
+        {/* Left — text content */}
+        <motion.div
           className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left max-w-2xl"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
         >
-          <p
+          <motion.p
+            variants={itemVariants}
             className="text-[10px] md:text-xs tracking-[0.5em] uppercase mb-5"
             style={{ fontFamily: "var(--font-arabian)", color: "var(--gold-primary)" }}
           >
             ✦ The Mystical Techno-Cultural Festival ✦
-          </p>
+          </motion.p>
 
-          <h1
+          <motion.h1
+            variants={itemVariants}
             className="text-[3.5rem] sm:text-[4.5rem] md:text-[5.5rem] lg:text-[7rem] font-extrabold leading-[0.9] tracking-tighter"
             style={{ fontFamily: "var(--font-heading)" }}
           >
@@ -369,54 +425,67 @@ export default function Hero() {
             >
               2026
             </span>
-          </h1>
+          </motion.h1>
 
-          <h2
+          <motion.h2
+            variants={itemVariants}
             className="text-xl md:text-2xl lg:text-3xl mt-4 tracking-[0.2em]"
             style={{ fontFamily: "var(--font-arabian)", color: "var(--gold-primary)" }}
           >
             Arabian Nights
-          </h2>
+          </motion.h2>
 
-          <p
+          <motion.p
+            variants={itemVariants}
             className="text-sm md:text-base lg:text-lg mt-6 max-w-lg leading-relaxed"
             style={{ color: "var(--text-muted)" }}
           >
             Where innovation awakens beneath the moonlight —
             a mystical fusion of culture, technology, and imagination.
-          </p>
+          </motion.p>
 
-          {/* CTA Button — below description, center aligned */}
-          <div className="mt-10 flex justify-center lg:justify-start w-full">
+          {/* CTA Button */}
+          <motion.div variants={itemVariants} className="mt-10 flex justify-center lg:justify-start w-full">
             <div className="relative inline-flex">
-              <Link
-                href="/register"
-                className="group relative inline-flex items-center gap-4 px-8 py-4 rounded-full border"
-                style={{
-                  borderColor: "var(--border-gold)",
-                  background: "var(--gold-subtle)",
-                }}
-              >
-                <span
-                  className="relative z-10 uppercase tracking-[0.15em] text-sm"
-                  style={{ color: "var(--text-primary)" }}
+              <Link href="/register" passHref legacyBehavior>
+                <motion.a
+                  className="group relative inline-flex items-center gap-4 px-8 py-4 rounded-full border"
+                  style={{
+                    borderColor: "var(--border-gold)",
+                    background: "var(--gold-subtle)",
+                  }}
+                  whileHover={!shouldReduceMotion ? {
+                    y: -2,
+                    boxShadow: "0 10px 25px rgba(212,160,23,0.15)",
+                    borderColor: "rgba(212,160,23,0.5)",
+                    background: "rgba(212,160,23,0.12)",
+                  } : {}}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
                 >
-                  Enter The Realm
-                </span>
-                <div
-                  className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center"
-                  style={{ background: "var(--gradient-gold)" }}
-                >
-                  <ArrowRight size={15} className="text-[#0a0805]" />
-                </div>
+                  <span
+                    className="relative z-10 uppercase tracking-[0.15em] text-sm transition-colors duration-300 group-hover:text-[var(--gold-light)]"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    Enter The Realm
+                  </span>
+                  <div
+                    className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
+                    style={{ background: "var(--gradient-gold)" }}
+                  >
+                    <ArrowRight size={15} className="text-[#0a0805]" />
+                  </div>
+                </motion.a>
               </Link>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        {/* Right — info cards only, no button */}
-        <div
+        {/* Right — info cards */}
+        <motion.div
           className="hidden lg:flex flex-1 relative w-full min-h-[350px] flex-col items-end justify-start gap-4 pr-4 pt-4"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
         >
           <InfoCard
             label="Venue" title="HIT Haldia"
@@ -430,10 +499,19 @@ export default function Hero() {
 
           {/* Lanterns */}
           {isMounted && (isLowPower ? LANTERNS.slice(0, 1) : LANTERNS.slice(0, 3)).map((l, i) => (
-            <div
+            <motion.div
               key={i}
               className="absolute z-[8]"
               style={{ left: l.x, bottom: "30%" }}
+              animate={!shouldReduceMotion ? {
+                y: [0, -8, 0],
+              } : {}}
+              transition={{
+                duration: l.dur,
+                repeat: Infinity,
+                delay: l.delay,
+                ease: "easeInOut"
+              }}
             >
               <div
                 className="rounded-full"
@@ -443,11 +521,11 @@ export default function Hero() {
                   boxShadow: "0 0 20px rgba(212,160,23,0.4)",
                 }}
               />
-            </div>
+            </motion.div>
           ))}
 
           {/* Fog */}
-          <div className="absolute bottom-[10%] right-0 w-[120%] h-[40%]">
+          <div className="absolute bottom-[10%] right-0 w-[120%] h-[40%] pointer-events-none">
             <div
               className="w-full h-full"
               style={{
@@ -458,7 +536,7 @@ export default function Hero() {
 
           {/* Embers */}
           {isMounted && !isLowPower && Array.from({ length: 5 }).map((_, i) => (
-            <div
+            <motion.div
               key={i}
               className="absolute rounded-full z-[6]"
               style={{
@@ -467,9 +545,19 @@ export default function Hero() {
                 right: `${15 + i * 10}%`,
                 bottom: `${20 + i * 7}%`,
               }}
+              animate={!shouldReduceMotion ? {
+                y: [0, -20],
+                opacity: [0, 0.6, 0]
+              } : {}}
+              transition={{
+                duration: 6 + (i % 3),
+                repeat: Infinity,
+                delay: i * 0.5,
+                ease: "linear"
+              }}
             />
           ))}
-        </div>
+        </motion.div>
       </div>
 
       {/* HIT Building silhouette */}
