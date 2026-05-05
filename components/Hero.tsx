@@ -1,28 +1,34 @@
 "use client";
 
+import { useEffect, useState, useRef, useMemo } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { motion, useReducedMotion, Variants } from "framer-motion";
 import { usePerformanceMode } from "@/hooks/usePerformanceMode";
+import {
+  generateStars,
+  generateEmbers,
+  getLanterns,
+  getPerformanceAdjustedParticles,
+} from "@/lib/particleAnimations";
 
-const LANTERNS = [
-  { x: "62%", delay: 0, size: 18, dur: 7 },
-  { x: "72%", delay: 2, size: 14, dur: 9 },
-  { x: "80%", delay: 4, size: 10, dur: 8 },
-  { x: "55%", delay: 1, size: 12, dur: 10 },
-  { x: "90%", delay: 3, size: 8,  dur: 11 },
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+const INTRO_LINES = [
+  "Beyond the dunes...",
+  "Where technology meets mysticism...",
+  "A new world awakens...",
 ];
 
-const STARS = Array.from({ length: 40 }, (_, i) => ({
-  id:      i,
-  x:       `${(i * 17 + 3) % 100}%`,
-  y:       `${(i * 13 + 7) % 75}%`,
-  size:    ((i * 7) % 3) + 1,
-  opacity: ((i * 11) % 25 + 8) / 100,
-  dur:     (i % 5) + 8,
-  delay:   i % 4,
-}));
-
+// ─── HIT Building SVG ───────────────────────────────────────────────────────
 function HITBuilding() {
   const P  = [430, 600, 840, 1010];
   const PR = 26;
@@ -260,9 +266,18 @@ function HITBuilding() {
 }
 
 function InfoCard({
-  label, title, sub, titleSize = "text-lg",
+  label,
+  title,
+  sub,
+  delay,
+  mainVisible,
+  titleSize = "text-lg",
 }: {
-  label: string; title: string; sub: string;
+  label: string;
+  title: string;
+  sub: string;
+  delay: number;
+  mainVisible: boolean;
   titleSize?: string;
 }) {
   return (
@@ -294,110 +309,217 @@ function InfoCard({
 }
 
 export default function Hero() {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [introPhase, setIntroPhase] = useState(0);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const heroFogRef = useRef<HTMLDivElement>(null);
+  const ambientGlowRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+
   const { isLowPower, isMounted } = usePerformanceMode();
-  const shouldReduceMotion = useReducedMotion();
-  const yOffset = shouldReduceMotion ? 0 : 20;
 
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.1,
-      },
+  const contentY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    [0, isLowPower ? -20 : -50]
+  );
+
+  const rightY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    [0, isLowPower ? 10 : 30]
+  );
+
+  const fadeOut = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
+  /* ── MOUSE TRACKING (desktop only) ── */
+  useEffect(() => {
+    if (isLowPower) return;
+    const handle = (e: MouseEvent) => {
+      setMousePos({
+        x: e.clientX / window.innerWidth,
+        y: e.clientY / window.innerHeight,
+      });
+    };
+    window.addEventListener("mousemove", handle);
+    return () => window.removeEventListener("mousemove", handle);
+  }, [isLowPower]);
+
+  /* ── INTRO SEQUENCE ── */
+  useEffect(() => {
+    if (isLowPower) {
+      Promise.resolve().then(() => setIntroPhase(4));
+      return;
+    }
+    const timers = [
+      setTimeout(() => setIntroPhase(1), 400),
+      setTimeout(() => setIntroPhase(2), 1600),
+      setTimeout(() => setIntroPhase(3), 2800),
+      setTimeout(() => setIntroPhase(4), 4200),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, [isLowPower]);
+
+  /* ── GSAP ATMOSPHERE ── */
+  useEffect(() => {
+    if (!isMounted) return;
+    const ctx = gsap.context(() => {
+      if (!isLowPower) {
+        if (ambientGlowRef.current) {
+          gsap.to(ambientGlowRef.current, {
+            scale: 1.05,
+            opacity: 0.75,
+            duration: 6,
+            ease: "sine.inOut",
+            yoyo: true,
+            repeat: -1,
+          });
+        }
+        if (heroFogRef.current) {
+          gsap.fromTo(heroFogRef.current, { opacity: 0 }, { opacity: 1, duration: 2, ease: "power2.out" });
+          gsap.to(heroFogRef.current, { x: "4%", duration: 18, ease: "sine.inOut", yoyo: true, repeat: -1 });
+        }
+      } else {
+        if (ambientGlowRef.current) gsap.set(ambientGlowRef.current, { opacity: 0.45, scale: 1 });
+        if (heroFogRef.current) gsap.set(heroFogRef.current, { opacity: 0.5 });
+      }
+    });
+    return () => ctx.revert();
+  }, [isLowPower, isMounted]);
+
+  /* ── STARS ── */
+  const stars = useMemo(
+    () => {
+      const { starCount } = getPerformanceAdjustedParticles(isLowPower);
+      return generateStars(starCount);
     },
-  };
+    [isLowPower]
+  );
 
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: yOffset },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: "easeOut", // Cinematic premium ease
-      },
-    },
-  };
-
-  const activeStars = isLowPower ? STARS.slice(0, 15) : STARS;
+  const activeLanterns = getLanterns(
+    getPerformanceAdjustedParticles(isLowPower).lanternCount
+  );
+  const mainVisible = introPhase >= 4;
 
   return (
     <section
       className="relative min-h-screen overflow-hidden"
       style={{ background: "var(--gradient-hero)" }}
     >
-      {/* ── SUBTLE PARTICLE DRIFT ── */}
+      {/* ── BACKGROUND ── */}
+
+      {/* Stars */}
       <div className="absolute inset-0" aria-hidden="true">
-        <svg className="absolute inset-0 w-full h-full pointer-events-none">
-          {activeStars.map((s) => (
-            <motion.circle
-              key={s.id}
-              cx={s.x} cy={s.y} r={s.size}
-              fill="var(--gold-primary)"
-              style={{ opacity: s.opacity }}
-              animate={!shouldReduceMotion ? {
-                y: [0, -15, 0],
-                opacity: [s.opacity, s.opacity * 0.4, s.opacity],
-              } : {}}
-              transition={{
-                duration: s.dur,
-                repeat: Infinity,
-                delay: s.delay,
-                ease: "easeInOut"
-              }}
-            />
-          ))}
-        </svg>
+        {stars.map((s) => (
+          <motion.div
+            key={s.id}
+            className="absolute rounded-full"
+            style={{
+              width: s.size,
+              height: s.size,
+              left: s.x,
+              top: s.y,
+              background: "var(--gold-primary)",
+              opacity: s.opacity,
+            }}
+            animate={isLowPower ? {} : { opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: s.dur, repeat: Infinity, delay: s.delay }}
+          />
+        ))}
       </div>
 
-      {/* ── SOFT AMBIENT GLOW PULSE ── */}
-      <motion.div
+      {/* Ambient Glow */}
+      <div
+        ref={ambientGlowRef}
         className="absolute left-[-10%] top-[20%] w-[500px] h-[500px] rounded-full opacity-50"
         style={{
-          background: "radial-gradient(circle, rgba(212,160,23,0.15) 0%, transparent 70%)",
+          background: "radial-gradient(circle, var(--gold-dim) 0%, transparent 70%)",
+          filter: isLowPower ? "blur(40px)" : "blur(70px)",
         }}
-        animate={!shouldReduceMotion && !isLowPower ? { opacity: [0.3, 0.6, 0.3] } : {}}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {isMounted && !isLowPower && (
-        <>
-          <motion.div
-            className="absolute right-[-5%] top-[10%] w-[400px] h-[400px] rounded-full"
-            style={{
-              background: "radial-gradient(circle, rgba(106,13,173,0.15) 0%, transparent 70%)",
-            }}
-            animate={!shouldReduceMotion ? { opacity: [0.3, 0.5, 0.3] } : {}}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          />
-          <motion.div
-            className="pointer-events-none absolute w-[500px] h-[500px] rounded-full hidden md:block"
-            style={{
-              background: "radial-gradient(circle, var(--moon-subtle) 0%, transparent 70%)",
-              left: "50%",
-              top: "50%",
-              transform: "translate(-50%, -50%)",
-            }}
-            animate={!shouldReduceMotion ? { opacity: [0.4, 0.8, 0.4] } : {}}
-            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          />
-        </>
+      {/* Right Glow */}
+      {!isLowPower && (
+        <div
+          className="absolute right-[-5%] top-[10%] w-[400px] h-[400px] rounded-full"
+          style={{
+            background: "radial-gradient(circle, var(--accent-purple-dim) 0%, transparent 70%)",
+            filter: "blur(70px)",
+          }}
+        />
       )}
 
-      {/* Very light atmospheric depth overlay */}
+      {/* Mouse Reactive Glow */}
+      {!isLowPower && (
+        <div
+          className="pointer-events-none absolute w-[500px] h-[500px] rounded-full hidden md:block will-change-transform"
+          style={{
+            background: "radial-gradient(circle, var(--moon-subtle) 0%, transparent 70%)",
+            left: `${mousePos.x * 100}%`,
+            top: `${mousePos.y * 100}%`,
+            transform: "translate(-50%, -50%)",
+            transition: "left 250ms linear, top 250ms linear",
+          }}
+        />
+      )}
+
+      {/* Noise */}
       <div className="absolute inset-0 bg-noise opacity-[0.03]" />
       <div
         className="absolute bottom-0 inset-x-0 h-40 z-[4]"
         style={{ background: "linear-gradient(to top, var(--bg-primary), transparent)" }}
       />
 
-      {/* Main content */}
-      <div
-        className="relative z-10 section-container min-h-auto lg:min-h-screen flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0 px-4 sm:px-6 pt-24 pb-16 sm:pt-32 sm:pb-24 lg:pb-28"
+      {/* ── INTRO ── */}
+      {!isLowPower && (
+        <AnimatePresence>
+          {introPhase < 4 && (
+            <motion.div
+              className="absolute inset-0 z-30 flex items-center justify-center"
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8, ease: easing.cinematic }}
+            >
+              <div className="text-center">
+                {INTRO_LINES.map((line, i) => (
+                  <motion.p
+                    key={i}
+                    className="text-lg md:text-2xl lg:text-3xl font-light tracking-widest mb-4"
+                    style={{ fontFamily: "var(--font-arabian)", color: "var(--gold-primary)" }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={
+                      introPhase > i
+                        ? { opacity: introPhase === i + 1 ? 1 : 0.3, y: 0 }
+                        : { opacity: 0, y: 20 }
+                    }
+                  >
+                    {line}
+                  </motion.p>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
+
+      {/* ── MAIN CONTENT ── */}
+      <motion.div
+        className="
+          relative z-10 section-container
+          min-h-auto lg:min-h-screen
+          flex flex-col lg:flex-row
+          items-center justify-center
+          gap-8 lg:gap-0
+          px-4 sm:px-6
+          pt-24 pb-16 sm:pt-32 sm:pb-24 lg:pb-28
+        "
+        style={{ y: contentY, opacity: fadeOut }}
       >
-        {/* Left — text content */}
+        {/* LEFT */}
         <motion.div
           className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left max-w-2xl"
           variants={containerVariants}
@@ -428,7 +550,6 @@ export default function Hero() {
           </motion.h1>
 
           <motion.h2
-            variants={itemVariants}
             className="text-xl md:text-2xl lg:text-3xl mt-4 tracking-[0.2em]"
             style={{ fontFamily: "var(--font-arabian)", color: "var(--gold-primary)" }}
           >
@@ -444,43 +565,26 @@ export default function Hero() {
             a mystical fusion of culture, technology, and imagination.
           </motion.p>
 
-          {/* CTA Button */}
-          <motion.div variants={itemVariants} className="mt-10 flex justify-center lg:justify-start w-full">
-            <div className="relative inline-flex">
-              <Link href="/register" passHref legacyBehavior>
-                <motion.a
-                  className="group relative inline-flex items-center gap-4 px-8 py-4 rounded-full border"
-                  style={{
-                    borderColor: "var(--border-gold)",
-                    background: "var(--gold-subtle)",
-                  }}
-                  whileHover={!shouldReduceMotion ? {
-                    y: -2,
-                    boxShadow: "0 10px 25px rgba(212,160,23,0.15)",
-                    borderColor: "rgba(212,160,23,0.5)",
-                    background: "rgba(212,160,23,0.12)",
-                  } : {}}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
-                >
-                  <span
-                    className="relative z-10 uppercase tracking-[0.15em] text-sm transition-colors duration-300 group-hover:text-[var(--gold-light)]"
-                    style={{ color: "var(--text-primary)" }}
-                  >
-                    Enter The Realm
-                  </span>
-                  <div
-                    className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
-                    style={{ background: "var(--gradient-gold)" }}
-                  >
-                    <ArrowRight size={15} className="text-[#0a0805]" />
-                  </div>
-                </motion.a>
-              </Link>
-            </div>
-          </motion.div>
+          <div className="mt-8">
+            <Link
+              href="/register"
+              className="group relative inline-flex items-center gap-4 px-8 py-4 rounded-full overflow-hidden border"
+              style={{ borderColor: "var(--border-gold)", background: "var(--gold-subtle)" }}
+            >
+              <span className="relative z-10 uppercase tracking-[0.15em] text-sm">
+                Enter The Realm
+              </span>
+              <div
+                className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center"
+                style={{ background: "var(--gradient-gold)" }}
+              >
+                <ArrowRight size={15} />
+              </div>
+            </Link>
+          </div>
         </motion.div>
 
-        {/* Right — info cards */}
+        {/* RIGHT — info cards + lanterns */}
         <motion.div
           className="hidden lg:flex flex-1 relative w-full min-h-[350px] flex-col items-end justify-start gap-4 pr-4 pt-4"
           variants={containerVariants}
@@ -490,10 +594,14 @@ export default function Hero() {
           <InfoCard
             label="Venue" title="HIT Haldia"
             sub="Haldia Institute of Technology"
+            delay={1.0}
+            mainVisible={mainVisible}
           />
           <InfoCard
             label="Edition" title="2026"
             sub="Annual Fest"
+            delay={1.2}
+            mainVisible={mainVisible}
             titleSize="text-3xl"
           />
 
@@ -501,7 +609,7 @@ export default function Hero() {
           {isMounted && (isLowPower ? LANTERNS.slice(0, 1) : LANTERNS.slice(0, 3)).map((l, i) => (
             <motion.div
               key={i}
-              className="absolute z-[8]"
+              className="absolute z-[8] lantern-layer"
               style={{ left: l.x, bottom: "30%" }}
               animate={!shouldReduceMotion ? {
                 y: [0, -8, 0],
@@ -525,43 +633,47 @@ export default function Hero() {
           ))}
 
           {/* Fog */}
-          <div className="absolute bottom-[10%] right-0 w-[120%] h-[40%] pointer-events-none">
+          <div ref={heroFogRef} className="absolute bottom-[10%] right-0 w-[120%] h-[40%]">
             <div
               className="w-full h-full"
               style={{
-                background: "radial-gradient(ellipse at 50% 80%, rgba(106,13,173,0.2) 0%, transparent 70%)",
+                background: "radial-gradient(ellipse at 50% 80%, var(--accent-purple-subtle) 0%, transparent 70%)",
+                filter: isLowPower ? "blur(30px)" : "blur(50px)",
               }}
             />
           </div>
 
           {/* Embers */}
-          {isMounted && !isLowPower && Array.from({ length: 5 }).map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute rounded-full z-[6]"
-              style={{
-                width: 3, height: 3,
-                background: "var(--gold-light)",
-                right: `${15 + i * 10}%`,
-                bottom: `${20 + i * 7}%`,
-              }}
-              animate={!shouldReduceMotion ? {
-                y: [0, -20],
-                opacity: [0, 0.6, 0]
-              } : {}}
-              transition={{
-                duration: 6 + (i % 3),
-                repeat: Infinity,
-                delay: i * 0.5,
-                ease: "linear"
-              }}
-            />
-          ))}
+          {(() => {
+            const { shouldRenderEmitters, emberCount } = getPerformanceAdjustedParticles(isLowPower);
+            if (!shouldRenderEmitters) return null;
+            const embers = generateEmbers(emberCount);
+            return embers.map((ember) => (
+              <motion.div
+                key={ember.id}
+                className="absolute rounded-full z-[6]"
+                style={{
+                  width: 3,
+                  height: 3,
+                  background: "var(--gold-light)",
+                  right: `${ember.right}%`,
+                  bottom: `${ember.bottom}%`,
+                }}
+                animate={{ y: [0, -60], opacity: [0, 0.7, 0] }}
+                transition={{ duration: ember.duration, repeat: Infinity, delay: ember.delay }}
+              />
+            ));
+          })()}
         </motion.div>
       </div>
 
-      {/* HIT Building silhouette */}
-      <div className="absolute bottom-0 left-0 right-0 w-full z-[3] pointer-events-none">
+      {/* ── HIT BUILDING SILHOUETTE (bottom) ── */}
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 w-full z-[3] pointer-events-none"
+        initial={{ opacity: 0 }}
+        animate={mainVisible ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 1.5, delay: 1.4 }}
+      >
         <HITBuilding />
       </div>
     </section>

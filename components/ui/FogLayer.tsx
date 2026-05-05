@@ -79,8 +79,9 @@ export default function FogLayer() {
         ref={fog4Ref}
         className="absolute w-[90%] h-[25%] left-[5%] top-[10%] rounded-full will-change-transform"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(212, 160, 23, calc(0.06 * var(--glow-intensity, 1))), transparent 60%)",
-          opacity: 0, // Initially hidden; GSAP reveals on desktop after mount
+          background: "radial-gradient(ellipse at center, rgba(212, 160, 23, calc(0.03 * var(--glow-intensity, 1))), transparent 60%)",
+          filter: getBlur("blur(120px)"),
+          opacity: fog4Opacity,
         }}
       />
     </div>
