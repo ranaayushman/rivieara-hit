@@ -19,6 +19,7 @@ const NAV_LINKS = [
 interface UserInfo {
   name: string;
   email: string;
+  avatar?: string;
 }
 
 /**
@@ -41,16 +42,63 @@ export default function Navbar() {
   useEffect(() => {
     try {
       const stored = localStorage.getItem("user");
-      if (stored) setUser(JSON.parse(stored));
+      if (stored) {
+        const p = JSON.parse(stored) as any;
+        const normalized: UserInfo = {
+          name: p.name,
+          email: p.email,
+          avatar: p.avatar || p.avatar_url || p.avatarUrl || undefined,
+        };
+        setUser(normalized);
+      }
     } catch { /* ignore */ }
 
     const handleStorage = () => {
       try {
         const stored = localStorage.getItem("user");
-        setUser(stored ? JSON.parse(stored) : null);
+        if (!stored) { setUser(null); return; }
+        const p = JSON.parse(stored) as any;
+        const normalized: UserInfo = {
+          name: p.name,
+          email: p.email,
+          avatar: p.avatar || p.avatar_url || p.avatarUrl || undefined,
+        };
+        setUser(normalized);
       } catch { setUser(null); }
     };
     window.addEventListener("storage", handleStorage);
+
+    // Also validate token with server-side /api/auth/me to ensure session is valid
+    (async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+        const res = await fetch("/api/auth/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) {
+          // invalid token — clear local session
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          setUser(null);
+          return;
+        }
+        const body = await res.json();
+        if (body?.user) {
+          const u = body.user as any;
+          const normalized: UserInfo = {
+            name: u.name,
+            email: u.email,
+            avatar: u.avatar || u.avatar_url || u.avatarUrl || undefined,
+          };
+          setUser(normalized);
+          try { localStorage.setItem("user", JSON.stringify(normalized)); } catch {}
+        }
+      } catch {
+        // network or other error — keep existing local user if any
+      }
+    })();
+
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
@@ -74,6 +122,13 @@ export default function Navbar() {
     localStorage.removeItem("user");
     setUser(null);
     router.push("/");
+  }
+
+  function getInitials(name?: string) {
+    if (!name) return "?";
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 1) return parts[0].slice(0, 1).toUpperCase();
+    return (parts[0].slice(0, 1) + parts[1].slice(0, 1)).toUpperCase();
   }
 
   return (
@@ -163,16 +218,22 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-4 border-l border-[rgba(212,160,23,0.2)] pl-6 ml-2">
             {user ? (
               <>
-                <div
-                  className="flex items-center gap-2 px-4 py-2 rounded-full text-sm"
-                  style={{
-                    background: "var(--gold-subtle)",
-                    border: "1px solid var(--border-gold)",
-                    color: "var(--text-primary)",
-                  }}
-                >
-                  <User size={14} style={{ color: "var(--gold-primary)" }} />
-                  <span className="max-w-[120px] truncate font-medium">{user.name}</span>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center text-sm font-semibold"
+                    style={{
+                      background: user.avatar ? "transparent" : "var(--gold-subtle)",
+                      border: user.avatar ? "1px solid var(--border-gold)" : "1px solid var(--border-gold)",
+                      color: "var(--text-primary)",
+                    }}
+                  >
+                    {user.avatar ? (
+                      <Image src={user.avatar} alt={user.name} width={36} height={36} className="object-cover" />
+                    ) : (
+                      <span style={{ color: "var(--gold-primary)" }}>{getInitials(user.name)}</span>
+                    )}
+                  </div>
+                  <span className="max-w-[120px] truncate font-medium text-sm">{user.name}</span>
                 </div>
                 <button onClick={handleLogout} className="btn-outline-gold !py-2 !px-4 !text-sm flex items-center gap-2">
                   <LogOut size={14} /> Logout
@@ -260,7 +321,13 @@ export default function Navbar() {
                           color: "var(--text-primary)",
                         }}
                       >
-                        <User size={16} style={{ color: "var(--gold-primary)" }} />
+                        {user.avatar ? (
+                          <Image src={user.avatar} alt={user.name} width={28} height={28} className="rounded-full object-cover" />
+                        ) : (
+                          <div className="w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-semibold" style={{ background: "var(--gold-subtle)", color: "var(--gold-primary)" }}>
+                            {getInitials(user.name)}
+                          </div>
+                        )}
                         <span className="truncate">{user.name}</span>
                       </div>
                       <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="btn-outline-gold !text-sm flex items-center gap-2 px-4">

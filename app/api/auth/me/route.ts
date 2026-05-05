@@ -15,6 +15,22 @@ export async function GET(req: NextRequest) {
         .single();
 
     if (error || !user) {
+        // Try fallback: lookup by email if id lookup failed (some tokens use email as subject)
+        try {
+            if (auth.email) {
+                const { data: byEmail, error: emailErr } = await supabase
+                    .from("users")
+                    .select("id, name, email, avatar_url, college, phone, created_at")
+                    .eq("email", auth.email)
+                    .single();
+                if (!emailErr && byEmail) {
+                    return NextResponse.json({ user: byEmail });
+                }
+            }
+        } catch (e) {
+            console.error("Fallback user lookup error:", e);
+        }
+
         return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
