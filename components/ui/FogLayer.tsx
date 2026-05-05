@@ -80,7 +80,7 @@ export default function FogLayer() {
         className="absolute w-[90%] h-[25%] left-[5%] top-[10%] rounded-full will-change-transform"
         style={{
           background: "radial-gradient(ellipse at center, rgba(212, 160, 23, calc(0.03 * var(--glow-intensity, 1))), transparent 60%)",
-          filter: getBlur("blur(120px)"),
+          filter: "blur(120px)",
           opacity: fog4Opacity,
         }}
       />

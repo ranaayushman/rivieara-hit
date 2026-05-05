@@ -29,9 +29,9 @@ const fallbackSchedule: Record<string, EventItem[]> = {
 };
 
 const mapDayToChapter = (day: string) => {
-  if (day.includes("1")) return "Day One";
-  if (day.includes("2")) return "Day Two";
-  if (day.includes("3")) return "Day Three";
+  if (day.includes("1")) return "Day 0";
+  if (day.includes("2")) return "Day 1";
+  if (day.includes("3")) return "Day 2";
   return day;
 };
 
