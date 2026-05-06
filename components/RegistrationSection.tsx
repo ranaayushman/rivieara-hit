@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useMemo } from "react";
 import { CalendarDays, MapPin, User, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import SectionWrapper from "@/components/ui/SectionWrapper";
@@ -21,27 +21,9 @@ const defaultCards: InfoCard[] = [
 ];
 
 export default function RegistrationSection() {
-  const [infoCards, setInfoCards] = useState<InfoCard[]>(defaultCards);
+  const infoCards = defaultCards;
   const shouldReduceMotion = useReducedMotion();
   const { isLowPower } = usePerformanceMode();
-
-  useEffect(() => {
-    fetch("/api/public/settings")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.settings) {
-          const s = data.settings as Record<string, string>;
-          if (s.event_dates || s.event_venue) {
-            setInfoCards([
-              { icon: CalendarDays, label: s.event_dates || "May 19–20", sublabel: "2026" },
-              { icon: MapPin, label: s.event_venue || "HIT Campus", sublabel: "Haldia" },
-              { icon: User, label: "Open for All", sublabel: "Students" },
-            ]);
-          }
-        }
-      })
-      .catch(() => { /* keep fallback */ });
-  }, []);
 
   // ── PARTICLES ──
   const stars = useMemo(
