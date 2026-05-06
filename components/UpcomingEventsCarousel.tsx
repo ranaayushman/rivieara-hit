@@ -222,7 +222,6 @@ export default function UpcomingEventsCarousel() {
                   borderStyle: "solid",
                   borderBottomWidth: "10px",
                   borderRadius: "20px",
-                  transformStyle: "preserve-3d",
                   boxShadow: isActive ? "0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(212,160,23,0.15)" : "0 20px 40px rgba(0,0,0,0.6)",
                   borderColor: isActive ? "var(--gold-primary)" : "var(--border-gold)",
                   borderBottomColor: isActive ? "rgba(160,110,10,1)" : "rgba(80,50,5,1)",
@@ -240,7 +239,7 @@ export default function UpcomingEventsCarousel() {
 
                 {/* === Carpet Ornamental Layers === */}
                 <div className="absolute inset-2 border border-[rgba(212,160,23,0.2)] rounded-xl pointer-events-none z-10" />
-                <div className="absolute inset-4 border border-[rgba(212,160,23,0.1)] rounded-lg pointer-events-none bg-pattern-arabian opacity-15 mix-blend-overlay z-10" />
+                <div className="absolute inset-4 border border-[rgba(212,160,23,0.1)] rounded-lg pointer-events-none bg-pattern-arabian opacity-10 z-10" />
 
                 {/* Corner Gold Ornaments */}
                 <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-[rgba(212,160,23,0.5)] rounded-tl-lg z-10" />
@@ -251,7 +250,6 @@ export default function UpcomingEventsCarousel() {
                 {/* === Floating Cinematic Content === */}
                 <div
                   className="relative z-20 w-full h-full p-6 sm:p-8 flex flex-col items-center text-center justify-between"
-                  style={{ transform: "translateZ(40px)" }}
                 >
                   {/* Holographic Image Panel */}
                   <div className="relative w-full h-[45%] md:h-[50%] mb-4 rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.8)] border border-[rgba(212,160,23,0.4)]">
