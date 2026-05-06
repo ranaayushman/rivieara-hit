@@ -5,15 +5,15 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, LogOut, User, ChevronDown } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 
 const NAV_LINKS = [
-  { label: "Home", href: "/" },
-  { label: "Schedule", href: "/#schedule" },
-  { label: "Activities", href: "/#activities" },
-  { label: "Sponsors", href: "/#sponsors" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Contact", href: "/contact" },
+  { label: "Home",       href: "/",            hash: ""           },
+  { label: "Schedule",   href: "/#schedule",   hash: "schedule"   },
+  { label: "Activities", href: "/#activities", hash: "activities" },
+  { label: "Sponsors",   href: "/#sponsors",   hash: "sponsors"   },
+  { label: "Gallery",    href: "/gallery",     hash: ""           },
+  { label: "Contact",    href: "/contact",     hash: ""           },
 ] as const;
 
 interface UserInfo {
@@ -22,58 +22,99 @@ interface UserInfo {
   avatar?: string;
 }
 
-/**
- * Floating cinematic glass navbar with Arabian gold accents,
- * animated active indicator, and premium mobile menu.
- */
 export default function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState<UserInfo | null>(null);
+  const router   = useRouter();
+
+  const [mobileOpen,   setMobileOpen]   = useState(false);
+  const [scrolled,     setScrolled]     = useState(false);
+  const [activeHash,   setActiveHash]   = useState("");
+  const [user,         setUser]         = useState<UserInfo | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // ── Scroll detection ──────────────────────────────────────────────────────
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // ── Auth state management ──
-  // Extracted so it can re-run on custom events and route changes
+  // ── IntersectionObserver: track which section is in view ─────────────────
+  // FIX: uses IntersectionObserver so hash-based nav links (/#schedule etc.)
+  // highlight correctly without relying on pathname (which never changes for
+  // same-page hash navigation).
   useEffect(() => {
-    function loadUserFromStorage() {
+    if (pathname !== "/") {
+      setActiveHash("");
+      return;
+    }
+
+    // Sync from URL hash on direct load (e.g. /  #schedule)
+    const urlHash = window.location.hash.replace("#", "");
+    if (urlHash) setActiveHash(urlHash);
+
+    const sectionIds = ["schedule", "activities", "sponsors"];
+    const observers: IntersectionObserver[] = [];
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActiveHash(id); },
+        { rootMargin: "-40% 0px -40% 0px" }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+
+    // Reset to Home when hero is back in view
+    const heroEl =
+      document.getElementById("hero") ??
+      (document.querySelector("main > section:first-child") as Element | null);
+    if (heroEl) {
+      const topObs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActiveHash(""); },
+        { threshold: 0.5 }
+      );
+      topObs.observe(heroEl);
+      observers.push(topObs);
+    }
+
+    return () => observers.forEach((o) => o.disconnect());
+  }, [pathname]);
+
+  // ── FIX: Active check — handles hash sections AND real routes ─────────────
+  // For hash links  (/#schedule):  active when on "/" AND that section is visible
+  // For Home ("/"):                active when on "/" AND no section is highlighted
+  // For real pages (/gallery etc): active when pathname starts with href
+  const isActive = (href: string, hash: string): boolean => {
+    if (hash)      return pathname === "/" && activeHash === hash;
+    if (href === "/") return pathname === "/" && activeHash === "";
+    return pathname.startsWith(href);
+  };
+
+  // ── Auth ──────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    function loadUser() {
       try {
         const stored = localStorage.getItem("user");
         if (stored) {
           const p = JSON.parse(stored) as any;
-          const normalized: UserInfo = {
-            name: p.name,
-            email: p.email,
-            avatar: p.avatar || p.avatar_url || p.avatarUrl || undefined,
-          };
-          setUser(normalized);
+          setUser({ name: p.name, email: p.email, avatar: p.avatar || p.avatar_url || undefined });
         } else {
           setUser(null);
         }
       } catch { setUser(null); }
     }
+    loadUser();
 
-    // Initial load from localStorage
-    loadUserFromStorage();
-
-    // Validate token with server-side /api/auth/me to ensure session is valid
     async function validateToken() {
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
-        const res = await fetch("/api/auth/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await fetch("/api/auth/me", { headers: { Authorization: `Bearer ${token}` } });
         if (!res.ok) {
-          // invalid token — clear local session
           localStorage.removeItem("token");
           localStorage.removeItem("user");
           setUser(null);
@@ -82,64 +123,43 @@ export default function Navbar() {
         const body = await res.json();
         if (body?.user) {
           const u = body.user as any;
-          const normalized: UserInfo = {
-            name: u.name,
-            email: u.email,
-            avatar: u.avatar || u.avatar_url || u.avatarUrl || undefined,
-          };
+          const normalized: UserInfo = { name: u.name, email: u.email, avatar: u.avatar || u.avatar_url || undefined };
           setUser(normalized);
           try { localStorage.setItem("user", JSON.stringify(normalized)); } catch {}
         }
-      } catch {
-        // network or other error — keep existing local user if any
-      }
+      } catch {}
     }
     validateToken();
 
-    // Listen for cross-tab storage changes
-    const handleStorage = () => loadUserFromStorage();
-    window.addEventListener("storage", handleStorage);
-
-    // Listen for same-tab auth changes (dispatched by auth/success page)
-    const handleAuthChange = () => {
-      loadUserFromStorage();
-      validateToken();
-    };
-    window.addEventListener("auth-change", handleAuthChange);
-
+    const onStorage    = () => loadUser();
+    const onAuthChange = () => { loadUser(); validateToken(); };
+    window.addEventListener("storage",     onStorage);
+    window.addEventListener("auth-change", onAuthChange);
     return () => {
-      window.removeEventListener("storage", handleStorage);
-      window.removeEventListener("auth-change", handleAuthChange);
+      window.removeEventListener("storage",     onStorage);
+      window.removeEventListener("auth-change", onAuthChange);
     };
-  }, [pathname]); // re-run when route changes so redirect from /auth/success → / picks up new state
+  }, [pathname]);
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
 
-  // Close avatar dropdown on outside click
   useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+    if (!dropdownOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node))
         setDropdownOpen(false);
-      }
-    }
-    if (dropdownOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
-    }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, [dropdownOpen]);
 
-  // Do not render the public navbar on admin routes
-  if (pathname.startsWith("/admin")) {
-    return null;
-  }
+  // Close mobile menu on route change
+  useEffect(() => { setMobileOpen(false); }, [pathname]);
 
-  const isActive = (href: string) => {
-    if (href === "/") return pathname === "/";
-    return pathname.startsWith(href.replace("/#", "/"));
-  };
+  if (pathname.startsWith("/admin")) return null;
 
   function handleLogout() {
     localStorage.removeItem("token");
@@ -151,8 +171,9 @@ export default function Navbar() {
   function getInitials(name?: string) {
     if (!name) return "?";
     const parts = name.trim().split(/\s+/).filter(Boolean);
-    if (parts.length === 1) return parts[0].slice(0, 1).toUpperCase();
-    return (parts[0].slice(0, 1) + parts[1].slice(0, 1)).toUpperCase();
+    return parts.length === 1
+      ? parts[0][0].toUpperCase()
+      : (parts[0][0] + parts[1][0]).toUpperCase();
   }
 
   return (
@@ -160,14 +181,12 @@ export default function Navbar() {
       <nav
         className="fixed top-4 inset-x-4 md:inset-x-8 z-50 transition-all duration-700 rounded-full"
         style={{
-          background: scrolled
-            ? "var(--surface-glass)"
-            : "rgba(5, 5, 5, 0.2)",
+          background: scrolled ? "var(--surface-glass)" : "rgba(5, 5, 5, 0.2)",
           backdropFilter: scrolled ? "blur(24px)" : "blur(8px)",
           WebkitBackdropFilter: scrolled ? "blur(24px)" : "blur(8px)",
           border: `1px solid ${scrolled ? "var(--border-gold)" : "rgba(212, 160, 23, 0.05)"}`,
           boxShadow: scrolled
-            ? "0 8px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(212, 160, 23, 0.05)"
+            ? "0 8px 40px rgba(0,0,0,0.3), 0 0 30px rgba(212,160,23,0.05)"
             : "none",
         }}
       >
@@ -176,29 +195,15 @@ export default function Navbar() {
           {/* ── Logo ── */}
           <Link href="/" className="flex items-center gap-3 group" onClick={() => setMobileOpen(false)}>
             <div
-              className="relative w-9 h-9 md:w-10 md:h-10 rounded-full overflow-hidden flex-shrink-0 transition-all duration-300"
-              style={{
-                border: "2px solid var(--border-gold)",
-                boxShadow: "0 0 12px rgba(212, 160, 23, 0.1)",
-              }}
+              className="relative w-9 h-9 md:w-10 md:h-10 rounded-full overflow-hidden flex-shrink-0 transition-all duration-300 group-hover:scale-105"
+              style={{ border: "2px solid var(--border-gold)", boxShadow: "0 0 12px rgba(212,160,23,0.15)" }}
             >
-              <Image
-                src="/logo.png"
-                alt="Riviera Logo"
-                fill
-                className="object-cover"
-                priority
-                sizes="40px"
-              />
+              <Image src="/logo.png" alt="Riviera Logo" fill className="object-cover" priority sizes="40px" />
             </div>
-
             <div className="flex flex-col">
               <span
-                className="text-lg md:text-xl font-extrabold tracking-tight transition-all duration-300"
-                style={{
-                  fontFamily: "var(--font-heading)",
-                  color: "var(--text-primary)",
-                }}
+                className="text-lg md:text-xl font-extrabold tracking-tight"
+                style={{ fontFamily: "var(--font-heading)", color: "var(--text-primary)" }}
               >
                 Riviera
               </span>
@@ -212,46 +217,47 @@ export default function Navbar() {
           </Link>
 
           {/* ── Desktop Links ── */}
+          {/* FIX: layoutId="nav-indicator" is shared across all links so the
+              gold pill slides smoothly between whichever link is active.
+              Previously the pill could get "stuck" because each link rendered
+              its own independent motion.div without a shared layoutId. */}
           <div className="hidden lg:flex items-center gap-1">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="relative px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200"
-                style={{
-                  color: isActive(link.href) ? "var(--gold-primary)" : "var(--text-muted)",
-                }}
-              >
-                {link.label}
-                {isActive(link.href) && (
-                  <motion.div
-                    layoutId="nav-indicator"
-                    className="absolute inset-0 rounded-full -z-10"
-                    style={{
-                      background: "var(--gold-dim)",
-                      border: "1px solid var(--border-gold)",
-                    }}
-                    transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
-                  />
-                )}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const active = isActive(link.href, link.hash);
+              return (
+                <Link
+                  key={`${link.href}-${link.hash}`}
+                  href={link.href}
+                  className="relative px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200 hover:text-[var(--gold-primary)]"
+                  style={{ color: active ? "var(--gold-primary)" : "var(--text-muted)" }}
+                >
+                  {active && (
+                    <motion.div
+                      layoutId="nav-indicator"
+                      className="absolute inset-0 rounded-full -z-10"
+                      style={{
+                        background: "var(--gold-dim)",
+                        border: "1px solid var(--border-gold)",
+                      }}
+                      transition={{ type: "spring", stiffness: 400, damping: 34 }}
+                    />
+                  )}
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
 
-          {/* ── Desktop Actions ── */}
+          {/* ── Desktop Auth ── */}
           <div className="hidden lg:flex items-center gap-4 border-l border-[rgba(212,160,23,0.2)] pl-6 ml-2">
             {user ? (
               <div className="relative" ref={dropdownRef}>
-                {/* Avatar button with golden glow ring */}
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   className="relative w-10 h-10 rounded-full flex items-center justify-center cursor-pointer transition-transform duration-200 hover:scale-105 focus:outline-none"
                   aria-label="User menu"
-                  style={{
-                    background: user.avatar ? "transparent" : "var(--gold-subtle)",
-                  }}
+                  style={{ background: user.avatar ? "transparent" : "var(--gold-subtle)" }}
                 >
-                  {/* Animated golden glow ring */}
                   <span
                     className="absolute inset-[-3px] rounded-full pointer-events-none"
                     style={{
@@ -260,12 +266,7 @@ export default function Navbar() {
                       transition: "opacity 0.3s",
                     }}
                   />
-                  {/* Inner mask */}
-                  <span
-                    className="absolute inset-[-1px] rounded-full pointer-events-none"
-                    style={{ background: "var(--bg-primary)" }}
-                  />
-                  {/* Avatar content */}
+                  <span className="absolute inset-[-1px] rounded-full pointer-events-none" style={{ background: "var(--bg-primary)" }} />
                   <div
                     className="relative w-full h-full rounded-full overflow-hidden flex items-center justify-center text-sm font-bold z-10"
                     style={{
@@ -273,15 +274,13 @@ export default function Navbar() {
                       boxShadow: "0 0 16px rgba(212,160,23,0.25), inset 0 0 8px rgba(212,160,23,0.1)",
                     }}
                   >
-                    {user.avatar ? (
-                      <Image src={user.avatar} alt={user.name} width={40} height={40} className="object-cover w-full h-full" />
-                    ) : (
-                      <span style={{ color: "var(--gold-primary)", fontSize: "14px" }}>{getInitials(user.name)}</span>
-                    )}
+                    {user.avatar
+                      ? <Image src={user.avatar} alt={user.name} width={40} height={40} className="object-cover w-full h-full" />
+                      : <span style={{ color: "var(--gold-primary)", fontSize: "14px" }}>{getInitials(user.name)}</span>
+                    }
                   </div>
                 </button>
 
-                {/* Dropdown menu */}
                 <AnimatePresence>
                   {dropdownOpen && (
                     <motion.div
@@ -296,12 +295,10 @@ export default function Navbar() {
                         boxShadow: "0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(212,160,23,0.08)",
                       }}
                     >
-                      {/* User info header */}
                       <div className="px-4 py-3" style={{ borderBottom: "1px solid rgba(212,160,23,0.15)" }}>
                         <p className="text-sm font-semibold truncate" style={{ color: "var(--text-primary)" }}>{user.name}</p>
                         <p className="text-xs truncate mt-0.5" style={{ color: "var(--text-dim)" }}>{user.email}</p>
                       </div>
-                      {/* Logout button */}
                       <button
                         onClick={() => { setDropdownOpen(false); handleLogout(); }}
                         className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors duration-150 cursor-pointer"
@@ -309,8 +306,7 @@ export default function Navbar() {
                         onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(212,160,23,0.08)"; e.currentTarget.style.color = "var(--gold-primary)"; }}
                         onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text-muted)"; }}
                       >
-                        <LogOut size={15} />
-                        Sign Out
+                        <LogOut size={15} /> Sign Out
                       </button>
                     </motion.div>
                   )}
@@ -319,103 +315,94 @@ export default function Navbar() {
             ) : (
               <>
                 <Link href="/register" className="btn-gold !py-2 !px-5 !text-sm">Register</Link>
-                <Link href="/login" className="btn-outline-gold !py-2 !px-4 !text-sm">Log in</Link>
+                <Link href="/login"    className="btn-outline-gold !py-2 !px-4 !text-sm">Log in</Link>
               </>
             )}
           </div>
 
           {/* ── Mobile Toggle ── */}
-          <div className="lg:hidden flex items-center gap-3">
+          <div className="lg:hidden flex items-center">
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="relative w-10 h-10 flex items-center justify-center rounded-full transition-colors"
-              style={{
-                background: "var(--gold-subtle)",
-                border: "1px solid var(--border-gold)",
-                color: "var(--gold-primary)",
-              }}
+              style={{ background: "var(--gold-subtle)", border: "1px solid var(--border-gold)", color: "var(--gold-primary)" }}
               aria-label="Toggle menu"
             >
               <AnimatePresence mode="wait">
-                {mobileOpen ? (
-                  <motion.span key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                    <X size={20} />
-                  </motion.span>
-                ) : (
-                  <motion.span key="open" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                    <Menu size={20} />
-                  </motion.span>
-                )}
+                {mobileOpen
+                  ? <motion.span key="x"    initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90,  opacity: 0 }} transition={{ duration: 0.2 }}><X    size={20} /></motion.span>
+                  : <motion.span key="menu" initial={{ rotate:  90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}><Menu size={20} /></motion.span>
+                }
               </AnimatePresence>
             </button>
           </div>
         </div>
       </nav>
 
-      {/* ── Mobile Menu Overlay ── */}
+      {/* ── Mobile Menu ── */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div className="fixed inset-0 z-40 lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+          <motion.div
+            className="fixed inset-0 z-40 lg:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
             <div
               className="absolute inset-0 backdrop-blur-sm"
-              style={{ background: "rgba(5, 5, 5, 0.6)" }}
+              style={{ background: "rgba(5,5,5,0.6)" }}
               onClick={() => setMobileOpen(false)}
             />
             <motion.div
               className="absolute top-20 inset-x-4 md:inset-x-8 rounded-3xl shadow-2xl"
-              style={{
-                background: "var(--surface-primary)",
-                border: "1px solid var(--border-gold)",
-              }}
+              style={{ background: "var(--surface-primary)", border: "1px solid var(--border-gold)" }}
               initial={{ y: -20, opacity: 0, scale: 0.98 }}
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: -20, opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             >
               <div className="p-6 flex flex-col gap-2">
-                {NAV_LINKS.map((link, i) => (
-                  <motion.div key={link.href} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}>
-                    <Link href={link.href} onClick={() => setMobileOpen(false)}
-                      className="block px-4 py-3 rounded-xl text-base font-medium transition-colors"
-                      style={{
-                        color: isActive(link.href) ? "var(--gold-primary)" : "var(--text-muted)",
-                        background: isActive(link.href) ? "var(--gold-dim)" : "transparent",
-                      }}
+                {NAV_LINKS.map((link, i) => {
+                  const active = isActive(link.href, link.hash);
+                  return (
+                    <motion.div
+                      key={`${link.href}-${link.hash}`}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05 }}
                     >
-                      {link.label}
-                    </Link>
-                  </motion.div>
-                ))}
+                      <Link
+                        href={link.href}
+                        onClick={() => setMobileOpen(false)}
+                        className="block px-4 py-3 rounded-xl text-base font-medium transition-all duration-200"
+                        style={{
+                          color:      active ? "var(--gold-primary)" : "var(--text-muted)",
+                          background: active ? "var(--gold-dim)"     : "transparent",
+                          borderLeft: active ? "2px solid var(--border-gold)" : "2px solid transparent",
+                        }}
+                      >
+                        {link.label}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
 
                 <div className="mt-4 pt-4" style={{ borderTop: "1px solid var(--border)" }}>
                   {user ? (
                     <div className="space-y-3">
-                      {/* User info row */}
                       <div className="flex items-center gap-3 px-2">
-                        <div
-                          className="relative w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
-                        >
-                          {/* Golden glow ring */}
-                          <span
-                            className="absolute inset-[-2px] rounded-full pointer-events-none"
-                            style={{ background: "conic-gradient(from 0deg, #D4A017, #F0D078, #8B5E00, #D4A017)" }}
-                          />
-                          <span
-                            className="absolute inset-0 rounded-full pointer-events-none"
-                            style={{ background: "var(--surface-primary)" }}
-                          />
+                        <div className="relative w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="absolute inset-[-2px] rounded-full" style={{ background: "conic-gradient(from 0deg, #D4A017, #F0D078, #8B5E00, #D4A017)" }} />
+                          <span className="absolute inset-0 rounded-full" style={{ background: "var(--surface-primary)" }} />
                           <div
                             className="relative w-[calc(100%-2px)] h-[calc(100%-2px)] rounded-full overflow-hidden flex items-center justify-center text-xs font-bold z-10"
-                            style={{
-                              background: user.avatar ? "transparent" : "rgba(212,160,23,0.12)",
-                              boxShadow: "0 0 12px rgba(212,160,23,0.2)",
-                            }}
+                            style={{ background: user.avatar ? "transparent" : "rgba(212,160,23,0.12)", boxShadow: "0 0 12px rgba(212,160,23,0.2)" }}
                           >
-                            {user.avatar ? (
-                              <Image src={user.avatar} alt={user.name} width={36} height={36} className="object-cover w-full h-full" />
-                            ) : (
-                              <span style={{ color: "var(--gold-primary)" }}>{getInitials(user.name)}</span>
-                            )}
+                            {user.avatar
+                              ? <Image src={user.avatar} alt={user.name} width={36} height={36} className="object-cover w-full h-full" />
+                              : <span style={{ color: "var(--gold-primary)" }}>{getInitials(user.name)}</span>
+                            }
                           </div>
                         </div>
                         <div className="flex-1 min-w-0">
@@ -423,24 +410,18 @@ export default function Navbar() {
                           <p className="text-xs truncate" style={{ color: "var(--text-dim)" }}>{user.email}</p>
                         </div>
                       </div>
-                      {/* Logout */}
                       <button
                         onClick={() => { handleLogout(); setMobileOpen(false); }}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors"
-                        style={{
-                          background: "rgba(212,160,23,0.06)",
-                          border: "1px solid var(--border-gold)",
-                          color: "var(--text-muted)",
-                        }}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium"
+                        style={{ background: "rgba(212,160,23,0.06)", border: "1px solid var(--border-gold)", color: "var(--text-muted)" }}
                       >
-                        <LogOut size={14} />
-                        Sign Out
+                        <LogOut size={14} /> Sign Out
                       </button>
                     </div>
                   ) : (
                     <div className="flex gap-3">
                       <Link href="/register" onClick={() => setMobileOpen(false)} className="btn-gold flex-1 justify-center !text-sm">Register</Link>
-                      <Link href="/login" onClick={() => setMobileOpen(false)} className="btn-outline-gold flex-1 justify-center !text-sm">Log in</Link>
+                      <Link href="/login"    onClick={() => setMobileOpen(false)} className="btn-outline-gold flex-1 justify-center !text-sm">Log in</Link>
                     </div>
                   )}
                 </div>
