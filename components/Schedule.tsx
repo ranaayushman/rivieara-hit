@@ -15,7 +15,7 @@ interface EventItem {
 const fallbackSchedule: Record<string, EventItem[]> = {
   "Day 1": [
     { time: "09:00 AM", title: "Opening Ceremony", desc: "Grand inauguration with guest speakers" },
-    { time: "11:00 AM", title: "AI Workshop", desc: "Hands-on session on machine learning" },
+    { time: "11:00 AM", title: "Gaming Event ", desc: "Enter the arena where strategy, skill, and glory collide." },
     { time: "02:00 PM", title: "Coding Challenge", desc: "Competitive programming round" },
   ],
   "Day 2": [
