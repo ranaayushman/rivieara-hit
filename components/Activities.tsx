@@ -24,7 +24,6 @@ const getRealmType = (title: string, icon: string) => {
   return "expo";
 };
 
-// Extremely Premium Atmospheric Backgrounds for the Portals (Fully Static)
 const RealmAtmosphere = ({ type, isLowPower }: { type: string, isLowPower?: boolean }) => {
   if (isLowPower) return null;
   return (
@@ -60,26 +59,17 @@ const RealmAtmosphere = ({ type, isLowPower }: { type: string, isLowPower?: bool
 };
 
 export default function Activities() {
-
-
   const { isLowPower } = usePerformanceMode();
 
-  // ── PARTICLES ──
-  const stars = useMemo(
-    () => {
-      const { starCount } = getPerformanceAdjustedParticles(isLowPower);
-      return generateStars(starCount);
-    },
-    [isLowPower]
-  );
+  const stars = useMemo(() => {
+    const { starCount } = getPerformanceAdjustedParticles(isLowPower);
+    return generateStars(starCount);
+  }, [isLowPower]);
 
-  const embers = useMemo(
-    () => {
-      const { emberCount } = getPerformanceAdjustedParticles(isLowPower);
-      return generateEmbers(emberCount);
-    },
-    [isLowPower]
-  );
+  const embers = useMemo(() => {
+    const { emberCount } = getPerformanceAdjustedParticles(isLowPower);
+    return generateEmbers(emberCount);
+  }, [isLowPower]);
 
   return (
     <section
@@ -90,11 +80,9 @@ export default function Activities() {
       {/* ================= BACKGROUND LAYERS ================= */}
       <div className="absolute inset-0 z-0" style={{ background: "radial-gradient(circle at center, var(--bg-deep) 0%, var(--bg-primary) 100%)" }} />
       
-      {/* Deep Magical Aura Orbs - Fully Static */}
       <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full pointer-events-none z-0" style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }} />
       <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none z-0" style={{ background: "radial-gradient(circle, var(--gold-glow) 0%, transparent 60%)" }} />
 
-      {/* Constellation SVG Network (Static) */}
       <svg className="absolute inset-0 w-full h-[150%] pointer-events-none z-0 opacity-50" preserveAspectRatio="none" viewBox="0 0 1000 1000">
         <path d="M50 150 L250 100 L450 350 L750 200 L950 550 L650 750 L150 650 Z" stroke="rgba(212,160,23,0.2)" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M250 100 L150 650" stroke="rgba(212,160,23,0.2)" strokeWidth="1" fill="none" />
@@ -109,40 +97,23 @@ export default function Activities() {
 
       {/* ── PARTICLE LAYERS ── */}
       <div className="absolute inset-0 z-5 pointer-events-none overflow-hidden">
-        {/* Stars */}
         {stars.map((s) => (
           <div
             key={s.id}
             className="absolute rounded-full"
-            style={{
-              width: s.size,
-              height: s.size,
-              left: s.x,
-              top: s.y,
-              background: "var(--gold-primary)",
-              opacity: s.opacity,
-            }}
+            style={{ width: s.size, height: s.size, left: s.x, top: s.y, background: "var(--gold-primary)", opacity: s.opacity }}
           />
         ))}
-
-        {/* Embers */}
         {embers.map((ember) => (
           <div
             key={ember.id}
             className="absolute rounded-full"
-            style={{
-              width: 3,
-              height: 3,
-              background: "var(--gold-light)",
-              right: `${ember.right}%`,
-              bottom: `${ember.bottom}%`,
-              opacity: 0.7,
-            }}
+            style={{ width: 3, height: 3, background: "var(--gold-light)", right: `${ember.right}%`, bottom: `${ember.bottom}%`, opacity: 0.7 }}
           />
         ))}
       </div>
 
-      {/* ================= LUXURY HEADING ================= */}
+      {/* ================= HEADING ================= */}
       <div className="relative z-30 text-center mb-20 md:mb-32 px-4 w-full">
         <p
           className="text-xs md:text-sm tracking-[0.5em] uppercase mb-4 font-semibold text-[var(--gold-primary)]"
@@ -150,36 +121,38 @@ export default function Activities() {
         >
           ✦ Enchanted Realms ✦
         </p>
-        
-        <div className="">
-          <h2
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight relative z-10"
-            style={{ 
-              fontFamily: "var(--font-heading)", 
-              color: "var(--text-primary)", 
-              textShadow: "0 0 50px rgba(212,160,23,0.5), 0 5px 15px rgba(0,0,0,0.9)" 
-            }}
-          >
-            Fest Activities
-          </h2>
-        </div>
 
-        <p
-          className="mt-8 text-sm md:text-base text-[var(--gold-dim)] max-w-2xl mx-auto font-light leading-relaxed"
+        <h2
+          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight relative z-10"
+          style={{
+            fontFamily: "var(--font-heading)",
+            color: "var(--text-primary)",
+            textShadow: "0 0 50px rgba(53, 40, 5, 0.5), 0 5px 15px rgba(0,0,0,0.9)",
+          }}
         >
-          Discover the magical worlds hidden within Riviera. 
+          Fest Activities
+        </h2>
+
+        {/* ✅ FIX 1 — Section subtitle: brighter color + font-weight + text-shadow */}
+        <p
+          className="mt-8 text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-normal"
+          style={{
+            color: "rgba(220, 210, 185, 0.95)",           // warm off-white, clearly readable
+            textShadow: "0 1px 16px rgba(4, 4, 16, 0.95)", // dark halo punches text through bg
+            letterSpacing: "0.02em",
+          }}
+        >
+          Discover the magical worlds hidden within Riviera.
           Each realm offers a unique trial of skill, creativity, and destiny.
         </p>
       </div>
 
-      {/* ================= PORTAL WINDOWS GALLERY ================= */}
+      {/* ================= PORTAL CARDS ================= */}
       <div className="relative z-30 w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-12">
           {activities.map((activity, index) => {
             const Icon = iconMap[activity.iconName] || Code;
             const realmType = getRealmType(activity.title, activity.iconName);
-            
-            // Create a majestic undulating wave layout using Y translations
             const layoutOffsets = ["lg:translate-y-0", "lg:translate-y-16", "lg:translate-y-8", "lg:translate-y-24"];
             const layoutOffset = layoutOffsets[index % 4];
 
@@ -188,7 +161,6 @@ export default function Activities() {
                 <div
                   className="group relative overflow-hidden w-full flex flex-col items-center text-center"
                   style={{
-                    // Arabian Palace Arch Window Silhouette
                     borderRadius: "140px 140px 24px 24px",
                     background: "var(--gradient-card)",
                     border: "1px solid var(--border-gold)",
@@ -197,51 +169,52 @@ export default function Activities() {
                     boxShadow: "0 20px 40px rgba(0,0,0,0.8), inset 0 0 40px rgba(0,0,0,0.4)",
                     transformStyle: "preserve-3d",
                     padding: "50px 24px 40px 24px",
-                    minHeight: "480px" // Tall elegant portals
+                    minHeight: "480px",
                   }}
                 >
-                  {/* === Inner Arch Decor === */}
                   <div className="absolute inset-[12px] border border-[rgba(212,160,23,0.15)] rounded-[130px_130px_16px_16px] pointer-events-none z-10" />
                   <div className="absolute inset-[24px] border border-[rgba(212,160,23,0.08)] rounded-[120px_120px_12px_12px] pointer-events-none bg-pattern-arabian opacity-10 mix-blend-overlay" />
                   
-                  {/* Dynamic Realm Atmosphere Background */}
                   <RealmAtmosphere type={realmType} isLowPower={isLowPower} />
 
-                  {/* === Content (Popping out in 3D) === */}
                   <div className="relative z-20 flex flex-col h-full items-center w-full" style={{ transform: "translateZ(30px)" }}>
                     
-                    {/* Keystone Medallion Icon */}
+                    {/* Icon Medallion */}
                     <div className="w-20 h-20 rounded-full flex items-center justify-center mb-8 relative">
-                       {/* Static Magic Ring */}
-                       <div className="absolute inset-[-6px] border-[2px] border-dashed border-[rgba(212,160,23,0.4)] rounded-full" />
-                       <div className="absolute inset-[-12px] border border-[rgba(212,160,23,0.1)] rounded-full" />
-                       
-                       {/* Core Plate */}
-                       <div className="absolute inset-0 bg-[var(--surface-primary)] rounded-full border-2 border-[var(--gold-primary)] shadow-[0_0_20px_var(--gold-glow)]" />
-                       
-                       <Icon 
-                          size={32} 
-                          className="text-[var(--gold-primary)] relative z-10 drop-shadow-[0_0_15px_rgba(212,160,23,0.9)]" 
-                        />
+                      <div className="absolute inset-[-6px] border-[2px] border-dashed border-[rgba(212,160,23,0.4)] rounded-full" />
+                      <div className="absolute inset-[-12px] border border-[rgba(212,160,23,0.1)] rounded-full" />
+                      <div className="absolute inset-0 bg-[var(--surface-primary)] rounded-full border-2 border-[var(--gold-primary)] shadow-[0_0_20px_var(--gold-glow)]" />
+                      <Icon size={32} className="text-[var(--gold-primary)] relative z-10 drop-shadow-[0_0_15px_rgba(212,160,23,0.9)]" />
                     </div>
 
-                    {/* Cinematic Title */}
-                    <h3 
-                      className="text-2xl lg:text-3xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-300 tracking-wide drop-shadow-md" 
-                      style={{ fontFamily: "var(--font-heading)" }}
+                    {/* Title */}
+                    <h3
+                      className="text-2xl lg:text-3xl font-extrabold mb-4 tracking-wide"
+                      style={{
+                        fontFamily: "var(--font-heading)",
+                        color: "var(--text-primary)",              // solid white, no transparency trick
+                        textShadow: "0 2px 12px rgba(0,0,0,0.8)",
+                      }}
                     >
                       {activity.title}
                     </h3>
-                    
-                    {/* Elegant Divider */}
+
+                    {/* Divider */}
                     <div className="w-12 h-[2px] bg-gradient-to-r from-transparent via-[rgba(212,160,23,0.6)] to-transparent mb-5" />
 
-                    {/* Atmospheric Description */}
-                    <p className="text-gray-400 text-sm md:text-sm leading-relaxed font-light opacity-90 flex-grow">
+                    {/* ✅ FIX 2 — Card description: much brighter + text-shadow */}
+                    <p
+                      className="text-sm md:text-sm leading-relaxed flex-grow"
+                      style={{
+                        color: "rgba(210, 200, 178, 0.92)",          // warm readable off-white
+                        textShadow: "0 1px 8px rgba(0, 0, 0, 0.9)", // dark halo per letter
+                        fontWeight: 400,
+                      }}
+                    >
                       {activity.desc}
                     </p>
 
-                    {/* Magical Indicator Accents */}
+                    {/* Unlock Portal */}
                     <div className="mt-8 pt-6 w-full flex items-center justify-center border-t border-[rgba(212,160,23,0.15)] relative overflow-hidden">
                       <button className="flex items-center gap-2 text-[10px] sm:text-xs tracking-[0.3em] uppercase text-[var(--gold-dim)]">
                         <Sparkles size={14} className="opacity-50" />

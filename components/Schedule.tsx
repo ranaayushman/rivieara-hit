@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect, useMemo } from "react";
 import { MapPin, Sparkles, Compass, Moon } from "lucide-react";
 import { generateStars, getLanterns, getPerformanceAdjustedParticles } from "@/lib/particleAnimations";
@@ -13,17 +12,17 @@ interface EventItem {
 }
 
 const fallbackSchedule: Record<string, EventItem[]> = {
-  "Day 1": [
+  "Day 0": [
     { time: "09:00 AM", title: "Opening Ceremony", desc: "Grand inauguration with guest speakers" },
-    { time: "11:00 AM", title: "Gaming Event ", desc: "Enter the arena where strategy, skill, and glory collide." },
-    { time: "02:00 PM", title: "Coding Challenge", desc: "Competitive programming round" },
+    { time: "11:00 AM", title: "Treasure Hunt", desc: "Venture through mystery and magic in search of the hidden prize." },
+    { time: "02:00 PM", title: "Gaming Event", desc: "Enter the arena where strategy, skill, and glory collide." },
   ],
-  "Day 2": [
+  "Day 1": [
     { time: "10:00 AM", title: "Hackathon Begins", desc: "24-hour build sprint starts" },
     { time: "01:00 PM", title: "Tech Talks", desc: "Industry experts share insights" },
     { time: "06:00 PM", title: "Cultural Night", desc: "Live performances & music" },
   ],
-  "Day 3": [
+  "Day 2": [
     { time: "09:30 AM", title: "Robotics Competition", desc: "Bot battles & challenges" },
     { time: "12:00 PM", title: "Gaming Finals", desc: "Esports championship matches" },
     { time: "05:00 PM", title: "Closing Ceremony", desc: "Awards & farewell" },
@@ -31,9 +30,9 @@ const fallbackSchedule: Record<string, EventItem[]> = {
 };
 
 const mapDayToChapter = (day: string) => {
-  if (day.includes("1")) return "Day 0";
-  if (day.includes("2")) return "Day 1";
-  if (day.includes("3")) return "Day 2";
+  if (day.includes("0")) return "Day 0";
+  if (day.includes("1")) return "Day 1";
+  if (day.includes("2")) return "Day 2";
   return day;
 };
 
