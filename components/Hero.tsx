@@ -11,8 +11,6 @@ import {
 } from "framer-motion";
 import { ArrowRight, Calendar, MapPin, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { easing } from "@/lib/motionPresets";
 import { usePerformanceMode } from "@/hooks/usePerformanceMode";
 import {
@@ -21,10 +19,6 @@ import {
   getLanterns,
   getPerformanceAdjustedParticles,
 } from "@/lib/particleAnimations";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 /* ── Animation variants ── */
 const containerVariants: Variants = {
@@ -49,12 +43,6 @@ const cardVariants: Variants = {
     transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] },
   },
 };
-
-const INTRO_LINES = [
-  "Beyond the dunes...",
-  "Where technology meets mysticism...",
-  "A new world awakens...",
-];
 
 /* ─────────────────────────────────────────────────────────────────
    HIT BUILDING  (opacity values bumped for better visibility)
@@ -407,53 +395,10 @@ function CTAButton() {
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   Magic floating dots (right column fill)
-───────────────────────────────────────────────────────────────── */
-function MagicDots({ isLowPower }: { isLowPower: boolean }) {
-  const shouldReduceMotion = useReducedMotion();
-  if (isLowPower || shouldReduceMotion) return null;
-
-  const dots = [
-    { x: "18%", y: "12%", size: 5, delay: 0,   dur: 3.8 },
-    { x: "72%", y: "28%", size: 3, delay: 0.7, dur: 4.5 },
-    { x: "42%", y: "52%", size: 4, delay: 1.4, dur: 3.2 },
-    { x: "83%", y: "68%", size: 6, delay: 0.3, dur: 5.0 },
-    { x: "8%",  y: "72%", size: 3, delay: 2.1, dur: 4.1 },
-    { x: "58%", y: "83%", size: 4, delay: 1.0, dur: 3.6 },
-    { x: "28%", y: "38%", size: 3, delay: 1.7, dur: 4.8 },
-    { x: "90%", y: "44%", size: 2.5, delay: 2.5, dur: 3.4 },
-  ];
-
-  return (
-    <>
-      {dots.map((d, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full pointer-events-none z-[2]"
-          style={{
-            left: d.x, top: d.y,
-            width: d.size, height: d.size,
-            background: "radial-gradient(circle, #ffe08a, rgba(212,160,23,0.25))",
-            boxShadow: `0 0 ${d.size * 3}px rgba(212,175,55,0.55)`,
-          }}
-          animate={{ y: [-8, 8, -8], opacity: [0.2, 0.8, 0.2], scale: [0.85, 1.2, 0.85] }}
-          transition={{ duration: d.dur, delay: d.delay, repeat: Infinity, ease: "easeInOut" }}
-        />
-      ))}
-    </>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────────
    MAIN HERO
 ───────────────────────────────────────────────────────────────── */
 export default function Hero() {
-  const [mousePos,   setMousePos]   = useState({ x: 0, y: 0 });
-  const [introPhase, setIntroPhase] = useState(0);
-
   const containerRef   = useRef<HTMLDivElement>(null);
-  const heroFogRef     = useRef<HTMLDivElement>(null);
-  const ambientGlowRef = useRef<HTMLDivElement>(null);
 
   const { isLowPower, isMounted } = usePerformanceMode();
   const shouldReduceMotion = useReducedMotion();
@@ -467,48 +412,7 @@ export default function Hero() {
   const rightY   = useTransform(scrollYProgress, [0, 1], [0, isLowPower ? 10  :  30]);
   const fadeOut  = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
-  useEffect(() => {
-    if (isLowPower) return;
-    const handle = (e: MouseEvent) =>
-      setMousePos({ x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight });
-    window.addEventListener("mousemove", handle, { passive: true });
-    return () => window.removeEventListener("mousemove", handle);
-  }, [isLowPower]);
 
-  useEffect(() => {
-    if (isLowPower) {
-      Promise.resolve().then(() => setIntroPhase(4));
-      return;
-    }
-    const timers = [
-      setTimeout(() => setIntroPhase(1), 400),
-      setTimeout(() => setIntroPhase(2), 1600),
-      setTimeout(() => setIntroPhase(3), 2800),
-      setTimeout(() => setIntroPhase(4), 4200),
-    ];
-    return () => timers.forEach(clearTimeout);
-  }, [isLowPower]);
-
-  useEffect(() => {
-    if (!isMounted) return;
-    const ctx = gsap.context(() => {
-      if (!isLowPower) {
-        if (ambientGlowRef.current)
-          gsap.to(ambientGlowRef.current, {
-            scale: 1.08, opacity: 0.80, duration: 7,
-            ease: "sine.inOut", yoyo: true, repeat: -1,
-          });
-        if (heroFogRef.current) {
-          gsap.fromTo(heroFogRef.current, { opacity: 0 }, { opacity: 1, duration: 2, ease: "power2.out" });
-          gsap.to(heroFogRef.current, { x: "4%", duration: 18, ease: "sine.inOut", yoyo: true, repeat: -1 });
-        }
-      } else {
-        if (ambientGlowRef.current) gsap.set(ambientGlowRef.current, { opacity: 0.45, scale: 1 });
-        if (heroFogRef.current)     gsap.set(heroFogRef.current,     { opacity: 0.5 });
-      }
-    });
-    return () => ctx.revert();
-  }, [isLowPower, isMounted]);
 
   const stars = useMemo(() => {
     const { starCount } = getPerformanceAdjustedParticles(isLowPower);
@@ -519,7 +423,7 @@ export default function Hero() {
     getPerformanceAdjustedParticles(isLowPower).lanternCount
   );
 
-  const mainVisible = introPhase >= 4;
+  const mainVisible = true;
 
   return (
     <section
@@ -560,46 +464,12 @@ export default function Hero() {
 
       {/* ── Ambient glow ── */}
       <div
-        ref={ambientGlowRef}
-        className="absolute left-[-10%] top-[20%] w-[500px] h-[500px] rounded-full opacity-55"
+        className="absolute left-[-10%] top-[20%] w-[500px] h-[500px] rounded-full opacity-40 pointer-events-none"
         style={{
           background: "radial-gradient(circle, var(--gold-dim) 0%, transparent 70%)",
-          filter: isLowPower ? "blur(40px)" : "blur(70px)",
-          willChange: "transform, opacity",
+          filter: "blur(40px)",
         }}
       />
-
-      {/* ── Client-only effects ── */}
-      {!isLowPower && (
-        <>
-          <div
-            className="absolute right-[-5%] top-[10%] w-[400px] h-[400px] rounded-full"
-            style={{
-              background: "radial-gradient(circle, var(--accent-purple-dim) 0%, transparent 70%)",
-              filter: "blur(70px)",
-            }}
-          />
-          {/* Extra right-side glow to reduce empty space feel */}
-          <div
-            className="absolute right-[5%] top-[35%] w-[300px] h-[300px] rounded-full pointer-events-none"
-            style={{
-              background: "radial-gradient(circle, rgba(212,175,55,0.045) 0%, transparent 70%)",
-              filter: "blur(55px)",
-            }}
-          />
-          <div
-            className="pointer-events-none absolute w-[500px] h-[500px] rounded-full hidden md:block"
-            style={{
-              background: "radial-gradient(circle, var(--moon-subtle) 0%, transparent 70%)",
-              left: `${mousePos.x * 100}%`,
-              top:  `${mousePos.y * 100}%`,
-              transform: "translate(-50%, -50%)",
-              transition: "left 250ms linear, top 250ms linear",
-              willChange: "transform",
-            }}
-          />
-        </>
-      )}
 
       <div className="absolute inset-0 bg-noise opacity-[0.03]" />
 
@@ -608,37 +478,6 @@ export default function Hero() {
         className="absolute bottom-0 inset-x-0 h-40 z-[4]"
         style={{ background: "linear-gradient(to top, var(--bg-primary) 20%, transparent)" }}
       />
-
-      {/* ── Cinematic intro ── */}
-      {!isLowPower && (
-        <AnimatePresence>
-          {introPhase < 4 && (
-            <motion.div
-              className="absolute inset-0 z-30 flex items-center justify-center"
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.8, ease: easing.cinematic }}
-            >
-              <div className="text-center">
-                {INTRO_LINES.map((line, i) => (
-                  <motion.p
-                    key={i}
-                    className="text-lg md:text-2xl lg:text-3xl font-light tracking-widest mb-4"
-                    style={{ fontFamily: "var(--font-arabian)", color: "var(--gold-primary)" }}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={
-                      introPhase > i
-                        ? { opacity: introPhase === i + 1 ? 1 : 0.3, y: 0 }
-                        : { opacity: 0, y: 20 }
-                    }
-                  >
-                    {line}
-                  </motion.p>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      )}
 
       {/* ── MAIN CONTENT ── */}
       <motion.div
@@ -693,12 +532,12 @@ export default function Hero() {
           <motion.div variants={itemVariants} className="relative mt-6 max-w-lg">
             <div
               className="absolute -inset-x-4 -inset-y-3 rounded-xl pointer-events-none"
-              style={{
-                background:
-                  "linear-gradient(135deg, rgba(5,5,15,0.68) 0%, rgba(5,5,15,0.35) 65%, transparent 100%)",
-                backdropFilter: "blur(3px)",
-                WebkitBackdropFilter: "blur(3px)",
-              }}
+              // style={{
+              //   background:
+              //     "linear-gradient(135deg, rgba(5,5,15,0.68) 0%, rgba(5,5,15,0.35) 65%, transparent 100%)",
+              //   backdropFilter: "blur(3px)",
+              //   WebkitBackdropFilter: "blur(3px)",
+              // }}
             />
             <p
               className="relative text-sm md:text-base lg:text-lg leading-relaxed"
@@ -759,10 +598,6 @@ export default function Hero() {
           animate="visible"
           style={{ y: rightY }}
         >
-          {/* Magic floating dots — fills empty space */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <MagicDots isLowPower={isLowPower} />
-          </div>
 
           {/* IMPROVED Info Cards — glassmorphism + float */}
           <InfoCard
@@ -822,16 +657,7 @@ export default function Hero() {
             </motion.div>
           ))}
 
-          {/* Fog */}
-          <div ref={heroFogRef} className="absolute bottom-[10%] right-0 w-[120%] h-[40%]">
-            <div
-              className="w-full h-full"
-              style={{
-                background: "radial-gradient(ellipse at 50% 80%, var(--accent-purple-subtle) 0%, transparent 70%)",
-                filter: isLowPower ? "blur(30px)" : "blur(50px)",
-              }}
-            />
-          </div>
+
 
           {/* Embers */}
           {(() => {

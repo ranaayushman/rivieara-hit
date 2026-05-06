@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowUp, Mail, Phone, MapPin } from "lucide-react";
 
@@ -26,25 +25,7 @@ const defaultContact: ContactInfo = {
 };
 
 export default function Footer() {
-  const [contact, setContact] = useState<ContactInfo>(defaultContact);
-
-  useEffect(() => {
-    fetch("/api/public/settings")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.settings) {
-          const s = data.settings as Record<string, string>;
-          if (s.contact_email || s.contact_phone || s.contact_address) {
-            setContact({
-              email: s.contact_email || defaultContact.email,
-              phone: s.contact_phone || defaultContact.phone,
-              address: s.contact_address || defaultContact.address,
-            });
-          }
-        }
-      })
-      .catch(() => { /* keep fallback */ });
-  }, []);
+  const contact = defaultContact;
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0 });
