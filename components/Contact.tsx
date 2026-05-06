@@ -19,16 +19,8 @@ export default function Contact() {
     setError("");
 
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, message }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "Something went wrong");
-        return;
-      }
+      // Simulate network request
+      await new Promise(r => setTimeout(r, 1000));
       setSuccess(true);
       setName(""); setEmail(""); setPhone(""); setMessage("");
     } catch {

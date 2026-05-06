@@ -10,30 +10,20 @@ import { CalendarDays, Users, Image, Clock, Zap, CreditCard, MessageSquare, Sett
 
 interface DashboardStats {
     events: number;
-    sponsors: number;
     albums: number;
     scheduleItems: number;
-    activities: number;
-    payments: number;
-    unreadInquiries: number;
 }
 
 const statCards = [
     { key: "events", label: "Events", icon: CalendarDays, href: "/admin/events", color: "text-blue-400", bg: "bg-blue-500/10" },
-    { key: "sponsors", label: "Sponsors", icon: Users, href: "/admin/sponsors", color: "text-amber-400", bg: "bg-amber-500/10" },
     { key: "albums", label: "Albums", icon: Image, href: "/admin/gallery", color: "text-purple-400", bg: "bg-purple-500/10" },
     { key: "scheduleItems", label: "Schedule Items", icon: Clock, href: "/admin/schedule", color: "text-green-400", bg: "bg-green-500/10" },
-    { key: "activities", label: "Activities", icon: Zap, href: "/admin/activities", color: "text-pink-400", bg: "bg-pink-500/10" },
-    { key: "payments", label: "Payments", icon: CreditCard, href: "/admin/payments", color: "text-cyan-400", bg: "bg-cyan-500/10" },
-    { key: "unreadInquiries", label: "Unread Messages", icon: MessageSquare, href: "/admin/contact", color: "text-red-400", bg: "bg-red-500/10" },
 ];
 
 const quickActions = [
     { label: "Add Event", href: "/admin/events", icon: CalendarDays },
-    { label: "Add Sponsor", href: "/admin/sponsors", icon: Users },
     { label: "Upload Photos", href: "/admin/gallery", icon: Image },
     { label: "Edit Schedule", href: "/admin/schedule", icon: Clock },
-    { label: "Site Settings", href: "/admin/settings", icon: Settings },
 ];
 
 export default function AdminDashboardPage() {
@@ -44,36 +34,25 @@ export default function AdminDashboardPage() {
         async function fetchAll() {
             const headers = authHeaders();
             try {
-                const [eventsRes, sponsorsRes, galleryRes, scheduleRes, activitiesRes, paymentsRes, contactRes] = await Promise.allSettled([
+                const [eventsRes, galleryRes, scheduleRes] = await Promise.allSettled([
                     fetch("/api/admin/events", { headers }),
-                    fetch("/api/admin/sponsors", { headers }),
                     fetch("/api/admin/gallery", { headers }),
                     fetch("/api/admin/schedule", { headers }),
-                    fetch("/api/admin/activities", { headers }),
-                    fetch("/api/admin/events", { headers }), // reuse for payments count placeholder
-                    fetch("/api/admin/contact", { headers }),
                 ]);
 
                 const getCount = async (res: PromiseSettledResult<Response>, key: string) => {
                     if (res.status !== "fulfilled" || !res.value.ok) return 0;
                     const d = await res.value.json();
                     if (key === "events") return (d.events || []).length;
-                    if (key === "sponsors") return (d.sponsors || []).length;
                     if (key === "albums") return (d.albums || []).length;
                     if (key === "schedule") return (d.items || []).length;
-                    if (key === "activities") return (d.activities || []).length;
-                    if (key === "contact") return (d.inquiries || []).filter((i: { is_read: boolean }) => !i.is_read).length;
                     return 0;
                 };
 
                 setStats({
                     events: await getCount(eventsRes, "events"),
-                    sponsors: await getCount(sponsorsRes, "sponsors"),
                     albums: await getCount(galleryRes, "albums"),
                     scheduleItems: await getCount(scheduleRes, "schedule"),
-                    activities: await getCount(activitiesRes, "activities"),
-                    payments: 0,
-                    unreadInquiries: await getCount(contactRes, "contact"),
                 });
             } catch { /* */ }
             finally { setLoading(false); }

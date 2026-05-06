@@ -5,17 +5,11 @@ import { Code, Music, Gamepad2, Cpu, Palette, Trophy, Camera, BookOpen, Mic2, Ro
 import { usePerformanceMode } from "@/hooks/usePerformanceMode";
 import { generateStars, generateEmbers, getPerformanceAdjustedParticles } from "@/lib/particleAnimations";
 
-interface ActivityItem {
-  title: string;
-  desc: string;
-  iconName: string;
-}
-
 const iconMap: Record<string, LucideIcon> = {
   Code, Music, Gamepad2, Cpu, Palette, Trophy, Camera, BookOpen, Mic2, Rocket, Globe, Lightbulb,
 };
 
-const fallbackActivities: ActivityItem[] = [
+const activities = [
   { title: "Hackathon", desc: "A 24-hour techno-alchemist trial. Bend the rules of logic and forge the future.", iconName: "Code" },
   { title: "Cultural Night", desc: "A royal celebration of rhythm and light. Experience breathtaking performances.", iconName: "Music" },
   { title: "Gaming Arena", desc: "Celestial battlegrounds await. Prove your supremacy in the digital colosseum.", iconName: "Gamepad2" },
@@ -66,24 +60,7 @@ const RealmAtmosphere = ({ type, isLowPower }: { type: string, isLowPower?: bool
 };
 
 export default function Activities() {
-  const [activities, setActivities] = useState<ActivityItem[]>(fallbackActivities);
 
-  useEffect(() => {
-    fetch("/api/public/activities")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.activities && data.activities.length > 0) {
-          setActivities(
-            data.activities.map((a: { title: string; description: string; icon_name: string }) => ({
-              title: a.title,
-              desc: a.description,
-              iconName: a.icon_name,
-            }))
-          );
-        }
-      })
-      .catch(() => { /* keep fallback */ });
-  }, []);
 
   const { isLowPower } = usePerformanceMode();
 
