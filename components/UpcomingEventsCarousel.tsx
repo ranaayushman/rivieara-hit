@@ -95,12 +95,10 @@ export default function UpcomingEventsCarousel() {
 
   return (
     <>
-      {/* 3. Ambient Background Glow (Animated) */}
-      <motion.div
+      {/* 3. Ambient Background Glow (Static/Simplified) */}
+      <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full pointer-events-none z-0 mix-blend-screen"
-        style={{ background: "radial-gradient(circle, rgba(212,160,23,0.06) 0%, transparent 60%)" }}
-        animate={!shouldReduceMotion && !isLowPower ? { opacity: [0.4, 0.8, 0.4] } : {}}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        style={{ background: "radial-gradient(circle, rgba(212,160,23,0.04) 0%, transparent 60%)" }}
       />
 
       {/* ── PARTICLE LAYERS ── */}
@@ -117,9 +115,10 @@ export default function UpcomingEventsCarousel() {
               top: s.y,
               background: "var(--gold-primary)",
               opacity: s.opacity,
+              willChange: "opacity"
             }}
             animate={!shouldReduceMotion && !isLowPower ? { opacity: [s.opacity, s.opacity * 0.3, s.opacity] } : {}}
-            transition={{ duration: 4 + Math.random() * 4, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 6 + Math.random() * 4, repeat: Infinity, ease: "linear" }}
           />
         ))}
 
@@ -208,9 +207,6 @@ export default function UpcomingEventsCarousel() {
                   rotateZ,
                   opacity,
                   zIndex,
-                  boxShadow: isActive ? "0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(212,160,23,0.15)" : "0 20px 40px rgba(0,0,0,0.6)",
-                  borderColor: isActive ? "var(--gold-primary)" : "var(--border-gold)",
-                  borderBottomColor: isActive ? "rgba(160,110,10,1)" : "rgba(80,50,5,1)",
                 }}
                 transition={{
                   duration: shouldReduceMotion ? 0 : (isLowPower ? 0.4 : 0.75),
@@ -227,15 +223,18 @@ export default function UpcomingEventsCarousel() {
                   borderBottomWidth: "10px",
                   borderRadius: "20px",
                   transformStyle: "preserve-3d",
+                  boxShadow: isActive ? "0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(212,160,23,0.15)" : "0 20px 40px rgba(0,0,0,0.6)",
+                  borderColor: isActive ? "var(--gold-primary)" : "var(--border-gold)",
+                  borderBottomColor: isActive ? "rgba(160,110,10,1)" : "rgba(80,50,5,1)",
+                  transition: "box-shadow 0.5s ease-out, border-color 0.5s ease-out",
+                  willChange: "transform, opacity",
                 }}
               >
                 {/* Active Card Focus Animation (Warm Glow) */}
                 {isActive && (
                   <motion.div
-                    className="absolute inset-0 rounded-[20px] pointer-events-none z-0"
-                    style={{ background: "radial-gradient(circle at center, rgba(212,160,23,0.15) 0%, transparent 70%)" }}
-                    animate={!shouldReduceMotion && !isLowPower ? { opacity: [0.5, 1, 0.5] } : {}}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute inset-0 rounded-[20px] pointer-events-none z-0 opacity-50"
+                    style={{ background: "radial-gradient(circle at center, rgba(212,160,23,0.1) 0%, transparent 70%)" }}
                   />
                 )}
 
@@ -260,6 +259,8 @@ export default function UpcomingEventsCarousel() {
                       src={event.image}
                       alt={event.title}
                       fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      priority={index === 0}
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     {/* Magical Vignette Overlay */}
@@ -270,7 +271,7 @@ export default function UpcomingEventsCarousel() {
 
                   {/* Text Content */}
                   <div className="flex flex-col items-center flex-1 w-full justify-center">
-                    <div className="px-4 py-1.5 mb-3 rounded-full border border-[rgba(212,160,23,0.4)] bg-[rgba(212,160,23,0.1)] text-[10px] sm:text-xs uppercase tracking-widest text-[var(--gold-light)] backdrop-blur-md shadow-[0_0_15px_rgba(212,160,23,0.2)]">
+                    <div className="px-4 py-1.5 mb-3 rounded-full border border-[rgba(212,160,23,0.4)] bg-[rgba(212,160,23,0.8)] text-[10px] sm:text-xs uppercase tracking-widest text-[var(--bg-primary)] shadow-[0_0_15px_rgba(212,160,23,0.2)] font-bold">
                       {event.tag}
                     </div>
 
@@ -286,14 +287,15 @@ export default function UpcomingEventsCarousel() {
                     </p>
 
                     {/* Static CTA */}
-                    {isActive && (
-                      <div className="mt-auto transition-opacity duration-500 opacity-100">
-                        <button className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-[rgba(212,160,23,0.1)] to-[rgba(139,94,0,0.2)] border border-[rgba(212,160,23,0.6)] text-[var(--gold-light)] text-sm font-semibold shadow-[0_0_20px_rgba(212,160,23,0.3)] transition-colors duration-300 hover:bg-[rgba(212,160,23,0.2)]">
-                          <Sparkles size={16} />
-                          <span>Enter Experience</span>
-                        </button>
-                      </div>
-                    )}
+                    <div 
+                      className="mt-auto transition-all duration-500" 
+                      style={{ opacity: isActive ? 1 : 0, pointerEvents: isActive ? 'auto' : 'none', transform: isActive ? 'translateY(0)' : 'translateY(10px)' }}
+                    >
+                      <button className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-[rgba(212,160,23,0.1)] to-[rgba(139,94,0,0.2)] border border-[rgba(212,160,23,0.6)] text-[var(--gold-light)] text-sm font-semibold shadow-[0_0_20px_rgba(212,160,23,0.3)] transition-colors duration-300 hover:bg-[rgba(212,160,23,0.2)]">
+                        <Sparkles size={16} />
+                        <span>Enter Experience</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </motion.article>
