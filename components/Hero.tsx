@@ -556,18 +556,18 @@ export default function Hero() {
 
         {/* ── RIGHT COLUMN — Countdown Timer ── */}
         <motion.div
-          className="hidden lg:flex flex-1 relative w-full min-h-[400px] flex-col items-center justify-start gap-4 pr-4 pt-16"
+          className="flex flex-1 relative w-full min-h-0 lg:min-h-[400px] flex-col items-center justify-start gap-4 lg:pr-4 pt-8 lg:pt-16"
           variants={containerVariants} initial="hidden" animate="visible" style={{ y: rightY }}
         >
-          {/* Magic floating dots */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {/* Magic floating dots — desktop only */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden hidden lg:block">
             <MagicDots isLowPower={isLowPower} />
           </div>
 
           {/* ── Countdown Card ── */}
           <motion.div
             variants={cardVariants}
-            className="relative w-full max-w-[380px] rounded-2xl px-8 py-8 overflow-hidden"
+            className="relative w-full max-w-[340px] sm:max-w-[380px] rounded-2xl px-6 sm:px-8 py-6 sm:py-8 overflow-hidden"
             style={{
               background: "rgba(8, 5, 22, 0.75)",
               backdropFilter: "blur(24px)",
@@ -615,9 +615,9 @@ export default function Hero() {
             </div>
           </motion.div>
 
-          {/* Lanterns */}
+          {/* Lanterns — desktop only */}
           {isMounted && activeLanterns.map((l, i) => (
-            <motion.div key={i} className="absolute z-[8]" style={{ left: l.x, bottom: "30%" }}
+            <motion.div key={i} className="absolute z-[8] hidden lg:block" style={{ left: l.x, bottom: "30%" }}
               animate={!shouldReduceMotion ? { y: [0, -10, 0] } : {}}
               transition={{ duration: l.dur, repeat: Infinity, delay: l.delay, ease: "easeInOut" }}>
               <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-px h-5"
@@ -630,20 +630,20 @@ export default function Hero() {
             </motion.div>
           ))}
 
-          {/* Fog */}
-          <div ref={heroFogRef} className="absolute bottom-[10%] right-0 w-[120%] h-[40%]">
+          {/* Fog — desktop only */}
+          <div ref={heroFogRef} className="absolute bottom-[10%] right-0 w-[120%] h-[40%] hidden lg:block">
             <div className="w-full h-full" style={{
               background: "radial-gradient(ellipse at 50% 80%, var(--accent-purple-subtle) 0%, transparent 70%)",
               filter: isLowPower ? "blur(30px)" : "blur(50px)",
             }} />
           </div>
 
-          {/* Embers */}
+          {/* Embers — desktop only */}
           {(() => {
             const { shouldRenderEmitters, emberCount } = getPerformanceAdjustedParticles(isLowPower);
             if (!shouldRenderEmitters || shouldReduceMotion) return null;
             return generateEmbers(emberCount).map((ember) => (
-              <motion.div key={ember.id} className="absolute rounded-full z-[6]"
+              <motion.div key={ember.id} className="absolute rounded-full z-[6] hidden lg:block"
                 style={{ width: 3, height: 3, background: "var(--gold-light)", right: `${ember.right}%`, bottom: `${ember.bottom}%`, willChange: "transform, opacity" }}
                 animate={{ y: [0, -70], opacity: [0, 0.8, 0] }}
                 transition={{ duration: ember.duration, repeat: Infinity, delay: ember.delay }}
