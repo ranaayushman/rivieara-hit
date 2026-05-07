@@ -78,7 +78,7 @@ export default function DetailedGallery() {
                     className={`relative rounded-xl overflow-hidden cursor-pointer group shadow-[0_0_20px_var(--gold-glow)] ring-1 ring-[var(--border-gold)] bg-[var(--surface-glass)] ${i === 0 ? "col-span-2 row-span-2 md:col-span-2 md:row-span-2 h-[200px] sm:h-[300px] md:h-[424px]" : "h-[100px] sm:h-[140px] md:h-[200px]"}`}
                     onClick={() => setFullscreenImage(img)}
                   >
-                    <Image src={img} alt={`${event.title} preview ${i + 1}`} fill className="object-cover transition-transform duration-700 group-hover:scale-110" sizes="(max-width: 768px) 50vw, 25vw" />
+                    <Image src={img} alt={`${event.title} preview ${i + 1}`} fill className="object-cover transition-transform duration-700 group-hover:scale-110" sizes={i === 0 ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 50vw, 25vw"} />
                     <div className="absolute inset-0 bg-[var(--surface-glass)] backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                       <Maximize2 className="text-[var(--gold-light)] drop-shadow-lg" size={24} />
                     </div>

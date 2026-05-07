@@ -218,7 +218,7 @@ export default function Gallery() {
                     alt={`Memory Fragment ${index + 1}`}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 768px) 80vw, 40vw"
+                    sizes="(max-width: 640px) 75vw, (max-width: 768px) 50vw, (max-width: 1024px) 40vw, 384px"
                     priority={isActive}
                   />
 
