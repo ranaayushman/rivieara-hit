@@ -10,6 +10,7 @@ import MouseGlow from "@/components/ui/MouseGlow";
 import ConditionalNavbar from "@/components/ConditionalNavbar";
 import ConditionalMain from "@/components/ConditionalMain";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
+import PageLoader from "@/components/PageLoader";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -62,6 +63,8 @@ export default function RootLayout({
         }}
       >
         <SmoothScrollProvider>
+          <PageLoader />
+
           {/* Global atmospheric layers */}
           <FogLayer />
           <ParticleLayer />
