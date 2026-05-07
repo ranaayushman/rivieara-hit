@@ -8,25 +8,25 @@ export default function PageLoader() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Simulate a smooth loading progress
+    // Fast progress to minimize LCP render delay
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
           return 100;
         }
-        // Accelerating curve — slow start, fast finish
-        const increment = prev < 60 ? 2 : prev < 85 ? 4 : 6;
+        // Fast curve — reaches 100 in ~400ms
+        const increment = prev < 50 ? 8 : 10;
         return Math.min(prev + increment, 100);
       });
-    }, 40);
+    }, 30);
 
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     if (progress >= 100) {
-      const timeout = setTimeout(() => setLoading(false), 600);
+      const timeout = setTimeout(() => setLoading(false), 200);
       return () => clearTimeout(timeout);
     }
   }, [progress]);

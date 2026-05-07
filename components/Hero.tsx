@@ -41,6 +41,16 @@ const itemVariants: Variants = {
   },
 };
 
+/* LCP-safe variant: H1 renders immediately visible (no opacity:0) to avoid
+   blocking Largest Contentful Paint. Only animates the y-transform. */
+const lcpVariants: Variants = {
+  hidden:  { y: 28 },
+  visible: {
+    y: 0,
+    transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] },
+  },
+};
+
 const cardVariants: Variants = {
   hidden:  { opacity: 0, x: 24, scale: 0.96 },
   visible: {
@@ -512,7 +522,7 @@ export default function Hero() {
             <div style={{ height: 1, width: 28, background: "rgba(212,175,55,0.45)" }} />
           </motion.div>
 
-          <motion.h1 variants={itemVariants}
+          <motion.h1 variants={lcpVariants}
             className="text-[3.5rem] sm:text-[4.5rem] md:text-[5.5rem] lg:text-[7rem] font-extrabold leading-[0.9] tracking-tighter"
             style={{ fontFamily: "var(--font-heading)" }}>
             <span style={{ color: "var(--text-primary)" }}>Riviera</span>
@@ -520,7 +530,7 @@ export default function Hero() {
             <span className="text-gradient-gold inline-block" style={{ textShadow: "0 0 40px rgba(212,160,23,0.25)" }}>2K26</span>
           </motion.h1>
 
-          <motion.h2 variants={itemVariants}
+          <motion.h2 variants={lcpVariants}
             className="text-xl md:text-2xl lg:text-3xl mt-4 tracking-[0.2em]"
             style={{ fontFamily: "var(--font-arabian)", color: "var(--gold-primary)" }}>
             Arabian Nights

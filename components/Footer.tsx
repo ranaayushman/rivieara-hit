@@ -71,7 +71,7 @@ export default function Footer() {
             </Link>
             <p
               className="mt-4 text-sm leading-relaxed max-w-sm"
-              style={{ color: "var(--text-dim)" }}
+              style={{ color: "var(--text-muted)" }}
             >
               The official website of Riviera — the annual techno-cultural fest of
               Haldia Institute of Technology. Three days of innovation, culture,
@@ -81,7 +81,7 @@ export default function Footer() {
             {/* Decorative Arabian text */}
             <p
               className="mt-4 text-xs tracking-[0.3em] uppercase"
-              style={{ fontFamily: "var(--font-arabian)", color: "var(--gold-primary)", opacity: 0.4 }}
+              style={{ fontFamily: "var(--font-arabian)", color: "var(--gold-primary)", opacity: 0.65 }}
             >
               ✦ Arabian Nights ✦
             </p>
@@ -144,7 +144,7 @@ export default function Footer() {
           className="mt-14 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4"
           style={{ borderTop: "1px solid var(--border)" }}
         >
-          <p className="text-xs" style={{ color: "var(--text-dim)" }}>
+          <p className="text-xs" style={{ color: "var(--text-muted)" }}>
             © {new Date().getFullYear()} Riviera 2026 — Haldia Institute of Technology. All rights reserved.
           </p>
 
