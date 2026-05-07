@@ -2,16 +2,27 @@ export default function JsonLd() {
   const eventSchema = {
     "@context": "https://schema.org",
     "@type": "Event",
-    name: "Riviera 2026 — Arabian Nights",
+    name: "Riviera Fest 2026 — Arabian Nights",
     alternateName: [
+      "Rivierafest",
+      "Riviera Fest",
       "Riviera Fest 2026",
+      "Rivierafest 2026",
+      "riviera fest",
+      "rivierafest",
       "Riviera HIT",
       "HIT Fest 2026",
       "Riviera Haldia",
       "HIT Haldia Fest",
+      "Riveria fest",
+      "Riveria",
+      "Riverafest",
+      "HIT Riviera fest",
+      "Riviera fest HIT",
+      "Riviera fest Haldia",
     ],
     description:
-      "Riviera 2026 is the premier Arabian Nights-themed techno-cultural fest of Haldia Institute of Technology (HIT). Featuring 50+ events including hackathons, coding competitions, workshops, robotics challenges, cultural nights, gaming tournaments, and more. Join 10,000+ students at the biggest college fest in West Bengal.",
+      "Riviera Fest 2026 (Rivierafest) is the premier Arabian Nights-themed techno-cultural fest of Haldia Institute of Technology (HIT Haldia). Riviera fest features 50+ events including hackathons, coding competitions, workshops, robotics challenges, cultural nights, gaming tournaments, and more. Join 10,000+ students at the biggest college fest in West Bengal.",
     url: "https://www.rivierafest.online",
     startDate: "2026-05-18T00:00:00+05:30",
     endDate: "2026-05-20T23:59:00+05:30",
@@ -48,18 +59,25 @@ export default function JsonLd() {
       validFrom: "2026-01-01T00:00:00+05:30",
     },
     keywords:
-      "Riviera, Riviera 2026, Riviera fest, Riviera HIT, HIT fest, Haldia fest, college fest, tech fest, cultural fest, Arabian Nights, hackathon, workshop, robotics, gaming, West Bengal",
+      "Riviera fest, Rivierafest, Riviera Fest, riviera fest, rivierafest, Riviera, Riviera 2026, Riviera fest 2026, Rivierafest 2026, Riveria fest, Riveria, Riverafest, Riviera HIT, Riviera fest HIT, HIT fest, HIT Riviera, Haldia fest, college fest, tech fest, cultural fest, Arabian Nights, hackathon, workshop, robotics, gaming, West Bengal, biggest college fest",
   };
 
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Riviera 2026 — HIT Haldia",
+    name: "Riviera Fest 2026 — Rivierafest | HIT Haldia",
     alternateName: [
+      "Rivierafest",
       "Riviera Fest",
+      "Riviera fest",
+      "rivierafest",
+      "riviera fest",
       "Riviera HIT",
       "HIT Fest",
       "Riviera Haldia Fest",
+      "Riveria fest",
+      "Riverafest",
+      "HIT Riviera fest",
     ],
     url: "https://www.rivierafest.online",
     description:
