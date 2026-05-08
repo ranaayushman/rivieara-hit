@@ -14,7 +14,7 @@ export default function PageLoader() {
         if (prev >= 100) {
           clearInterval(interval);
           return 100;
-        }
+        }    
         // Fast curve — reaches 100 in ~400ms
         const increment = prev < 50 ? 8 : 10;
         return Math.min(prev + increment, 100);

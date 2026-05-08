@@ -1,19 +1,44 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { Code, Music, Gamepad2, Cpu, Palette, Trophy, Camera, BookOpen, Mic2, Rocket, Globe, Lightbulb, Sparkles, type LucideIcon } from "lucide-react";
+import {
+  Code, Music, Gamepad2, Cpu, Palette, Trophy,
+  Camera, BookOpen, Mic2, Rocket, Globe, Lightbulb,
+  Sparkles, Compass,                          // ← Compass added
+  type LucideIcon
+} from "lucide-react";
 import { usePerformanceMode } from "@/hooks/usePerformanceMode";
 import { generateStars, generateEmbers, getPerformanceAdjustedParticles } from "@/lib/particleAnimations";
 
 const iconMap: Record<string, LucideIcon> = {
-  Code, Music, Gamepad2, Cpu, Palette, Trophy, Camera, BookOpen, Mic2, Rocket, Globe, Lightbulb,
+  Code, Music, Gamepad2, Cpu, Palette, Trophy,
+  Camera, BookOpen, Mic2, Rocket, Globe, Lightbulb,
+  Compass,                                     // ← Compass registered
 };
 
 const activities = [
-  { title: "Hackathon", desc: "A 24-hour techno-alchemist trial. Bend the rules of logic and forge the future.", iconName: "Code" },
-  { title: "Cultural Night", desc: "A royal celebration of rhythm and light. Experience breathtaking performances.", iconName: "Music" },
-  { title: "Gaming Arena", desc: "Celestial battlegrounds await. Prove your supremacy in the digital colosseum.", iconName: "Gamepad2" },
-  { title: "Tech Expo", desc: "A grand chamber of futuristic relics and visionary student innovations.", iconName: "Cpu" },
+  {
+    title: "Treasure Hunt",
+    // ✅ FIX 1 — icon changed from "Code" to "Compass"
+    // ✅ FIX 2 — "mbark" → "Embark" typo fixed
+    desc: "Embark on a mystical quest through the dunes of HIT. Decode ancient riddles and uncover the hidden treasure of Riviera 2K26.",
+    iconName: "Compass",
+  },
+  {
+    title: "Cultural Night",
+    desc: "A royal celebration of rhythm and light. Experience breathtaking performances.",
+    iconName: "Music",
+  },
+  {
+    title: "Gaming Arena",
+    desc: "Celestial battlegrounds await. Prove your supremacy in the digital colosseum.",
+    iconName: "Gamepad2",
+  },
+  {
+    title: "Tech Expo",
+    desc: "A grand chamber of futuristic relics and visionary student innovations.",
+    iconName: "Cpu",
+  },
 ];
 
 const getRealmType = (title: string, icon: string) => {
@@ -21,10 +46,11 @@ const getRealmType = (title: string, icon: string) => {
   if (text.includes("hack") || text.includes("code") || text.includes("cpu")) return "tech";
   if (text.includes("cultur") || text.includes("music") || text.includes("art")) return "cultural";
   if (text.includes("game") || text.includes("arena") || text.includes("trophy")) return "gaming";
+  if (text.includes("treasure") || text.includes("compass")) return "expo"; // treasure uses expo atmosphere
   return "expo";
 };
 
-const RealmAtmosphere = ({ type, isLowPower }: { type: string, isLowPower?: boolean }) => {
+const RealmAtmosphere = ({ type, isLowPower }: { type: string; isLowPower?: boolean }) => {
   if (isLowPower) return null;
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[inherit] z-0">
@@ -78,22 +104,45 @@ export default function Activities() {
       style={{ background: "var(--bg-primary)" }}
     >
       {/* ================= BACKGROUND LAYERS ================= */}
-      <div className="absolute inset-0 z-0" style={{ background: "radial-gradient(circle at center, var(--bg-deep) 0%, var(--bg-primary) 100%)" }} />
-      
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full pointer-events-none z-0" style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }} />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none z-0" style={{ background: "radial-gradient(circle, var(--gold-glow) 0%, transparent 60%)" }} />
+      <div
+        className="absolute inset-0 z-0"
+        style={{ background: "radial-gradient(circle at center, var(--bg-deep) 0%, var(--bg-primary) 100%)" }}
+      />
 
-      <svg className="absolute inset-0 w-full h-[150%] pointer-events-none z-0 opacity-50" preserveAspectRatio="none" viewBox="0 0 1000 1000">
-        <path d="M50 150 L250 100 L450 350 L750 200 L950 550 L650 750 L150 650 Z" stroke="rgba(212,160,23,0.2)" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <div
+        className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full pointer-events-none z-0"
+        style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }}
+      />
+      <div
+        className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none z-0"
+        style={{ background: "radial-gradient(circle, var(--gold-glow) 0%, transparent 60%)" }}
+      />
+
+      <svg
+        className="absolute inset-0 w-full h-[150%] pointer-events-none z-0 opacity-50"
+        preserveAspectRatio="none"
+        viewBox="0 0 1000 1000"
+      >
+        <path
+          d="M50 150 L250 100 L450 350 L750 200 L950 550 L650 750 L150 650 Z"
+          stroke="rgba(212,160,23,0.2)" strokeWidth="2" fill="none"
+          strokeLinecap="round" strokeLinejoin="round"
+        />
         <path d="M250 100 L150 650" stroke="rgba(212,160,23,0.2)" strokeWidth="1" fill="none" />
         <path d="M450 350 L950 550" stroke="rgba(212,160,23,0.2)" strokeWidth="1" fill="none" />
-        {[ [50,150], [250,100], [450,350], [750,200], [950,550], [650,750], [150,650], [350,150], [650,450], [250,550] ].map(([cx, cy], i) => (
+        {[
+          [50,150],[250,100],[450,350],[750,200],
+          [950,550],[650,750],[150,650],[350,150],[650,450],[250,550],
+        ].map(([cx, cy], i) => (
           <circle key={i} cx={cx} cy={cy} r="3" fill="var(--gold-primary)" />
         ))}
       </svg>
 
       <div className="absolute inset-0 z-0 opacity-[0.06] pointer-events-none mix-blend-overlay bg-noise" />
-      <div className="absolute inset-0 z-20 pointer-events-none" style={{ background: "linear-gradient(180deg, var(--bg-primary) 0%, var(--surface-glass) 100%)" }} />
+      <div
+        className="absolute inset-0 z-20 pointer-events-none"
+        style={{ background: "linear-gradient(180deg, var(--bg-primary) 0%, var(--surface-glass) 100%)" }}
+      />
 
       {/* ── PARTICLE LAYERS ── */}
       <div className="absolute inset-0 z-5 pointer-events-none overflow-hidden">
@@ -101,14 +150,25 @@ export default function Activities() {
           <div
             key={s.id}
             className="absolute rounded-full"
-            style={{ width: s.size, height: s.size, left: s.x, top: s.y, background: "var(--gold-primary)", opacity: s.opacity }}
+            style={{
+              width: s.size, height: s.size,
+              left: s.x, top: s.y,
+              background: "var(--gold-primary)",
+              opacity: s.opacity,
+            }}
           />
         ))}
         {embers.map((ember) => (
           <div
             key={ember.id}
             className="absolute rounded-full"
-            style={{ width: 3, height: 3, background: "var(--gold-light)", right: `${ember.right}%`, bottom: `${ember.bottom}%`, opacity: 0.7 }}
+            style={{
+              width: 3, height: 3,
+              background: "var(--gold-light)",
+              right: `${ember.right}%`,
+              bottom: `${ember.bottom}%`,
+              opacity: 0.7,
+            }}
           />
         ))}
       </div>
@@ -133,12 +193,11 @@ export default function Activities() {
           Fest Activities
         </h2>
 
-        {/* ✅ FIX 1 — Section subtitle: brighter color + font-weight + text-shadow */}
         <p
           className="mt-8 text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-normal"
           style={{
-            color: "rgba(220, 210, 185, 0.95)",           // warm off-white, clearly readable
-            textShadow: "0 1px 16px rgba(4, 4, 16, 0.95)", // dark halo punches text through bg
+            color: "rgba(220, 210, 185, 0.95)",
+            textShadow: "0 1px 16px rgba(4, 4, 16, 0.95)",
             letterSpacing: "0.02em",
           }}
         >
@@ -153,7 +212,12 @@ export default function Activities() {
           {activities.map((activity, index) => {
             const Icon = iconMap[activity.iconName] || Code;
             const realmType = getRealmType(activity.title, activity.iconName);
-            const layoutOffsets = ["lg:translate-y-0", "lg:translate-y-16", "lg:translate-y-8", "lg:translate-y-24"];
+            const layoutOffsets = [
+              "lg:translate-y-0",
+              "lg:translate-y-16",
+              "lg:translate-y-8",
+              "lg:translate-y-24",
+            ];
             const layoutOffset = layoutOffsets[index % 4];
 
             return (
@@ -174,17 +238,22 @@ export default function Activities() {
                 >
                   <div className="absolute inset-[12px] border border-[rgba(212,160,23,0.15)] rounded-[130px_130px_16px_16px] pointer-events-none z-10" />
                   <div className="absolute inset-[24px] border border-[rgba(212,160,23,0.08)] rounded-[120px_120px_12px_12px] pointer-events-none bg-pattern-arabian opacity-10 mix-blend-overlay" />
-                  
+
                   <RealmAtmosphere type={realmType} isLowPower={isLowPower} />
 
-                  <div className="relative z-20 flex flex-col h-full items-center w-full" style={{ transform: "translateZ(30px)" }}>
-                    
+                  <div
+                    className="relative z-20 flex flex-col h-full items-center w-full"
+                    style={{ transform: "translateZ(30px)" }}
+                  >
                     {/* Icon Medallion */}
                     <div className="w-20 h-20 rounded-full flex items-center justify-center mb-8 relative">
                       <div className="absolute inset-[-6px] border-[2px] border-dashed border-[rgba(212,160,23,0.4)] rounded-full" />
                       <div className="absolute inset-[-12px] border border-[rgba(212,160,23,0.1)] rounded-full" />
                       <div className="absolute inset-0 bg-[var(--surface-primary)] rounded-full border-2 border-[var(--gold-primary)] shadow-[0_0_20px_var(--gold-glow)]" />
-                      <Icon size={32} className="text-[var(--gold-primary)] relative z-10 drop-shadow-[0_0_15px_rgba(212,160,23,0.9)]" />
+                      <Icon
+                        size={32}
+                        className="text-[var(--gold-primary)] relative z-10 drop-shadow-[0_0_15px_rgba(212,160,23,0.9)]"
+                      />
                     </div>
 
                     {/* Title */}
@@ -192,7 +261,7 @@ export default function Activities() {
                       className="text-2xl lg:text-3xl font-extrabold mb-4 tracking-wide"
                       style={{
                         fontFamily: "var(--font-heading)",
-                        color: "var(--text-primary)",              // solid white, no transparency trick
+                        color: "var(--text-primary)",
                         textShadow: "0 2px 12px rgba(0,0,0,0.8)",
                       }}
                     >
@@ -202,12 +271,12 @@ export default function Activities() {
                     {/* Divider */}
                     <div className="w-12 h-[2px] bg-gradient-to-r from-transparent via-[rgba(212,160,23,0.6)] to-transparent mb-5" />
 
-                    {/* ✅ FIX 2 — Card description: much brighter + text-shadow */}
+                    {/* Description */}
                     <p
                       className="text-sm md:text-sm leading-relaxed flex-grow"
                       style={{
-                        color: "rgba(210, 200, 178, 0.92)",          // warm readable off-white
-                        textShadow: "0 1px 8px rgba(0, 0, 0, 0.9)", // dark halo per letter
+                        color: "rgba(210, 200, 178, 0.92)",
+                        textShadow: "0 1px 8px rgba(0, 0, 0, 0.9)",
                         fontWeight: 400,
                       }}
                     >

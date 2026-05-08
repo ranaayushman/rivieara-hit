@@ -3,7 +3,6 @@
 import { useState, FormEvent, useMemo } from "react";
 import { ArrowRight, Mail, Phone, User, MessageSquare, Check } from "lucide-react";
 import { motion } from "framer-motion";
-
 export default function Contact() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

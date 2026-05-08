@@ -16,7 +16,7 @@ interface AlbumData {
 
 const fallbackGallery: AlbumData[] = [
   { id: "cultural-night", title: "Cultural Night 2025", description: "Electrifying performances and unforgettable vibes from the main stage.", images: ["/gallery1.jpg", "/gallery2.jpg", "/gallery3.jpg", "/gallery4.jpg"] },
-  { id: "hackathon", title: "Hackathon & Tech Events", description: "24 hours of non-stop coding, innovation, and intense competition.", images: ["/gallery2.jpg", "/gallery4.jpg", "/gallery1.jpg", "/gallery3.jpg"] },
+  { id: "hackathon", title: "Non-Tech Events", description: "Experience music, dance, fashion, gaming, creativity, and unforgettable moments beyond technology.", images: ["/Gamings.jpeg", "/gaming4.jpeg", "/gaming6.jpeg", "/Gaming3.jpeg"] },
   { id: "edm-night", title: "EDM Night", description: "The crowd went wild with our guest DJs dropping the bass.", images: ["/gallery3.jpg", "/gallery1.jpg", "/gallery4.jpg", "/gallery2.jpg"] },
 ];
 
