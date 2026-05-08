@@ -16,15 +16,15 @@ interface EventData {
 
 const fallbackEvents: EventData[] = [
   {
-    title: "AI Workshop",
-    desc: "Step into the world of AI and explore how intelligent systems are transforming industries in this mystical journey of knowledge.",
-    image: "/gallery1.jpg",
+    title: "Treasure Hunt",
+    desc: "Decode clues, chase hidden paths, and race against rival teams in an adventure packed with mystery, strategy, and excitement.",
+    image: "/treasure.jpeg",
     tag: "Workshop",
   },
   {
-    title: "Hackathon",
+    title: "Gaming Tournament",
     desc: "A 24-hour coding trial. Build, innovate, and compete with the finest minds in an enchanted atmosphere of creation.",
-    image: "/gallery2.jpg",
+    image: "/gaming6.jpeg",
     tag: "Competition",
   },
   {
