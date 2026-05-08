@@ -8,7 +8,7 @@ import { usePerformanceMode } from "@/hooks/usePerformanceMode";
 import { generateStars, generateEmbers, getPerformanceAdjustedParticles } from "@/lib/particleAnimations";
 import { motion, useReducedMotion, Variants } from "framer-motion";
 
-const fallbackImages = ["/gallery2.jpg", "/Gaming3.jpeg", "/gallery3.jpg", "/gallery4.jpg", "/gallery1.jpg"];
+const fallbackImages = ["/gallery2.jpg", "/Gaming3.jpeg", "/gallery3.jpg", "/gallery4.jpg", "/gaming4.jpeg"];
 
 export default function Gallery() {
   const [images, setImages] = useState<string[]>(fallbackImages);
