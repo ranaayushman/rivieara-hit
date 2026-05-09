@@ -18,7 +18,7 @@ export function getSupabase(): SupabaseClient {
       "Missing Supabase env vars. Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.local"
     );
   }
-
+  
   _client = createClient(url, key);
   return _client;
 }

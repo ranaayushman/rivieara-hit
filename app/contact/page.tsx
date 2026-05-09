@@ -604,13 +604,13 @@ export default function ContactPage() {
             textShadow: "0 1px 8px rgba(0,0,0,0.7)",
           }}>
             Write to us at{" "}
-            <a href="mailto:info@riviera2026.com" style={{ color: "#D4A017", textDecoration: "none", fontFamily: "'Cinzel', serif" }}>
-              info@riviera2026.com
+            <a href="mailto:hithaldiariviera@gmail.com" style={{ color: "#D4A017", textDecoration: "none", fontFamily: "'Cinzel', serif" }}>
+              hithaldiariviera@gmail.com 
             </a>{" "}
             and we'll get back to you within 24 hours.
           </p>
           <a
-            href="mailto:info@riviera2026.com"
+            href="mailto:hithaldiariviera@gmail.com"
             style={{
               display: "inline-flex",
               alignItems: "center",

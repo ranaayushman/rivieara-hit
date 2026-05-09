@@ -15,9 +15,9 @@ interface AlbumData {
 }
 
 const fallbackGallery: AlbumData[] = [
-  { id: "cultural-night", title: "Cultural Night 2025", description: "Electrifying performances and unforgettable vibes from the main stage.", images: ["/gallery2.jpg", "/gallery3.jpg", "/gallery4.jpg"] },
+  { id: "cultural- Event", title: "Cultural Night 2025", description: "Electrifying performances and unforgettable vibes from the main stage.", images: ["/gallery2.jpg", "/gallery3.jpg", "/gallery4.jpg","/cul4.jpg","/cul5.jpg","/cul6.jpg","/cul7.jpg","/cul8.jpg","/cul9.jpg","/cul10.jpg","/cul11.jpg","/cul12.jpg","/cul13.jpg","/cul14.jpg"] },
   { id: "hackathon", title: "Non-Tech Events", description: "Experience music, dance, fashion, gaming, creativity, and unforgettable moments beyond technology.", images: ["/Gamings.jpeg", "/gaming4.jpeg", "/gaming6.jpeg", "/Gaming3.jpeg"] },
-  { id: "edm-night", title: "EDM Night", description: "The crowd went wild with our guest DJs dropping the bass.", images: ["/gallery3.jpg", "/gallery4.jpg", "/gallery2.jpg"] },
+  { id: "edm-night", title: "EDM Night", description: "The crowd went wild with our guest DJs dropping the bass.", images: ["/cul.jpg", "/cul1.jpg", "/cul2.jpg","/cul3.jpg", "/cul15.jpg","/cul16.jpg","/cul17.jpg","/cul18.jpg","/cul19.jpg","/cul20.jpg","/cul21.jpg","/cul22.jpg","/cul23.jpg","/cul24.jpg","/cul25.jpg"] },
 ];
 
 export default function DetailedGallery() {
