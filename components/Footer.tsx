@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUp, Mail, Phone, MapPin } from "lucide-react";
+import { ArrowUp, Mail, Phone, MapPin, Zap } from "lucide-react";
 
 const quickLinks = [
   { label: "Home", href: "/" },
@@ -32,80 +32,92 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative" style={{ background: "var(--surface-primary)" }}>
-      {/* Top gold gradient line */}
+    <footer
+      className="relative"
+      style={{ background: "#050507" }}
+    >
+      {/* Top crimson gradient line */}
       <div
         className="absolute inset-x-0 top-0 h-px"
         style={{
-          background: "linear-gradient(90deg, transparent, var(--gold-primary), transparent)",
-          opacity: 0.3,
+          background: "linear-gradient(90deg, transparent, rgba(255,32,78,0.2), transparent)",
         }}
       />
 
-      {/* Subtle glow at top */}
+      {/* Subtle crimson glow at top */}
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px]"
         style={{
-          background: "radial-gradient(ellipse at center top, rgba(212, 160, 23, 0.05), transparent 70%)",
+          background: "radial-gradient(ellipse at center top, rgba(255,32,78,0.02), transparent 70%)",
         }}
         aria-hidden="true"
       />
 
-      <div className="section-container py-16 md:py-20 relative z-10">
+      {/* Noise */}
+      <div className="absolute inset-0 bg-noise opacity-[0.02] pointer-events-none" />
+
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8">
 
           {/* ── Brand ── */}
           <div className="md:col-span-5">
             <Link href="/" className="inline-block group">
               <h2
-                className="text-2xl md:text-3xl font-extrabold tracking-tight"
+                className="text-2xl md:text-3xl font-black tracking-tight"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
+                <span style={{ color: "#F5F5F5" }}>RIVIERA</span>{" "}
                 <span
-                  className="text-gradient-gold"
+                  style={{
+                    background: "linear-gradient(135deg, #FF204E, #FF2E63)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    fontFamily: "var(--font-tactical)",
+                  }}
                 >
-                  Riviera
-                </span>{" "}
-                <span style={{ color: "var(--gold-primary)" }}>2026</span>
+                  2026
+                </span>
               </h2>
             </Link>
             <p
               className="mt-4 text-sm leading-relaxed max-w-sm"
-              style={{ color: "var(--text-muted)" }}
+              style={{ color: "rgba(245,245,245,0.35)" }}
             >
               The official website of Riviera — the annual techno-cultural fest of
-              Haldia Institute of Technology. Three days of innovation, culture,
-              and unforgettable memories.
+              Haldia Institute of Technology. Three days of competition, culture,
+              and relentless challenges.
             </p>
 
-            {/* Decorative Arabian text */}
+            {/* Tactical branding */}
             <p
-              className="mt-4 text-xs tracking-[0.3em] uppercase"
-              style={{ fontFamily: "var(--font-arabian)", color: "var(--gold-primary)", opacity: 0.65 }}
+              className="mt-4 text-[9px] tracking-[0.4em] uppercase font-bold"
+              style={{ fontFamily: "var(--font-tactical)", color: "rgba(255,32,78,0.35)" }}
             >
-              ✦ Arabian Nights ✦
+              ◆ CULLING GAMES ◆
             </p>
           </div>
 
           {/* ── Quick Links ── */}
           <div className="md:col-span-3">
             <h3
-              className="text-sm font-semibold uppercase tracking-[0.15em] mb-5"
-              style={{ color: "var(--gold-primary)" }}
+              className="text-[10px] font-bold uppercase tracking-[0.25em] mb-5"
+              style={{ color: "rgba(255,32,78,0.5)", fontFamily: "var(--font-tactical)" }}
             >
-              Quick Links
+              NAVIGATION
             </h3>
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm inline-flex items-center gap-1.5 group"
-                    style={{ color: "var(--text-muted)" }}
+                    className="text-sm inline-flex items-center gap-2 group transition-colors duration-200"
+                    style={{ color: "rgba(245,245,245,0.35)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = "rgba(245,245,245,0.75)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(245,245,245,0.35)"; }}
                   >
                     <span
-                      className="w-0 h-px"
-                      style={{ background: "var(--gold-primary)" }}
+                      className="w-0 group-hover:w-3 h-px transition-all duration-200"
+                      style={{ background: "#FF204E" }}
                     />
                     {link.label}
                   </Link>
@@ -117,23 +129,23 @@ export default function Footer() {
           {/* ── Contact ── */}
           <div className="md:col-span-4">
             <h3
-              className="text-sm font-semibold uppercase tracking-[0.15em] mb-5"
-              style={{ color: "var(--gold-primary)" }}
+              className="text-[10px] font-bold uppercase tracking-[0.25em] mb-5"
+              style={{ color: "rgba(255,32,78,0.5)", fontFamily: "var(--font-tactical)" }}
             >
-              Get in Touch
+              COMMUNICATIONS
             </h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <Mail size={16} style={{ color: "var(--gold-primary)" }} className="mt-0.5 flex-shrink-0" />
-                <span className="text-sm" style={{ color: "var(--text-muted)" }}>{contact.email}</span>
+                <Mail size={14} style={{ color: "rgba(255,32,78,0.4)" }} className="mt-0.5 flex-shrink-0" />
+                <span className="text-sm" style={{ color: "rgba(245,245,245,0.35)" }}>{contact.email}</span>
               </li>
               <li className="flex items-start gap-3">
-                <Phone size={16} style={{ color: "var(--gold-primary)" }} className="mt-0.5 flex-shrink-0" />
-                <span className="text-sm" style={{ color: "var(--text-muted)" }}>{contact.phone}</span>
+                <Phone size={14} style={{ color: "rgba(255,32,78,0.4)" }} className="mt-0.5 flex-shrink-0" />
+                <span className="text-sm" style={{ color: "rgba(245,245,245,0.35)" }}>{contact.phone}</span>
               </li>
               <li className="flex items-start gap-3">
-                <MapPin size={16} style={{ color: "var(--gold-primary)" }} className="mt-0.5 flex-shrink-0" />
-                <span className="text-sm whitespace-pre-line" style={{ color: "var(--text-muted)" }}>{contact.address}</span>
+                <MapPin size={14} style={{ color: "rgba(255,32,78,0.4)" }} className="mt-0.5 flex-shrink-0" />
+                <span className="text-sm whitespace-pre-line" style={{ color: "rgba(245,245,245,0.35)" }}>{contact.address}</span>
               </li>
             </ul>
           </div>
@@ -142,23 +154,34 @@ export default function Footer() {
         {/* ── Bottom bar ── */}
         <div
           className="mt-14 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4"
-          style={{ borderTop: "1px solid var(--border)" }}
+          style={{ borderTop: "1px solid rgba(255,32,78,0.06)" }}
         >
-          <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+          <p className="text-xs flex items-center gap-2" style={{ color: "rgba(245,245,245,0.2)" }}>
+            <Zap size={10} className="text-[#FF204E] opacity-30" />
             © {new Date().getFullYear()} Riviera 2026 — Haldia Institute of Technology. All rights reserved.
           </p>
 
           <button
             onClick={scrollToTop}
-            className="group w-10 h-10 rounded-full flex items-center justify-center"
+            className="group w-9 h-9 rounded-sm flex items-center justify-center transition-all duration-200"
             style={{
-              border: "1px solid var(--border-gold)",
-              color: "var(--text-dim)",
-              background: "var(--gold-subtle)",
+              border: "1px solid rgba(255,32,78,0.12)",
+              color: "rgba(245,245,245,0.3)",
+              background: "rgba(255,32,78,0.04)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255,32,78,0.3)";
+              e.currentTarget.style.color = "rgba(245,245,245,0.6)";
+              e.currentTarget.style.background = "rgba(255,32,78,0.08)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255,32,78,0.12)";
+              e.currentTarget.style.color = "rgba(245,245,245,0.3)";
+              e.currentTarget.style.background = "rgba(255,32,78,0.04)";
             }}
             aria-label="Scroll to top"
           >
-            <ArrowUp size={16} />
+            <ArrowUp size={14} />
           </button>
         </div>
       </div>
