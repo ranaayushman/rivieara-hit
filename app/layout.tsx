@@ -2,6 +2,8 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { Cinzel } from "next/font/google";
 import { El_Messiri } from "next/font/google";
+import { Poppins } from "next/font/google";
+import { Rajdhani } from "next/font/google";
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import ParticleLayer from "@/components/ui/ParticleLayer";
@@ -31,6 +33,20 @@ const elMessiri = El_Messiri({
   display: "swap",
   variable: "--font-messiri",
   weight: ["400", "500", "600", "700"],
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-poppins",
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+const rajdhani = Rajdhani({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-rajdhani",
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -164,7 +180,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`theme-night ${inter.variable} ${cinzel.variable} ${elMessiri.variable}`}
+      className={`theme-night ${inter.variable} ${cinzel.variable} ${elMessiri.variable} ${poppins.variable} ${rajdhani.variable}`}
     >
       <head>
         <JsonLd />

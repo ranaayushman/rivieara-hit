@@ -258,9 +258,9 @@ export default function Gallery() {
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
       >
-        <Link href="/gallery" passHref legacyBehavior>
-          <motion.a 
-            className="group relative inline-flex items-center justify-center w-[220px] h-[56px] rounded-full overflow-hidden"
+        <Link href="/gallery" className="group relative inline-flex items-center justify-center w-[220px] h-[56px] rounded-full overflow-hidden">
+          <motion.span 
+            className="inline-flex items-center justify-center w-full h-full"
             whileHover={!shouldReduceMotion && !isLowPower ? { y: -2, scale: 1.02 } : {}}
             transition={{ duration: 0.3 }}
           >
@@ -274,7 +274,7 @@ export default function Gallery() {
                 <ArrowRight size={14} className="text-[var(--gold-light)]" />
               </div>
             </div>
-          </motion.a>
+          </motion.span>
         </Link>
       </motion.div>
 
