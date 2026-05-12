@@ -88,6 +88,84 @@ const itemVariants: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
 };
 
+/* ── Fullscreen Lightbox with Escape + Click-outside ── */
+function FullscreenLightbox({ image, onClose }: { image: string; onClose: () => void }) {
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKey);
+    // Prevent body scroll when lightbox is open
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[60] flex flex-col items-center justify-center p-4 sm:p-8"
+      style={{ background: "rgba(5,5,7,0.96)", backdropFilter: "blur(10px)" }}
+      onClick={onClose}
+    >
+      {/* Close button — large and visible */}
+      <button
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
+        className="absolute top-5 right-5 sm:top-6 sm:right-6 w-11 h-11 rounded-sm flex items-center justify-center z-20 transition-all duration-200"
+        style={{
+          background: "rgba(255,32,78,0.1)",
+          border: "1px solid rgba(255,32,78,0.3)",
+          color: "rgba(245,245,245,0.7)",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "rgba(255,32,78,0.2)";
+          e.currentTarget.style.borderColor = "rgba(255,32,78,0.5)";
+          e.currentTarget.style.color = "#F5F5F5";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "rgba(255,32,78,0.1)";
+          e.currentTarget.style.borderColor = "rgba(255,32,78,0.3)";
+          e.currentTarget.style.color = "rgba(245,245,245,0.7)";
+        }}
+        aria-label="Close image"
+      >
+        <X size={20} />
+      </button>
+
+      {/* Image container */}
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        className="relative w-full max-w-6xl h-full max-h-[85vh] rounded-sm overflow-hidden"
+        style={{
+          border: "1px solid rgba(255,32,78,0.12)",
+          boxShadow: "0 0 50px rgba(255,32,78,0.05)",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Image src={image} alt="Fullscreen view" fill className="object-contain" sizes="100vw" priority />
+      </motion.div>
+
+      {/* "Tap anywhere to close" hint */}
+      <motion.p
+        className="mt-4 text-[9px] tracking-[0.3em] uppercase font-bold"
+        style={{ color: "rgba(245,245,245,0.15)", fontFamily: "var(--font-tactical)" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+      >
+        TAP ANYWHERE TO CLOSE • ESC
+      </motion.p>
+    </motion.div>
+  );
+}
+
 /* ═══════════════════════════════════════════════
    DETAILED GALLERY — SURVEILLANCE ARCHIVE
 ═══════════════════════════════════════════════ */
@@ -425,39 +503,10 @@ export default function DetailedGallery() {
       {/* ═══ FULLSCREEN LIGHTBOX ═══ */}
       <AnimatePresence>
         {fullscreenImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-8"
-            style={{ background: "rgba(5,5,7,0.95)", backdropFilter: "blur(8px)" }}
-            onClick={() => setFullscreenImage(null)}
-          >
-            <button
-              onClick={(e) => { e.stopPropagation(); setFullscreenImage(null); }}
-              className="absolute top-6 right-6 w-10 h-10 rounded-sm flex items-center justify-center z-10 transition-all duration-200"
-              style={{
-                background: "rgba(255,32,78,0.06)",
-                border: "1px solid rgba(255,32,78,0.2)",
-                color: "rgba(245,245,245,0.5)",
-              }}
-            >
-              <X size={18} />
-            </button>
-            <motion.div
-              initial={{ scale: 0.95 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.95 }}
-              className="relative w-full max-w-6xl h-full max-h-[85vh] rounded-sm overflow-hidden"
-              style={{
-                border: "1px solid rgba(255,32,78,0.12)",
-                boxShadow: "0 0 40px rgba(255,32,78,0.04)",
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Image src={fullscreenImage} alt="Fullscreen view" fill className="object-contain" sizes="100vw" priority />
-            </motion.div>
-          </motion.div>
+          <FullscreenLightbox
+            image={fullscreenImage}
+            onClose={() => setFullscreenImage(null)}
+          />
         )}
       </AnimatePresence>
     </>
