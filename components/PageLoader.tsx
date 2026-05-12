@@ -3,31 +3,43 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+/* ── Boot sequence text lines ── */
+const BOOT_LINES = [
+  "SYSTEM LINK — ESTABLISHED",
+  "BARRIER PROTOCOL — ACTIVE",
+  "DOMAIN VERIFIED — RIVIERA:2026",
+  "PARTICIPANT ACCESS — GRANTED",
+];
+
 export default function PageLoader() {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [visibleLines, setVisibleLines] = useState(0);
 
+  /* Fast progress ~500ms total */
   useEffect(() => {
-    // Fast progress to minimize LCP render delay
     const interval = setInterval(() => {
       setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          return 100;
-        }    
-        // Fast curve — reaches 100 in ~400ms
-        const increment = prev < 50 ? 8 : 10;
-        return Math.min(prev + increment, 100);
+        if (prev >= 100) { clearInterval(interval); return 100; }
+        return Math.min(prev + (prev < 50 ? 7 : 9), 100);
       });
     }, 30);
-
     return () => clearInterval(interval);
   }, []);
 
+  /* Stagger boot lines */
+  useEffect(() => {
+    const timers = BOOT_LINES.map((_, i) =>
+      setTimeout(() => setVisibleLines(i + 1), 80 + i * 90)
+    );
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  /* Dismiss after complete */
   useEffect(() => {
     if (progress >= 100) {
-      const timeout = setTimeout(() => setLoading(false), 200);
-      return () => clearTimeout(timeout);
+      const t = setTimeout(() => setLoading(false), 250);
+      return () => clearTimeout(t);
     }
   }, [progress]);
 
@@ -35,287 +47,208 @@ export default function PageLoader() {
     <AnimatePresence>
       {loading && (
         <motion.div
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
-          style={{ background: "var(--bg-primary)" }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center"
+          style={{ background: "#050507" }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: [0.4, 0, 0, 1] }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         >
-          {/* Deep background radial */}
+          {/* ── BACKGROUND LAYERS ── */}
+
+          {/* Grid */}
+          <div
+            className="absolute inset-0 pointer-events-none opacity-[0.02]"
+            style={{
+              backgroundImage: "linear-gradient(rgba(255,32,78,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,32,78,0.2) 1px, transparent 1px)",
+              backgroundSize: "50px 50px",
+            }}
+          />
+
+          {/* Horizontal scan line */}
+          <motion.div
+            className="absolute left-0 right-0 h-[1px] pointer-events-none z-20"
+            style={{ background: "linear-gradient(90deg, transparent 10%, rgba(255,32,78,0.15) 50%, transparent 90%)" }}
+            animate={{ top: ["0%", "100%"] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          />
+
+          {/* Scanlines */}
+          <div
+            className="absolute inset-0 pointer-events-none opacity-[0.015]"
+            style={{
+              backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.04) 2px, rgba(255,255,255,0.04) 4px)",
+            }}
+          />
+
+          {/* Vignette */}
           <div
             className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(ellipse at center, var(--bg-deep) 0%, var(--bg-primary) 70%)",
-            }}
+            style={{ background: "radial-gradient(ellipse 60% 55% at 50% 50%, transparent 30%, rgba(5,5,7,0.7) 100%)" }}
           />
 
-          {/* Ambient moon glow */}
-          <div
-            className="absolute top-[10%] right-[15%] w-[300px] h-[300px] md:w-[500px] md:h-[500px] rounded-full pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(circle, rgba(147,197,253,0.08) 0%, transparent 60%)",
-            }}
-          />
-
-          {/* Gold atmospheric glow behind the emblem */}
+          {/* Crimson ambient */}
           <motion.div
-            className="absolute w-[400px] h-[400px] md:w-[600px] md:h-[600px] rounded-full pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(circle, rgba(255,181,71,0.06) 0%, transparent 60%)",
-            }}
+            className="absolute w-[350px] h-[350px] rounded-full pointer-events-none"
+            style={{ background: "radial-gradient(circle, rgba(255,32,78,0.04) 0%, transparent 60%)" }}
             animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.8, 0.4] }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           />
 
-          {/* ─── Central Emblem ─── */}
-          <div className="relative z-10 flex flex-col items-center">
-            {/* Ornamental crescent + star */}
+          {/* ── CONTENT ── */}
+          <div className="relative z-10 flex flex-col items-center w-full max-w-md px-6">
+
+            {/* Top tactical label */}
             <motion.div
-              className="relative w-28 h-28 md:w-36 md:h-36 mb-8"
-              initial={{ opacity: 0, scale: 0.6 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            >
-              {/* Outer rotating ring */}
-              <motion.svg
-                viewBox="0 0 120 120"
-                className="absolute inset-0 w-full h-full"
-                animate={{ rotate: 360 }}
-                transition={{
-                  duration: 12,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              >
-                <defs>
-                  <linearGradient
-                    id="ring-grad"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="100%"
-                  >
-                    <stop offset="0%" stopColor="var(--gold-light)" />
-                    <stop offset="50%" stopColor="var(--gold-primary)" />
-                    <stop offset="100%" stopColor="var(--gold-deep)" />
-                  </linearGradient>
-                </defs>
-                <circle
-                  cx="60"
-                  cy="60"
-                  r="55"
-                  fill="none"
-                  stroke="url(#ring-grad)"
-                  strokeWidth="1.5"
-                  strokeDasharray="12 8"
-                  opacity="0.6"
-                />
-              </motion.svg>
-
-              {/* Inner counter-rotating ring */}
-              <motion.svg
-                viewBox="0 0 120 120"
-                className="absolute inset-0 w-full h-full"
-                animate={{ rotate: -360 }}
-                transition={{
-                  duration: 18,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              >
-                <circle
-                  cx="60"
-                  cy="60"
-                  r="45"
-                  fill="none"
-                  stroke="var(--gold-primary)"
-                  strokeWidth="0.8"
-                  strokeDasharray="6 14"
-                  opacity="0.35"
-                />
-              </motion.svg>
-
-              {/* Central crescent moon + star */}
-              <svg
-                viewBox="0 0 120 120"
-                className="absolute inset-0 w-full h-full"
-              >
-                <defs>
-                  <linearGradient
-                    id="crescent-grad"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="100%"
-                  >
-                    <stop offset="0%" stopColor="var(--gold-light)" />
-                    <stop offset="100%" stopColor="var(--gold-deep)" />
-                  </linearGradient>
-                  <filter id="glow">
-                    <feGaussianBlur stdDeviation="2" result="blur" />
-                    <feMerge>
-                      <feMergeNode in="blur" />
-                      <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                  </filter>
-                </defs>
-                {/* Crescent */}
-                <path
-                  d="M 52 30 A 28 28 0 1 0 52 90 A 22 22 0 1 1 52 30"
-                  fill="url(#crescent-grad)"
-                  filter="url(#glow)"
-                  opacity="0.9"
-                />
-                {/* Star */}
-                <polygon
-                  points="78,38 80,44 86,44 81,48 83,54 78,50 73,54 75,48 70,44 76,44"
-                  fill="var(--gold-light)"
-                  filter="url(#glow)"
-                  opacity="0.85"
-                />
-              </svg>
-
-              {/* Pulsing aura behind the emblem */}
-              <motion.div
-                className="absolute inset-[-20%] rounded-full pointer-events-none"
-                style={{
-                  background:
-                    "radial-gradient(circle, rgba(255,181,71,0.12) 0%, transparent 70%)",
-                }}
-                animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }}
-                transition={{
-                  duration: 2.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-            </motion.div>
-
-            {/* Title text */}
-            <motion.h1
-              className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-wider mb-2"
-              style={{
-                fontFamily: "var(--font-heading)",
-                color: "var(--text-primary)",
-                textShadow:
-                  "0 0 30px rgba(255,181,71,0.3), 0 2px 8px rgba(0,0,0,0.8)",
-              }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
-            >
-              RIVIERA
-            </motion.h1>
-
-            <motion.p
-              className="text-[10px] sm:text-xs tracking-[0.5em] uppercase mb-10"
-              style={{
-                fontFamily: "var(--font-arabian)",
-                color: "var(--gold-primary)",
-                opacity: 0.7,
-              }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.7 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-            >
-              Arabian Nights
-            </motion.p>
-
-            {/* ─── Progress bar ─── */}
-            <motion.div
-              className="relative w-48 sm:w-56 md:w-64 h-[2px] overflow-hidden rounded-full"
-              style={{ background: "rgba(255,181,71,0.1)" }}
-              initial={{ opacity: 0, scaleX: 0.6 }}
-              animate={{ opacity: 1, scaleX: 1 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <motion.div
-                className="absolute inset-y-0 left-0 rounded-full"
-                style={{
-                  background:
-                    "linear-gradient(90deg, var(--gold-deep), var(--gold-primary), var(--gold-light))",
-                  boxShadow: "0 0 12px rgba(255,181,71,0.5)",
-                  width: `${progress}%`,
-                  transition: "width 0.15s linear",
-                }}
-              />
-              {/* Bright tip glow */}
-              <div
-                className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full pointer-events-none"
-                style={{
-                  left: `calc(${progress}% - 6px)`,
-                  background:
-                    "radial-gradient(circle, var(--gold-light) 0%, transparent 70%)",
-                  transition: "left 0.15s linear",
-                  opacity: progress < 100 ? 1 : 0,
-                }}
-              />
-            </motion.div>
-
-            {/* Loading text */}
-            <motion.p
-              className="mt-5 text-[10px] tracking-[0.35em] uppercase"
-              style={{ color: "var(--text-dim)" }}
+              className="flex items-center gap-3 mb-8"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
+              transition={{ duration: 0.3 }}
             >
-              {progress < 100 ? "Unveiling the Realm..." : "Enter"}
+              <div style={{ height: 1, width: 20, background: "rgba(255,32,78,0.25)" }} />
+              <p
+                className="text-[8px] tracking-[0.5em] uppercase font-bold"
+                style={{ fontFamily: "var(--font-tactical)", color: "rgba(255,32,78,0.4)" }}
+              >
+                ◆ DOMAIN INITIALIZATION ◆
+              </p>
+              <div style={{ height: 1, width: 20, background: "rgba(255,32,78,0.25)" }} />
+            </motion.div>
+
+            {/* Main title — glitch-style */}
+            <motion.div
+              className="relative mb-3"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <h1
+                className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-center"
+                style={{
+                  fontFamily: "var(--font-heading)",
+                  color: "#F5F5F5",
+                  textShadow: "0 0 20px rgba(255,32,78,0.1)",
+                }}
+              >
+                RIVIERA
+              </h1>
+              {/* Glitch duplicate — offset crimson */}
+              <motion.h1
+                className="absolute inset-0 text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-center pointer-events-none select-none"
+                style={{
+                  fontFamily: "var(--font-heading)",
+                  color: "transparent",
+                  WebkitTextStroke: "0.5px rgba(255,32,78,0.15)",
+                }}
+                animate={{ x: [-1, 1, 0, -1], opacity: [0.3, 0.5, 0.3, 0.4] }}
+                transition={{ duration: 0.3, repeat: Infinity, ease: "linear" }}
+                aria-hidden="true"
+              >
+                RIVIERA
+              </motion.h1>
+            </motion.div>
+
+            {/* Subtitle */}
+            <motion.p
+              className="text-[9px] tracking-[0.5em] uppercase font-bold mb-10 text-center"
+              style={{ fontFamily: "var(--font-tactical)", color: "#FF204E", opacity: 0.45 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.45 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+            >
+              THE CULLING GAMES
+            </motion.p>
+
+            {/* ── Boot sequence terminal ── */}
+            <div className="w-full mb-8">
+              {BOOT_LINES.map((line, i) => (
+                <motion.div
+                  key={i}
+                  className="flex items-center gap-2 py-[3px]"
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={i < visibleLines ? { opacity: 1, x: 0 } : {}}
+                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <motion.span
+                    className="w-1 h-1 rounded-full flex-shrink-0"
+                    style={{
+                      background: i < visibleLines ? "#FF204E" : "transparent",
+                      boxShadow: i < visibleLines ? "0 0 4px rgba(255,32,78,0.4)" : "none",
+                    }}
+                    animate={i < visibleLines ? { opacity: [0.4, 1, 0.4] } : {}}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 }}
+                  />
+                  <span
+                    className="text-[8px] tracking-[0.2em] uppercase font-bold"
+                    style={{
+                      fontFamily: "var(--font-tactical)",
+                      color: i < visibleLines ? "rgba(245,245,245,0.25)" : "transparent",
+                    }}
+                  >
+                    {line}
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* ── Progress bar ── */}
+            <div className="w-full">
+              <div className="flex items-center justify-between mb-2">
+                <span
+                  className="text-[7px] tracking-[0.3em] uppercase font-bold"
+                  style={{ fontFamily: "var(--font-tactical)", color: "rgba(255,32,78,0.3)" }}
+                >
+                  LOADING
+                </span>
+                <span
+                  className="text-[8px] tracking-[0.15em] font-bold tabular-nums"
+                  style={{ fontFamily: "var(--font-tactical)", color: "rgba(255,32,78,0.4)" }}
+                >
+                  {progress}%
+                </span>
+              </div>
+              <div
+                className="relative w-full h-[2px] overflow-hidden"
+                style={{ background: "rgba(255,32,78,0.06)" }}
+              >
+                <div
+                  className="absolute inset-y-0 left-0"
+                  style={{
+                    background: "linear-gradient(90deg, #A91032, #FF204E, #FF2E63)",
+                    boxShadow: "0 0 8px rgba(255,32,78,0.35)",
+                    width: `${progress}%`,
+                    transition: "width 0.15s linear",
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Status text */}
+            <motion.p
+              className="mt-4 text-[8px] tracking-[0.4em] uppercase font-bold"
+              style={{ color: "rgba(245,245,245,0.15)", fontFamily: "var(--font-tactical)" }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              {progress < 100 ? "INITIALIZING DOMAIN..." : "◆ ENTER ◆"}
             </motion.p>
           </div>
 
-          {/* Corner ornamental dots */}
+          {/* ── Corner brackets ── */}
           {[
-            "top-6 left-6",
-            "top-6 right-6",
-            "bottom-6 left-6",
-            "bottom-6 right-6",
-          ].map((pos, i) => (
+            { pos: "top-4 left-4", border: "border-t border-l" },
+            { pos: "top-4 right-4", border: "border-t border-r" },
+            { pos: "bottom-4 left-4", border: "border-b border-l" },
+            { pos: "bottom-4 right-4", border: "border-b border-r" },
+          ].map((c, i) => (
             <motion.div
               key={i}
-              className={`absolute ${pos} w-1.5 h-1.5 rounded-full`}
-              style={{ background: "var(--gold-primary)" }}
+              className={`absolute ${c.pos} w-6 h-6 ${c.border} pointer-events-none`}
+              style={{ borderColor: "rgba(255,32,78,0.1)" }}
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.3 }}
-              transition={{ delay: 0.2 + i * 0.1 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 + i * 0.06 }}
             />
           ))}
-
-          {/* Corner ornamental lines */}
-          <motion.div
-            className="absolute top-6 left-6 w-12 h-12 border-t border-l pointer-events-none"
-            style={{ borderColor: "rgba(255,181,71,0.15)" }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          />
-          <motion.div
-            className="absolute top-6 right-6 w-12 h-12 border-t border-r pointer-events-none"
-            style={{ borderColor: "rgba(255,181,71,0.15)" }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          />
-          <motion.div
-            className="absolute bottom-6 left-6 w-12 h-12 border-b border-l pointer-events-none"
-            style={{ borderColor: "rgba(255,181,71,0.15)" }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          />
-          <motion.div
-            className="absolute bottom-6 right-6 w-12 h-12 border-b border-r pointer-events-none"
-            style={{ borderColor: "rgba(255,181,71,0.15)" }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-          />
         </motion.div>
       )}
     </AnimatePresence>
