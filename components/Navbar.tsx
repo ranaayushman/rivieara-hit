@@ -119,7 +119,7 @@ export default function Navbar() {
               }}
             >
               <Image
-                src="/logo.png"
+                src="/logojjk.png"
                 alt="Riviera Logo"
                 fill
                 className="object-cover"
