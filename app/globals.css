@@ -99,7 +99,7 @@
   --font-heading:  var(--font-cinzel), 'Cinzel', serif;
   --font-arabian:  var(--font-messiri), 'El Messiri', sans-serif;
   --font-body:     var(--font-poppins), var(--font-inter), 'Poppins', 'Inter', system-ui, sans-serif;
-  --font-tactical: var(--font-rajdhani), 'Rajdhani', sans-serif;
+  --font-tactical: var(--font-jjk), var(--font-rajdhani), 'Rajdhani', sans-serif;
 
   /* ── Transitions ───────────────────────────────────────────────── */
   --ease-expo:     cubic-bezier(0.16, 1, 0.3, 1);
@@ -424,6 +424,28 @@ body {
 
 .culling-btn-secondary:hover svg {
   color: rgba(255, 32, 78, 0.7) !important;
+}
+
+/* ── Culling Info Card Hover ── */
+.culling-info-card:hover {
+  border-color: rgba(255, 32, 78, 0.3) !important;
+  background: rgba(255, 32, 78, 0.04) !important;
+  box-shadow: 0 0 20px rgba(255, 32, 78, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  transform: translateY(-2px);
+}
+
+.culling-nav-btn:hover {
+  border-color: rgba(255, 32, 78, 0.35) !important;
+  background: rgba(255, 32, 78, 0.06) !important;
+  box-shadow: 0 0 12px rgba(255, 32, 78, 0.08);
+}
+
+.culling-nav-btn.prev:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)) !important;
+}
+
+.culling-nav-btn.next:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)) !important;
 }
 
 /* ================================================================== */

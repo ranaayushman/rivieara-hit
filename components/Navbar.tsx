@@ -91,14 +91,14 @@ export default function Navbar() {
           DESKTOP + TABLET NAVBAR
       ════════════════════════════════════════ */}
       <nav
-        className="fixed top-4 inset-x-4 md:inset-x-8 z-50 transition-all duration-500 rounded-full"
+        className="fixed top-4 inset-x-4 md:inset-x-8 z-50 transition-all duration-500 rounded-sm"
         style={{
-          background: scrolled ? "var(--surface-glass)" : "rgba(5, 5, 5, 0.20)",
-          backdropFilter: scrolled ? "blur(24px)" : "blur(8px)",
-          WebkitBackdropFilter: scrolled ? "blur(24px)" : "blur(8px)",
-          border: `1px solid ${scrolled ? "var(--border-gold)" : "rgba(212,160,23,0.05)"}`,
+          background: scrolled ? "rgba(5,5,7,0.85)" : "rgba(5,5,7,0.25)",
+          backdropFilter: scrolled ? "blur(20px)" : "blur(6px)",
+          WebkitBackdropFilter: scrolled ? "blur(20px)" : "blur(6px)",
+          border: `1px solid ${scrolled ? "rgba(255,32,78,0.1)" : "rgba(255,32,78,0.03)"}`,
           boxShadow: scrolled
-            ? "0 8px 40px rgba(0,0,0,0.3), 0 0 30px rgba(212,160,23,0.05)"
+            ? "0 8px 40px rgba(0,0,0,0.4), 0 0 20px rgba(255,32,78,0.03)"
             : "none",
         }}
       >
@@ -114,8 +114,8 @@ export default function Navbar() {
               className="relative w-9 h-9 md:w-10 md:h-10 rounded-full overflow-hidden flex-shrink-0
                 transition-all duration-300 group-hover:scale-105"
               style={{
-                border: "2px solid var(--border-gold)",
-                boxShadow: "0 0 12px rgba(212,160,23,0.15)",
+                border: "1px solid rgba(255,32,78,0.15)",
+                boxShadow: "0 0 10px rgba(255,32,78,0.06)",
               }}
             >
               <Image
@@ -129,40 +129,48 @@ export default function Navbar() {
             </div>
             <div className="flex flex-col">
               <span
-                className="text-lg md:text-xl font-extrabold tracking-tight"
-                style={{ fontFamily: "var(--font-heading)", color: "var(--text-primary)" }}
+                className="text-lg md:text-xl font-black tracking-tight"
+                style={{ fontFamily: "var(--font-tactical)", color: "#F5F5F5" }}
               >
-                Riviera
+                RIVIERA
               </span>
               <span
-                className="text-[8px] md:text-[9px] uppercase tracking-[0.25em] font-semibold -mt-0.5"
-                style={{ color: "var(--text-dim)" }}
+                className="text-[7px] md:text-[8px] uppercase tracking-[0.3em] font-bold -mt-0.5"
+                style={{ color: "rgba(255,32,78,0.45)", fontFamily: "var(--font-tactical)" }}
               >
-                HIT Haldia
+                HIT HALDIA
               </span>
             </div>
           </Link>
 
           {/* ── Desktop nav links ── */}
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-0.5">
             {NAV_LINKS.map((link) => {
               const active = isActive(link.href, link.hash);
               return (
                 <Link
                   key={`${link.href}-${link.hash}`}
                   href={link.href}
-                  className="relative px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200
-                    hover:text-[var(--gold-primary)]"
-                  style={{ color: active ? "var(--gold-primary)" : "var(--text-muted)" }}
+                  className="relative px-4 py-2 text-sm font-medium rounded-sm transition-colors duration-200"
+                  style={{
+                    color: active ? "#F5F5F5" : "rgba(245,245,245,0.45)",
+                    fontFamily: "var(--font-body)",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!active) e.currentTarget.style.color = "rgba(245,245,245,0.75)";
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!active) e.currentTarget.style.color = "rgba(245,245,245,0.45)";
+                  }}
                 >
-                  {/* Shared layoutId pill — slides between active links */}
+                  {/* Active indicator pill */}
                   {active && (
                     <motion.div
                       layoutId="nav-indicator"
-                      className="absolute inset-0 rounded-full -z-10"
+                      className="absolute inset-0 rounded-sm -z-10"
                       style={{
-                        background: "var(--gold-dim)",
-                        border: "1px solid var(--border-gold)",
+                        background: "rgba(255,32,78,0.08)",
+                        border: "1px solid rgba(255,32,78,0.2)",
                       }}
                       transition={{ type: "spring", stiffness: 400, damping: 34 }}
                     />
@@ -173,39 +181,25 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* ── Desktop CTA — Register Now ── */}
+          {/* ── Desktop CTA — Enter Games ── */}
           <div className="hidden lg:flex items-center gap-3">
             <a
               href={REGISTER_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full
-                text-xs font-semibold uppercase tracking-[0.10em] overflow-hidden
+              className="culling-btn-primary group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-sm
+                text-xs font-bold uppercase tracking-[0.12em] overflow-hidden
                 transition-all duration-300"
               style={{
-                background: "linear-gradient(135deg, #F6AD55, #FFB547, #FFC857)",
-                color: "#0a0805",
-                boxShadow: "0 0 20px rgba(255,181,71,0.20)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = "0 0 35px rgba(255,181,71,0.40)";
-                e.currentTarget.style.transform = "translateY(-1px) scale(1.02)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = "0 0 20px rgba(255,181,71,0.20)";
-                e.currentTarget.style.transform = "translateY(0) scale(1)";
+                background: "rgba(255,32,78,0.08)",
+                border: "1px solid rgba(255,32,78,0.35)",
+                color: "#F5F5F5",
+                fontFamily: "var(--font-heading)",
+                boxShadow: "0 0 15px rgba(255,32,78,0.06)",
               }}
             >
-              {/* Shimmer sweep */}
-              <span
-                className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%]
-                  transition-transform duration-700"
-                style={{
-                  background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.28),transparent)",
-                }}
-              />
-              <span className="relative z-10">Register Now</span>
-              <ExternalLink size={12} className="relative z-10 opacity-70" />
+              <span className="relative z-10">Enter Games</span>
+              <ExternalLink size={11} className="relative z-10 opacity-60" />
             </a>
           </div>
 
@@ -213,11 +207,11 @@ export default function Navbar() {
           <div className="lg:hidden flex items-center">
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="relative w-10 h-10 flex items-center justify-center rounded-full transition-colors"
+              className="relative w-10 h-10 flex items-center justify-center rounded-sm transition-colors"
               style={{
-                background: "var(--gold-subtle)",
-                border: "1px solid var(--border-gold)",
-                color: "var(--gold-primary)",
+                background: "rgba(255,32,78,0.04)",
+                border: "1px solid rgba(255,32,78,0.12)",
+                color: "rgba(245,245,245,0.6)",
               }}
               aria-label="Toggle menu"
             >
@@ -264,23 +258,29 @@ export default function Navbar() {
             {/* Backdrop */}
             <div
               className="absolute inset-0 backdrop-blur-sm"
-              style={{ background: "rgba(5,5,5,0.65)" }}
+              style={{ background: "rgba(5,5,7,0.75)" }}
               onClick={() => setMobileOpen(false)}
             />
 
             {/* Panel */}
             <motion.div
-              className="absolute top-20 inset-x-4 md:inset-x-8 rounded-3xl overflow-hidden"
+              className="absolute top-20 inset-x-4 md:inset-x-8 rounded-sm overflow-hidden"
               style={{
-                background: "var(--surface-primary)",
-                border: "1px solid var(--border-gold)",
-                boxShadow: "0 24px 60px rgba(0,0,0,0.5), 0 0 40px rgba(212,160,23,0.06)",
+                background: "rgba(9,9,15,0.95)",
+                border: "1px solid rgba(255,32,78,0.12)",
+                boxShadow: "0 24px 60px rgba(0,0,0,0.6), 0 0 30px rgba(255,32,78,0.04)",
               }}
               initial={{ y: -16, opacity: 0, scale: 0.98 }}
               animate={{ y: 0,   opacity: 1, scale: 1    }}
               exit={{    y: -16, opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
             >
+              {/* Top crimson line */}
+              <div
+                className="absolute inset-x-0 top-0 h-px"
+                style={{ background: "linear-gradient(90deg, transparent, rgba(255,32,78,0.3), transparent)" }}
+              />
+
               <div className="p-5 flex flex-col gap-1">
 
                 {/* Nav links */}
@@ -296,18 +296,22 @@ export default function Navbar() {
                       <Link
                         href={link.href}
                         onClick={() => setMobileOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
+                        className="flex items-center gap-3 px-4 py-3 rounded-sm text-sm font-medium
                           transition-all duration-200"
                         style={{
-                          color:      active ? "var(--gold-primary)" : "var(--text-muted)",
-                          background: active ? "rgba(255,181,71,0.10)" : "transparent",
+                          color:      active ? "#F5F5F5" : "rgba(245,245,245,0.4)",
+                          background: active ? "rgba(255,32,78,0.06)" : "transparent",
                           borderLeft: active
-                            ? "2px solid rgba(255,181,71,0.55)"
+                            ? "2px solid rgba(255,32,78,0.5)"
                             : "2px solid transparent",
+                          fontFamily: "var(--font-body)",
                         }}
                       >
                         {active && (
-                          <span style={{ color: "var(--gold-primary)", fontSize: "8px" }}>✦</span>
+                          <span
+                            className="w-1 h-1 rounded-full flex-shrink-0"
+                            style={{ background: "#FF204E", boxShadow: "0 0 6px rgba(255,32,78,0.5)" }}
+                          />
                         )}
                         {link.label}
                       </Link>
@@ -321,23 +325,25 @@ export default function Navbar() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: NAV_LINKS.length * 0.04 + 0.05, duration: 0.22 }}
                   className="mt-3 pt-4"
-                  style={{ borderTop: "1px solid rgba(255,181,71,0.10)" }}
+                  style={{ borderTop: "1px solid rgba(255,32,78,0.08)" }}
                 >
                   <a
                     href={REGISTER_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl
-                      text-sm font-semibold uppercase tracking-[0.08em] transition-all duration-200"
+                    className="culling-btn-primary flex items-center justify-center gap-2 w-full py-3 rounded-sm
+                      text-sm font-bold uppercase tracking-[0.1em] transition-all duration-200"
                     style={{
-                      background: "linear-gradient(135deg, #F6AD55, #FFB547, #FFC857)",
-                      color: "#0a0805",
-                      boxShadow: "0 0 20px rgba(255,181,71,0.18)",
+                      background: "rgba(255,32,78,0.08)",
+                      border: "1px solid rgba(255,32,78,0.35)",
+                      color: "#F5F5F5",
+                      fontFamily: "var(--font-heading)",
+                      boxShadow: "0 0 12px rgba(255,32,78,0.06)",
                     }}
                   >
-                    Register Now
-                    <ExternalLink size={13} className="opacity-70" />
+                    Enter Games
+                    <ExternalLink size={12} className="opacity-50" />
                   </a>
                 </motion.div>
 

@@ -4,6 +4,7 @@ import { Cinzel } from "next/font/google";
 import { El_Messiri } from "next/font/google";
 import { Poppins } from "next/font/google";
 import { Rajdhani } from "next/font/google";
+import localFont from "next/font/local";
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import ParticleLayer from "@/components/ui/ParticleLayer";
@@ -47,6 +48,13 @@ const rajdhani = Rajdhani({
   display: "swap",
   variable: "--font-rajdhani",
   weight: ["300", "400", "500", "600", "700"],
+});
+
+const jujutsuKaisen = localFont({
+  src: "./Jujutsu Kaisen.ttf",
+  display: "swap",
+  variable: "--font-jjk",
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -180,7 +188,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`theme-night ${inter.variable} ${cinzel.variable} ${elMessiri.variable} ${poppins.variable} ${rajdhani.variable}`}
+      className={`theme-night ${inter.variable} ${cinzel.variable} ${elMessiri.variable} ${poppins.variable} ${rajdhani.variable} ${jujutsuKaisen.variable}`}
     >
       <head>
         <JsonLd />
