@@ -4,299 +4,418 @@ import { useEffect, useState, useMemo } from "react";
 import {
   Code, Music, Gamepad2, Cpu, Palette, Trophy,
   Camera, BookOpen, Mic2, Rocket, Globe, Lightbulb,
-  Sparkles, Compass,                          // ← Compass added
+  Crosshair, Target, Zap, Shield,
   type LucideIcon
 } from "lucide-react";
+import { motion, useReducedMotion, Variants } from "framer-motion";
 import { usePerformanceMode } from "@/hooks/usePerformanceMode";
-import { generateStars, generateEmbers, getPerformanceAdjustedParticles } from "@/lib/particleAnimations";
 
+/* ── Icon map ── */
 const iconMap: Record<string, LucideIcon> = {
   Code, Music, Gamepad2, Cpu, Palette, Trophy,
   Camera, BookOpen, Mic2, Rocket, Globe, Lightbulb,
-  Compass,                                     // ← Compass registered
+  Crosshair, Target, Zap, Shield,
 };
 
+/* ── Activity data ── */
 const activities = [
   {
-    title: "Treasure Hunt",
-    // ✅ FIX 1 — icon changed from "Code" to "Compass"
-    // ✅ FIX 2 — "mbark" → "Embark" typo fixed
-    desc: "Embark on a mystical quest through the dunes of HIT. Decode ancient riddles and uncover the hidden treasure of Riviera 2K26.",
-    iconName: "Compass",
+    title: "Hidden Protocol",
+    desc: "Navigate a web of encoded clues across the arena. Decode, pursue, and outmaneuver rival squads in a high-stakes survival pursuit.",
+    iconName: "Crosshair",
+    sectorTag: "RECON—01",
+    threatLevel: "HIGH",
   },
   {
-    title: "Cultural Night",
-    desc: "A royal celebration of rhythm and light. Experience breathtaking performances.",
+    title: "Crimson Stage",
+    desc: "Where performance becomes a weapon. Electrifying acts under crimson lights in the most intense cultural showdown.",
     iconName: "Music",
+    sectorTag: "PERFORMANCE—02",
+    threatLevel: "CRITICAL",
   },
   {
-    title: "Gaming Arena",
-    desc: "Celestial battlegrounds await. Prove your supremacy in the digital colosseum.",
+    title: "Digital Combat",
+    desc: "Enter the digital battlefield. Only reflexes, strategy, and ruthless precision will determine the survivors.",
     iconName: "Gamepad2",
+    sectorTag: "COMBAT—03",
+    threatLevel: "EXTREME",
   },
   {
-    title: "Tech Expo",
-    desc: "A grand chamber of futuristic relics and visionary student innovations.",
+    title: "Innovation Forge",
+    desc: "A vault of cutting-edge creations and experimental technology. Where visionary minds showcase weapons of innovation.",
     iconName: "Cpu",
+    sectorTag: "TACTICAL—04",
+    threatLevel: "ELEVATED",
   },
 ];
 
-const getRealmType = (title: string, icon: string) => {
-  const text = (title + icon).toLowerCase();
-  if (text.includes("hack") || text.includes("code") || text.includes("cpu")) return "tech";
-  if (text.includes("cultur") || text.includes("music") || text.includes("art")) return "cultural";
-  if (text.includes("game") || text.includes("arena") || text.includes("trophy")) return "gaming";
-  if (text.includes("treasure") || text.includes("compass")) return "expo"; // treasure uses expo atmosphere
-  return "expo";
-};
-
-const RealmAtmosphere = ({ type, isLowPower }: { type: string; isLowPower?: boolean }) => {
-  if (isLowPower) return null;
+/* ── Tactical Corner SVG ── */
+function TacticalCorner({ position }: { position: "tl" | "tr" | "bl" | "br" }) {
+  const rotate = { tl: 0, tr: 90, bl: -90, br: 180 }[position];
+  const pos = {
+    tl: { top: -1, left: -1 },
+    tr: { top: -1, right: -1 },
+    bl: { bottom: -1, left: -1 },
+    br: { bottom: -1, right: -1 },
+  }[position];
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[inherit] z-0">
-      {type === "tech" && (
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(100,200,255,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(100,200,255,0.15)_1px,transparent_1px)] bg-[size:15px_15px] [transform:perspective(500px)_rotateX(60deg)] origin-bottom" />
-          <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-[rgba(0,100,150,0.5)] to-transparent" />
-        </div>
-      )}
-      {type === "cultural" && (
-        <div className="absolute inset-0 opacity-30 mix-blend-screen">
-          <div className="absolute bottom-10 left-[20%] w-32 h-32 rounded-full" style={{ background: "radial-gradient(circle, rgba(255,100,0,0.5) 0%, transparent 70%)" }} />
-          <div className="absolute bottom-20 right-[20%] w-24 h-24 rounded-full" style={{ background: "radial-gradient(circle, rgba(255,200,0,0.4) 0%, transparent 70%)" }} />
-        </div>
-      )}
-      {type === "gaming" && (
-        <div className="absolute inset-0 opacity-30 mix-blend-screen">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] border-[8px] border-[rgba(200,50,50,0.05)] rounded-full" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] border-4 border-[rgba(150,0,255,0.08)] rounded-full" />
-          <div className="absolute bottom-0 inset-x-0 h-32 bg-[radial-gradient(ellipse_at_bottom,rgba(200,50,50,0.4)_0%,transparent_70%)]" />
-        </div>
-      )}
-      {type === "expo" && (
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-20 h-20 border-2 border-[rgba(212,160,23,0.3)] rotate-45" />
-          <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-20 h-20 border-2 border-[rgba(212,160,23,0.1)] rotate-0" />
-          <div className="absolute bottom-0 inset-x-0 h-full bg-gradient-to-t from-[rgba(212,160,23,0.15)] to-transparent mix-blend-overlay" />
-        </div>
-      )}
+    <svg
+      width="12" height="12" viewBox="0 0 14 14"
+      className="absolute pointer-events-none z-30"
+      style={{ ...pos, transform: `rotate(${rotate}deg)` }}
+    >
+      <path d="M0 0 L14 0 L14 2.5 L2.5 2.5 L2.5 14 L0 14 Z" fill="#FF204E" opacity="0.4" />
+    </svg>
+  );
+}
+
+/* ── Section embers ── */
+function ActivityEmbers({ isLowPower }: { isLowPower: boolean }) {
+  const shouldReduceMotion = useReducedMotion();
+  const particles = useMemo(() => {
+    const count = isLowPower ? 4 : 8;
+    return Array.from({ length: count }, (_, i) => ({
+      id: i,
+      x: `${(i * 21 + 13) % 100}%`,
+      y: `${(i * 17 + 8) % 90}%`,
+      size: ((i * 3) % 2) + 1.5,
+      opacity: ((i * 5) % 10 + 5) / 100,
+      dur: 6 + ((i * 4) % 5),
+      delay: (i * 0.6) % 3,
+    }));
+  }, [isLowPower]);
+
+  if (shouldReduceMotion) return null;
+
+  return (
+    <div className="absolute inset-0 pointer-events-none z-[3]" aria-hidden="true">
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          className="absolute rounded-full"
+          style={{
+            left: p.x, top: p.y,
+            width: p.size, height: p.size,
+            background: "radial-gradient(circle, #FF204E, rgba(169,16,50,0.15))",
+            boxShadow: `0 0 ${p.size * 2}px rgba(255,32,78,0.2)`,
+          }}
+          animate={!isLowPower ? { y: [-3, 3, -3], opacity: [p.opacity, p.opacity * 2, p.opacity] } : {}}
+          transition={{ duration: p.dur, delay: p.delay, repeat: Infinity, ease: "easeInOut" }}
+        />
+      ))}
     </div>
   );
+}
+
+/* ── Animation Variants ── */
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.15 } },
 };
 
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
+};
+
+/* ═══════════════════════════════════════════════
+   ACTIVITIES — COMBAT DOMAINS
+═══════════════════════════════════════════════ */
 export default function Activities() {
-  const { isLowPower } = usePerformanceMode();
-
-  const stars = useMemo(() => {
-    const { starCount } = getPerformanceAdjustedParticles(isLowPower);
-    return generateStars(starCount);
-  }, [isLowPower]);
-
-  const embers = useMemo(() => {
-    const { emberCount } = getPerformanceAdjustedParticles(isLowPower);
-    return generateEmbers(emberCount);
-  }, [isLowPower]);
+  const { isLowPower, isMounted } = usePerformanceMode();
+  const shouldReduceMotion = useReducedMotion();
+  const shouldAnimate = !shouldReduceMotion && !isLowPower;
 
   return (
     <section
       id="activities"
       className="relative min-h-screen overflow-hidden py-24 sm:py-32 flex flex-col items-center"
-      style={{ background: "var(--bg-primary)" }}
+      style={{
+        background: "linear-gradient(180deg, #050507 0%, #08080D 25%, #12070B 50%, #09090F 75%, #050507 100%)",
+      }}
     >
-      {/* ================= BACKGROUND LAYERS ================= */}
+      {/* ── BACKGROUND LAYERS ── */}
+
+      {/* Top divider */}
       <div
-        className="absolute inset-0 z-0"
-        style={{ background: "radial-gradient(circle at center, var(--bg-deep) 0%, var(--bg-primary) 100%)" }}
+        className="absolute inset-x-0 top-0 h-px z-10"
+        style={{ background: "linear-gradient(90deg, transparent, rgba(255,32,78,0.12), transparent)" }}
       />
 
-      <div
-        className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full pointer-events-none z-0"
-        style={{ background: "radial-gradient(circle, var(--moon-glow) 0%, transparent 60%)" }}
-      />
-      <div
-        className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full pointer-events-none z-0"
-        style={{ background: "radial-gradient(circle, var(--gold-glow) 0%, transparent 60%)" }}
+      {/* Crimson haze — left */}
+      <motion.div
+        className="absolute top-[15%] left-[-5%] w-[400px] h-[400px] rounded-full pointer-events-none z-0"
+        style={{ background: "radial-gradient(circle, rgba(255,32,78,0.04) 0%, transparent 65%)" }}
+        animate={shouldAnimate ? { scale: [1, 1.04, 1], opacity: [0.5, 0.7, 0.5] } : {}}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      <svg
-        className="absolute inset-0 w-full h-[150%] pointer-events-none z-0 opacity-50"
-        preserveAspectRatio="none"
-        viewBox="0 0 1000 1000"
-      >
-        <path
-          d="M50 150 L250 100 L450 350 L750 200 L950 550 L650 750 L150 650 Z"
-          stroke="rgba(212,160,23,0.2)" strokeWidth="2" fill="none"
-          strokeLinecap="round" strokeLinejoin="round"
+      {/* Crimson haze — right */}
+      {!isLowPower && (
+        <div
+          className="absolute bottom-[10%] right-[-5%] w-[450px] h-[450px] rounded-full pointer-events-none z-0"
+          style={{ background: "radial-gradient(circle, rgba(169,16,50,0.03) 0%, transparent 65%)" }}
         />
-        <path d="M250 100 L150 650" stroke="rgba(212,160,23,0.2)" strokeWidth="1" fill="none" />
-        <path d="M450 350 L950 550" stroke="rgba(212,160,23,0.2)" strokeWidth="1" fill="none" />
-        {[
-          [50,150],[250,100],[450,350],[750,200],
-          [950,550],[650,750],[150,650],[350,150],[650,450],[250,550],
-        ].map(([cx, cy], i) => (
-          <circle key={i} cx={cx} cy={cy} r="3" fill="var(--gold-primary)" />
-        ))}
-      </svg>
+      )}
 
-      <div className="absolute inset-0 z-0 opacity-[0.06] pointer-events-none mix-blend-overlay bg-noise" />
+      {/* Tactical grid */}
       <div
-        className="absolute inset-0 z-20 pointer-events-none"
-        style={{ background: "linear-gradient(180deg, var(--bg-primary) 0%, var(--surface-glass) 100%)" }}
+        className="absolute inset-0 z-0 pointer-events-none opacity-[0.012]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,32,78,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,32,78,0.2) 1px, transparent 1px)",
+          backgroundSize: "80px 80px",
+        }}
       />
 
-      {/* ── PARTICLE LAYERS ── */}
-      <div className="absolute inset-0 z-5 pointer-events-none overflow-hidden">
-        {stars.map((s) => (
+      {/* Noise */}
+      <div className="absolute inset-0 bg-noise opacity-[0.03] z-0" />
+
+      {/* Scanlines */}
+      <div
+        className="absolute inset-0 z-[1] pointer-events-none opacity-[0.01]"
+        style={{
+          backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)",
+        }}
+      />
+
+      {/* Vignette */}
+      <div
+        className="absolute inset-0 z-[1] pointer-events-none"
+        style={{ background: "radial-gradient(ellipse 65% 60% at 50% 50%, transparent 30%, rgba(5,5,7,0.5) 100%)" }}
+      />
+
+      {/* Diagonal energy streaks */}
+      {!isLowPower && (
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-[0.018]">
           <div
-            key={s.id}
-            className="absolute rounded-full"
+            className="absolute w-[180%] h-[1px]"
             style={{
-              width: s.size, height: s.size,
-              left: s.x, top: s.y,
-              background: "var(--gold-primary)",
-              opacity: s.opacity,
+              top: "30%", left: "-10%",
+              background: "linear-gradient(90deg, transparent, #FF204E 40%, transparent)",
+              transform: "rotate(-12deg)",
             }}
           />
-        ))}
-        {embers.map((ember) => (
           <div
-            key={ember.id}
-            className="absolute rounded-full"
+            className="absolute w-[150%] h-[1px]"
             style={{
-              width: 3, height: 3,
-              background: "var(--gold-light)",
-              right: `${ember.right}%`,
-              bottom: `${ember.bottom}%`,
-              opacity: 0.7,
+              top: "70%", left: "-15%",
+              background: "linear-gradient(90deg, transparent, #A91032 50%, transparent)",
+              transform: "rotate(-6deg)",
             }}
           />
-        ))}
-      </div>
+        </div>
+      )}
 
-      {/* ================= HEADING ================= */}
-      <div className="relative z-30 text-center mb-20 md:mb-32 px-4 w-full">
-        <p
-          className="text-xs md:text-sm tracking-[0.5em] uppercase mb-4 font-semibold text-[var(--gold-primary)]"
-          style={{ fontFamily: "var(--font-arabian)" }}
+      {/* Embers */}
+      {isMounted && <ActivityEmbers isLowPower={isLowPower} />}
+
+      {/* ═══ HEADING ═══ */}
+      <motion.div
+        className="relative z-30 text-center mb-16 md:mb-24 px-4 w-full"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+      >
+        {/* Top label */}
+        <motion.div variants={itemVariants} className="flex items-center justify-center gap-3 mb-5">
+          <div style={{ height: 1, width: 28, background: "rgba(255,32,78,0.3)" }} />
+          <p
+            className="text-[9px] md:text-[10px] tracking-[0.5em] uppercase font-bold"
+            style={{ fontFamily: "var(--font-tactical)", color: "#FF204E", opacity: 0.7 }}
+          >
+            ◆ COMBAT DOMAINS ◆
+          </p>
+          <div style={{ height: 1, width: 28, background: "rgba(255,32,78,0.3)" }} />
+        </motion.div>
+
+        <motion.h2
+          variants={itemVariants}
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-[-0.02em] relative z-10"
+          style={{ fontFamily: "var(--font-heading)" }}
         >
-          ✦ Enchanted Realms ✦
-        </p>
+          <span style={{ color: "#F5F5F5", textShadow: "0 0 35px rgba(255,32,78,0.1)" }}>
+            ACTIVE{" "}
+          </span>
+          <span
+            style={{
+              background: "linear-gradient(135deg, #FF204E, #FF2E63, #FF4D6D)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              fontFamily: "var(--font-tactical)",
+              filter: "drop-shadow(0 0 18px rgba(255,32,78,0.2))",
+            }}
+          >
+            DOMAINS
+          </span>
+        </motion.h2>
 
-        <h2
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight relative z-10"
-          style={{
-            fontFamily: "var(--font-heading)",
-            color: "var(--text-primary)",
-            textShadow: "0 0 50px rgba(53, 40, 5, 0.5), 0 5px 15px rgba(0,0,0,0.9)",
-          }}
+        <motion.p
+          variants={itemVariants}
+          className="mt-5 text-sm md:text-base max-w-lg mx-auto"
+          style={{ color: "rgba(245,245,245,0.4)", fontFamily: "var(--font-body)" }}
         >
-          Fest Activities
-        </h2>
+          Each domain is a unique trial of skill, strategy, and survival.
+          Choose your battlefield wisely.
+        </motion.p>
+      </motion.div>
 
-        <p
-          className="mt-8 text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-normal"
-          style={{
-            color: "rgba(220, 210, 185, 0.95)",
-            textShadow: "0 1px 16px rgba(4, 4, 16, 0.95)",
-            letterSpacing: "0.02em",
-          }}
-        >
-          Discover the magical worlds hidden within Riviera.
-          Each realm offers a unique trial of skill, creativity, and destiny.
-        </p>
-      </div>
-
-      {/* ================= PORTAL CARDS ================= */}
-      <div className="relative z-30 w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-12">
+      {/* ═══ DOMAIN CARDS ═══ */}
+      <motion.div
+        className="relative z-30 w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-60px" }}
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
           {activities.map((activity, index) => {
             const Icon = iconMap[activity.iconName] || Code;
-            const realmType = getRealmType(activity.title, activity.iconName);
-            const layoutOffsets = [
+            const staggerOffsets = [
               "lg:translate-y-0",
-              "lg:translate-y-16",
               "lg:translate-y-8",
-              "lg:translate-y-24",
+              "lg:translate-y-4",
+              "lg:translate-y-12",
             ];
-            const layoutOffset = layoutOffsets[index % 4];
 
             return (
-              <div key={index} className={`portal-card relative w-full ${layoutOffset}`}>
+              <motion.div
+                key={index}
+                variants={cardVariants}
+                className={`culling-info-card group relative overflow-hidden rounded-sm ${staggerOffsets[index % 4]}`}
+                style={{
+                  background: "rgba(9,9,15,0.75)",
+                  border: "1px solid rgba(255,32,78,0.1)",
+                  backdropFilter: "blur(10px)",
+                  WebkitBackdropFilter: "blur(10px)",
+                  transition: "all 0.3s ease",
+                }}
+              >
+                {/* Tactical corners */}
+                <TacticalCorner position="tl" />
+                <TacticalCorner position="tr" />
+                <TacticalCorner position="bl" />
+                <TacticalCorner position="br" />
+
+                {/* Top crimson line */}
                 <div
-                  className="group relative overflow-hidden w-full flex flex-col items-center text-center"
+                  className="absolute inset-x-0 top-0 h-px pointer-events-none z-10"
+                  style={{ background: "linear-gradient(90deg, transparent, rgba(255,32,78,0.3), transparent)" }}
+                />
+
+                {/* Scanline texture */}
+                <div
+                  className="absolute inset-0 pointer-events-none z-0 opacity-[0.015]"
                   style={{
-                    borderRadius: "140px 140px 24px 24px",
-                    background: "var(--gradient-card)",
-                    border: "1px solid var(--border-gold)",
-                    borderTop: "2px solid var(--gold-primary)",
-                    borderBottom: "8px solid var(--gold-deep)",
-                    boxShadow: "0 20px 40px rgba(0,0,0,0.8), inset 0 0 40px rgba(0,0,0,0.4)",
-                    transformStyle: "preserve-3d",
-                    padding: "50px 24px 40px 24px",
-                    minHeight: "480px",
+                    backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255,255,255,0.04) 1px, rgba(255,255,255,0.04) 2px)",
                   }}
-                >
-                  <div className="absolute inset-[12px] border border-[rgba(212,160,23,0.15)] rounded-[130px_130px_16px_16px] pointer-events-none z-10" />
-                  <div className="absolute inset-[24px] border border-[rgba(212,160,23,0.08)] rounded-[120px_120px_12px_12px] pointer-events-none bg-pattern-arabian opacity-10 mix-blend-overlay" />
+                />
 
-                  <RealmAtmosphere type={realmType} isLowPower={isLowPower} />
-
-                  <div
-                    className="relative z-20 flex flex-col h-full items-center w-full"
-                    style={{ transform: "translateZ(30px)" }}
-                  >
-                    {/* Icon Medallion */}
-                    <div className="w-20 h-20 rounded-full flex items-center justify-center mb-8 relative">
-                      <div className="absolute inset-[-6px] border-[2px] border-dashed border-[rgba(212,160,23,0.4)] rounded-full" />
-                      <div className="absolute inset-[-12px] border border-[rgba(212,160,23,0.1)] rounded-full" />
-                      <div className="absolute inset-0 bg-[var(--surface-primary)] rounded-full border-2 border-[var(--gold-primary)] shadow-[0_0_20px_var(--gold-glow)]" />
-                      <Icon
-                        size={32}
-                        className="text-[var(--gold-primary)] relative z-10 drop-shadow-[0_0_15px_rgba(212,160,23,0.9)]"
+                {/* Card content */}
+                <div className="relative z-10 p-6 sm:p-7 flex flex-col min-h-[320px] sm:min-h-[360px]">
+                  {/* Sector tag + threat level */}
+                  <div className="flex items-center justify-between mb-5">
+                    <span
+                      className="text-[7px] tracking-[0.25em] uppercase font-bold"
+                      style={{ color: "rgba(255,32,78,0.4)", fontFamily: "var(--font-tactical)" }}
+                    >
+                      {activity.sectorTag}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <motion.div
+                        className="w-1 h-1 rounded-full"
+                        style={{ background: "#FF204E", boxShadow: "0 0 4px rgba(255,32,78,0.5)" }}
+                        animate={shouldAnimate ? { opacity: [0.4, 1, 0.4] } : {}}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: index * 0.3 }}
                       />
+                      <span
+                        className="text-[6px] tracking-[0.2em] uppercase font-bold"
+                        style={{ color: "rgba(255,32,78,0.3)", fontFamily: "var(--font-tactical)" }}
+                      >
+                        {activity.threatLevel}
+                      </span>
                     </div>
+                  </div>
 
-                    {/* Title */}
-                    <h3
-                      className="text-2xl lg:text-3xl font-extrabold mb-4 tracking-wide"
+                  {/* Icon */}
+                  <div
+                    className="w-12 h-12 rounded-sm flex items-center justify-center mb-5"
+                    style={{
+                      background: "rgba(255,32,78,0.05)",
+                      border: "1px solid rgba(255,32,78,0.12)",
+                    }}
+                  >
+                    <Icon size={22} style={{ color: "#FF204E", opacity: 0.6 }} />
+                  </div>
+
+                  {/* Title */}
+                  <h3
+                    className="text-xl sm:text-2xl font-black mb-3"
+                    style={{
+                      fontFamily: "var(--font-heading)",
+                      color: "#F5F5F5",
+                      textShadow: "0 0 12px rgba(255,32,78,0.06)",
+                    }}
+                  >
+                    {activity.title}
+                  </h3>
+
+                  {/* Crimson divider */}
+                  <div
+                    className="w-8 h-px mb-4"
+                    style={{ background: "linear-gradient(90deg, rgba(255,32,78,0.4), transparent)" }}
+                  />
+
+                  {/* Description */}
+                  <p
+                    className="text-[11px] sm:text-xs leading-relaxed flex-grow"
+                    style={{ color: "rgba(245,245,245,0.35)" }}
+                  >
+                    {activity.desc}
+                  </p>
+
+                  {/* Bottom action */}
+                  <div
+                    className="mt-5 pt-4 flex items-center justify-between"
+                    style={{ borderTop: "1px solid rgba(255,32,78,0.06)" }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Target size={10} className="text-[#FF204E] opacity-30" />
+                      <span
+                        className="text-[8px] tracking-[0.2em] uppercase font-bold"
+                        style={{ color: "rgba(255,32,78,0.3)", fontFamily: "var(--font-tactical)" }}
+                      >
+                        ACCESS DOMAIN
+                      </span>
+                    </div>
+                    <div
+                      className="w-5 h-5 rounded-sm flex items-center justify-center"
                       style={{
-                        fontFamily: "var(--font-heading)",
-                        color: "var(--text-primary)",
-                        textShadow: "0 2px 12px rgba(0,0,0,0.8)",
+                        background: "rgba(255,32,78,0.06)",
+                        border: "1px solid rgba(255,32,78,0.15)",
                       }}
                     >
-                      {activity.title}
-                    </h3>
-
-                    {/* Divider */}
-                    <div className="w-12 h-[2px] bg-gradient-to-r from-transparent via-[rgba(212,160,23,0.6)] to-transparent mb-5" />
-
-                    {/* Description */}
-                    <p
-                      className="text-sm md:text-sm leading-relaxed flex-grow"
-                      style={{
-                        color: "rgba(210, 200, 178, 0.92)",
-                        textShadow: "0 1px 8px rgba(0, 0, 0, 0.9)",
-                        fontWeight: 400,
-                      }}
-                    >
-                      {activity.desc}
-                    </p>
-
-                    {/* Unlock Portal */}
-                    <div className="mt-8 pt-6 w-full flex items-center justify-center border-t border-[rgba(212,160,23,0.15)] relative overflow-hidden">
-                      <button className="flex items-center gap-2 text-[10px] sm:text-xs tracking-[0.3em] uppercase text-[var(--gold-dim)]">
-                        <Sparkles size={14} className="opacity-50" />
-                        Unlock Portal
-                      </button>
+                      <Zap size={9} className="text-[#FF204E] opacity-50" />
                     </div>
                   </div>
                 </div>
-              </div>
+
+                {/* Bottom line */}
+                <div
+                  className="absolute inset-x-0 bottom-0 h-px pointer-events-none z-10"
+                  style={{ background: "linear-gradient(90deg, transparent, rgba(255,32,78,0.12), transparent)" }}
+                />
+              </motion.div>
             );
           })}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
