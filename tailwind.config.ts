@@ -8,7 +8,7 @@ const config: Config = {
   darkMode: "class",
   theme: {
     extend: {
-      /* ── Arabian Nights Color Palette ─────────────────────────── */
+      /* ── Jujutsu Kaisen Culling Games Color Palette ─────────────────────────── */
       colors: {
         arabian: {
           bg:          "var(--bg-primary)",

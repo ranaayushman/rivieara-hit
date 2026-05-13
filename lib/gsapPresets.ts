@@ -1,5 +1,5 @@
 /**
- * GSAP Cinematic Presets — Arabian Nights Animation System
+ * GSAP Cinematic Presets — Jujutsu Kaisen Culling Games Animation System
  *
  * This file houses all GSAP-specific utilities:
  *   • Hero intro timeline choreography

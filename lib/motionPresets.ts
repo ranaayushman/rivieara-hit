@@ -1,5 +1,5 @@
 /**
- * Centralized Framer Motion presets for the Arabian Nights theme.
+ * Centralized Framer Motion presets for the Jujutsu Kaisen Culling Games theme.
  * Import these everywhere to ensure consistent, globally-tunable animation.
  */
 

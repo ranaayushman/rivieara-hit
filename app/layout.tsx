@@ -60,11 +60,11 @@ const jujutsuKaisen = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.rivierafest.online"),
   title: {
-    default: "Riviera Fest 2026 | Rivierafest — Arabian Nights | HIT Haldia Techno-Cultural Fest",
+    default: "Riviera Fest 2026 | Rivierafest — Jujutsu Kaisen Culling Games | HIT Haldia Techno-Cultural Fest",
     template: "%s | Riviera Fest 2026 — HIT Haldia",
   },
   description:
-    "Riviera Fest 2026 (Rivierafest) — the premier Arabian Nights-themed techno-cultural fest of Haldia Institute of Technology (HIT Haldia). 18-20 May 2026. Riviera fest features 50+ events: hackathons, coding competitions, workshops, robotics, cultural nights, gaming tournaments. Join 10,000+ students at the biggest college fest in West Bengal. Register now at rivierafest.online!",
+    "Riviera Fest 2026 (Rivierafest) — the premier Jujutsu Kaisen Culling Games-themed techno-cultural fest of Haldia Institute of Technology (HIT Haldia). 18-20 May 2026. Riviera fest features 50+ events: hackathons, coding competitions, workshops, robotics, cultural nights, gaming tournaments. Join 10,000+ students at the biggest college fest in West Bengal. Register now at rivierafest.online!",
   keywords: [
     /* Primary brand keywords — with & without space */
     "Riviera fest",
@@ -105,9 +105,9 @@ export const metadata: Metadata = {
     "Haldia cultural fest",
     "HIT techno cultural fest",
     /* Theme keywords */
-    "Arabian Nights fest",
-    "Riviera Arabian Nights",
-    "Riviera fest Arabian Nights",
+    "Jujutsu Kaisen Culling Games fest",
+    "Riviera Jujutsu Kaisen",
+    "Riviera fest Jujutsu Kaisen",
     /* Generic college fest keywords */
     "college fest 2026",
     "college fest West Bengal",
@@ -134,11 +134,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/favicon-jjk.ico", sizes: "any" },
+      { url: "/icon-jjk-192.png", sizes: "192x192", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      { url: "/apple-touch-icon-jjk.png", sizes: "180x180", type: "image/png" },
     ],
   },
   openGraph: {
@@ -146,24 +146,24 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: "https://www.rivierafest.online",
     siteName: "Riviera Fest 2026 — Rivierafest | HIT Haldia",
-    title: "Riviera Fest 2026 | Rivierafest — Arabian Nights | HIT Haldia Techno-Cultural Fest",
+    title: "Riviera Fest 2026 | Rivierafest — Jujutsu Kaisen Culling Games | HIT Haldia Techno-Cultural Fest",
     description:
       "Riviera Fest (Rivierafest) — the biggest techno-cultural fest of Haldia Institute of Technology. 18-20 May 2026. 50+ events, hackathons, workshops, cultural nights & more. Register now!",
     images: [
       {
-        url: "/riviera-logo.jpeg",
+        url: "/logojjk.png",
         width: 1200,
         height: 630,
-        alt: "Riviera Fest 2026 — Rivierafest Arabian Nights Techno-Cultural Fest at HIT Haldia",
+        alt: "Riviera Fest 2026 — Rivierafest Jujutsu Kaisen Culling Games Techno-Cultural Fest at HIT Haldia",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Riviera Fest 2026 | Rivierafest — Arabian Nights | HIT Haldia",
+    title: "Riviera Fest 2026 | Rivierafest — Jujutsu Kaisen Culling Games | HIT Haldia",
     description:
-      "Riviera Fest (Rivierafest) — the premier Arabian Nights techno-cultural fest of HIT Haldia. 18-20 May 2026. Register now!",
-    images: ["/riviera-logo.jpeg"],
+      "Riviera Fest (Rivierafest) — the premier Jujutsu Kaisen Culling Games techno-cultural fest of HIT Haldia. 18-20 May 2026. Register now!",
+    images: ["/logojjk.png"],
   },
   robots: {
     index: true,
@@ -177,6 +177,20 @@ export const metadata: Metadata = {
     },
   },
   category: "education",
+  other: {
+    "referrer": "strict-origin-when-cross-origin",
+    "color-scheme": "dark light",
+    "mobile-web-app-capable": "yes",
+    "mobile-web-app-status-bar-style": "black-translucent",
+    "theme-color": "#FFB547",
+    "format-detection": "telephone=no",
+  },
+  verification: {
+    google: "google-site-verification-code",
+    other: {
+      "msvalidate.01": "msvalidate-code",
+    },
+  },
 };
 
 
@@ -191,7 +205,18 @@ export default function RootLayout({
       className={`theme-night ${inter.variable} ${cinzel.variable} ${elMessiri.variable} ${poppins.variable} ${rajdhani.variable} ${jujutsuKaisen.variable}`}
     >
       <head>
+        {/* Performance optimizations */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+        
+        {/* Structured data and SEO */}
         <JsonLd />
+        
+        {/* Web app meta tags */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body
         className="antialiased"

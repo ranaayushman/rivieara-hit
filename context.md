@@ -1,6 +1,6 @@
 # Riviera 2026 — Project Context
 
-> **Theme:** Arabian Nights · Mystical Desert Fantasy · Luxury Cinematic Storytelling
+> **Theme:** Jujutsu Kaisen Culling Games · Dark Anime Fantasy · Premium Action Storytelling
 > **Stack:** Next.js 16 (App Router) + TypeScript + Tailwind CSS v3 + Framer Motion + GSAP
 
 ---
@@ -8,7 +8,7 @@
 ## Quick Summary
 
 Riviera 2026 is the official website for the annual techno-cultural fest of Haldia Institute of Technology (HIT).
-The entire frontend is designed around an **Arabian Nights** dark fantasy aesthetic — warm golds, cinematic black backgrounds, glass morphism cards, floating lanterns, crescent moon, desert fog particles, and premium micro-animations.
+The entire frontend is designed around a **Jujutsu Kaisen Culling Games** dark anime fantasy aesthetic — intense purples, crimsons, cinematic black backgrounds, glass morphism cards, animated cursed energy effects, mystical fog particles, and premium micro-animations.
 
 ---
 
@@ -86,7 +86,7 @@ riveria_hit_main/
 │   └── types.ts                  # TypeScript interfaces
 │
 ├── public/                       # Static assets
-│   ├── riviera-logo.jpeg         # Logo
+│   ├── logojjk.png               # JJK Logo
 │   ├── gallery1-4.jpg            # Fallback gallery images
 │   └── fire-bg.png               # Background texture
 │

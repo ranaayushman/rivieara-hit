@@ -241,7 +241,7 @@ export default function Hero() {
       />
 
       {/* Secondary dark red haze */}
-      {!isLowPower && (
+      {isMounted && !isLowPower && (
         <div
           className="absolute top-[10%] right-[-5%] w-[450px] h-[450px] rounded-full pointer-events-none z-0"
           style={{ background: "radial-gradient(circle, rgba(169,16,50,0.05) 0%, transparent 70%)" }}
@@ -262,7 +262,7 @@ export default function Hero() {
       <div className="absolute inset-0 bg-noise opacity-[0.035] z-0" />
 
       {/* Diagonal energy streaks */}
-      {!isLowPower && (
+      {isMounted && !isLowPower && (
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-[0.03]">
           <div
             className="absolute w-[200%] h-[1px]"

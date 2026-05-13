@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 /* ================================================================== */
-/*  ARABIAN NIGHTS — DESIGN TOKENS (Night Mode = Default)              */
+/*  JUJUTSU KAISEN CULLING GAMES — DESIGN TOKENS (Night Mode = Default)              */
 /* ================================================================== */
 
 :root,
 .theme-night {
-  /* ── Cinematic Arabian Nights Backgrounds (Deep Sky & Midnight) ─── */
+  /* ── Cinematic JJK Culling Games Backgrounds (Deep Purple & Crimson) ─── */
   --bg-primary:       #050816;
   --bg-secondary:     #0B1020;
   --bg-deep:          #140B1F;
