@@ -1,7 +1,6 @@
 import "./globals.css";
-import { Inter } from "next/font/google";
-import { Cinzel } from "next/font/google";
-import { El_Messiri } from "next/font/google";
+import { Poppins, Bebas_Neue } from "next/font/google";
+import localFont from "next/font/local";
 import type { Metadata } from "next";
 import ParticleLayer from "@/components/ui/ParticleLayer";
 import FogLayer from "@/components/ui/FogLayer";
@@ -9,9 +8,14 @@ import MouseGlow from "@/components/ui/MouseGlow";
 import ConditionalNavbar from "@/components/ConditionalNavbar";
 import ConditionalMain from "@/components/ConditionalMain";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
+import PageLoader from "@/components/PageLoader";
+import JsonLd from "@/components/JsonLd";
+import Switch3DButton from "@/components/Switch3DButton";
 
-const inter = Inter({
-  subsets: ["latin"],
+/* ── JujutsuKaisen — local .ttf (place in public/fonts/) ── */
+const jujutsuKaisen = localFont({
+  src: "../public/fonts/Jujutsu Kaisen.ttf",
+  variable: "--font-jjk",
   display: "swap",
   weight: "400",
 });
@@ -32,37 +36,99 @@ const bebasNeue = Bebas_Neue({
   weight: "400",
 });
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-poppins",
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-const rajdhani = Rajdhani({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-rajdhani",
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-const jujutsuKaisen = localFont({
-  src: "./Jujutsu Kaisen.ttf",
-  display: "swap",
-  variable: "--font-jjk",
-  weight: "400",
-});
-
 export const metadata: Metadata = {
-  title: "Riviera 2026 | Arabian Nights — HIT Haldia Tech & Cultural Fest",
+  metadataBase: new URL("https://www.rivierafest.online"),
+  title: {
+    default: "Riviera Fest 2026 | Culling Games | HIT Haldia Techno-Cultural Fest",
+    template: "%s | Riviera Fest 2026 — HIT Haldia",
+  },
   description:
-    "Official website of Riviera 2026 — A mystical Arabian Nights techno-cultural experience at Haldia Institute of Technology. Register now for hackathons, workshops, cultural events, and more.",
-  keywords: ["Riviera", "HIT", "Haldia", "tech fest", "cultural fest", "college fest 2026", "Arabian Nights"],
+    "Riviera Fest 2026 — the Culling Games-themed techno-cultural fest of Haldia Institute of Technology (HIT Haldia). 19-20 May 2026. 50+ events: hackathons, coding competitions, workshops, robotics, cultural nights, gaming tournaments. Join 10,000+ students at the biggest college fest in West Bengal.",
+  keywords: [
+    "Riviera fest",
+    "Rivierafest",
+    "riviera fest",
+    "rivierafest",
+    "Riviera 2026",
+    "Riviera fest 2026",
+    "Rivierafest 2026",
+    "Riveria fest",
+    "Riveria",
+    "Riveria fest 2026",
+    "Riviera HIT",
+    "Riviera Haldia",
+    "HIT fest",
+    "HIT fest 2026",
+    "HIT Haldia fest",
+    "Haldia fest",
+    "Haldia fest 2026",
+    "Haldia Institute of Technology fest",
+    "Haldia tech fest",
+    "Haldia cultural fest",
+    "HIT techno cultural fest",
+    "Culling Games fest",
+    "JJK fest",
+    "college fest 2026",
+    "college fest West Bengal",
+    "tech fest India 2026",
+    "cultural fest India 2026",
+    "biggest college fest West Bengal",
+    "hackathon 2026",
+    "coding competition college",
+    "robotics competition",
+    "gaming tournament college",
+    "rivierafest.online",
+  ],
+  authors: [{ name: "Riviera Fest 2026 — Haldia Institute of Technology" }],
+  creator: "Haldia Institute of Technology",
+  publisher: "Riviera Fest 2026 Organizing Committee",
+  alternates: {
+    canonical: "https://www.rivierafest.online",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
   openGraph: {
     type: "website",
+    locale: "en_IN",
+    url: "https://www.rivierafest.online",
+    siteName: "Riviera Fest 2026 — Rivierafest | HIT Haldia",
+    title: "Riviera Fest 2026 | Culling Games | HIT Haldia Techno-Cultural Fest",
+    description:
+      "Riviera Fest — the biggest techno-cultural fest of Haldia Institute of Technology. 19-20 May 2026. 50+ events, hackathons, workshops, cultural nights & more. Register now!",
+    images: [
+      {
+        url: "/riviera-logo.jpeg",
+        width: 1200,
+        height: 630,
+        alt: "Riviera Fest 2026 — Culling Games Techno-Cultural Fest at HIT Haldia",
+      },
+    ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Riviera Fest 2026 | Culling Games | HIT Haldia",
+    description:
+      "Riviera Fest — the Culling Games themed techno-cultural fest of HIT Haldia. 19-20 May 2026. Register now!",
+    images: ["/riviera-logo.jpeg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  category: "education",
 };
-
 
 export default function RootLayout({
   children,
@@ -72,8 +138,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`theme-night ${inter.variable} ${cinzel.variable} ${elMessiri.variable}`}
+      className={`theme-night ${jujutsuKaisen.variable} ${poppins.variable} ${bebasNeue.variable}`}
     >
+      <head>
+        <JsonLd />
+      </head>
       <body
         className="antialiased"
         style={{
@@ -83,6 +152,7 @@ export default function RootLayout({
         }}
       >
         <SmoothScrollProvider>
+          <Switch3DButton />
           <PageLoader />
 
           {/* Global atmospheric layers */}
