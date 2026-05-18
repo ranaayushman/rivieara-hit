@@ -1,0 +1,92 @@
+[33m133fca3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m updated website UI and theme
+[33mb4567d4[m backup before pull
+[33mad68155[m seo optimised
+[33m913dcb1[m new jjk logo
+[33me31a91c[m loader
+[33mf5a91a1[m contact page
+[33m506a207[m tap anywhere to close;
+[33m30510b2[m gallery page
+[33mdd7f0ae[m footer updated accorcing to the theme
+[33m5a3bd69[m gallery and sponsor section
+[33m9dc4e10[m actities section
+[33m4d7ffff[m schedule
+[33m9662519[m added custom font
+[33m73f699a[m hero jjk
+[33m946fb08[m fix: gallery images and sponsors section
+[33ma6e94d1[m fix: gallery images and sponsors section
+[33me2d366f[m fix: gallery images and sponsors section
+[33m64d5b91[m fix: gallery images and sponsors section
+[33mb15c984[m updated events section and homepage UI
+[33m655d596[m updated events section and homepage UI
+[33mae04b97[m optimised the images
+[33md84c55a[m optimised image
+[33m91866c3[m added more tags
+[33m2419c96[m add bing
+[33m032eb55[m SEO
+[33m2692d9d[m countdown
+[33m3659d59[m added loader
+[33ma2546b9[m improved hero section and updated event content
+[33mfa6c5ee[m temp changes before pull
+[33mae828f9[m temp changes before pull
+[33mf405f4f[m fixed the carousel
+[33m3e83a7b[m carousel animation fixed
+[33m753f49b[m removefd backend
+[33m880f091[m removed unncessary api call
+[33m03adbac[m switched to server side code
+[33mda5f792[m added lazy loading
+[33ma3dc4ce[m removed high gpu animations from hero section
+[33m1f82a13[m before merge;
+[33m78bf29c[m improved schedule
+[33m8bde46b[m improved hero UI and fixed navbar + animations
+[33m5e3599a[m temp changes before pull
+[33m46bbe6a[m animation of gallery section
+[33m27969b4[m ok merge
+[33mfebe2d2[m upcoming events section animation updated
+[33maf0c9e1[m added minimal animations on register now section
+[33me3c1bca[m added smooth scroll
+[33m0297ebd[m rempved all animations
+[33mb911e29[m my latest changes
+[33m3d46360[m optimised the aniamtions;
+[33mf90cdb3[m fixed the animation bug
+[33mf60343e[m fixed carousel
+[33md1a2d66[m reduced the animation of acitivities section
+[33m6cc2b3d[m reduced animations on activites section
+[33mb998cd2[m reduced animations
+[33m9562b6c[m fixed auth
+[33m9e1a395[m modification on auth route
+[33mf4046ae[m my latest changes
+[33m7ba4bfd[m updated the contact form
+[33m9056e95[m updated login page
+[33maa88a02[m gloabalised animation file\
+[33m708a8f7[m fexed merge
+[33m569e6ad[m home page improved ang register section
+[33mf45930d[m removed heading lights; ;
+[33mf4fff03[m removed lights
+[33m6d737a1[m removed lights
+[33m564ae8e[m updated the favicon file
+[33m92c3c95[m removed the scroll indicator
+[33m039c880[m added new logo
+[33m65dd07c[m removed moon
+[33m2043cc0[m optimised for mobile phones
+[33m585222c[m new gallery section
+[33m06b2b83[m added new fest activities ui\
+[33m685d975[m added new carousel
+[33m2501c7f[m theme
+[33md23707f[m admin panle succeed
+[33m443a807[m admin panel completed
+[33m0b42817[m new structured layout of the webiste
+[33m0c1b280[m register page is created\
+[33m17f70fa[m removed scroll indicator
+[33m278f7e7[m gallery page added
+[33m1ac72ed[m added sponsors animation and layout
+[33m1f05cbb[m upcoming carousel working
+[33mb265179[m rewrite the code\
+[33mce1aef4[m Merge pull request #1 from Raj123Aditya/aditya-work
+[33me3b8272[m improved ui
+[33m7419006[m my changes
+[33m87a17dd[m Merge branch 'main' of https://github.com/ranaayushman/rivieara-hit
+[33me7dafb8[m local changes before pull
+[33mc665085[m backend completed
+[33m3cd163a[m admin side actions completel
+[33m57eb0f9[m first commit
+[33mc49ade2[m Initial commit from Create Next App

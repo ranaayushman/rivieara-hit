@@ -10,7 +10,6 @@ import ConditionalMain from "@/components/ConditionalMain";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import PageLoader from "@/components/PageLoader";
 import JsonLd from "@/components/JsonLd";
-import Switch3DButton from "@/components/Switch3DButton";
 
 /* ── JujutsuKaisen — local .ttf (place in public/fonts/) ── */
 const jujutsuKaisen = localFont({
@@ -87,44 +86,43 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/favicon.ico",   sizes: "any"     },
+      { url: "/icon-192.png",  sizes: "192x192", type: "image/png" },
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
-    type: "website",
-    locale: "en_IN",
-    url: "https://www.rivierafest.online",
+    type:     "website",
+    locale:   "en_IN",
+    url:      "https://www.rivierafest.online",
     siteName: "Riviera Fest 2026 — Rivierafest | HIT Haldia",
-    title: "Riviera Fest 2026 | Culling Games | HIT Haldia Techno-Cultural Fest",
+    title:    "Riviera Fest 2026 | Culling Games | HIT Haldia Techno-Cultural Fest",
     description:
       "Riviera Fest — the biggest techno-cultural fest of Haldia Institute of Technology. 19-20 May 2026. 50+ events, hackathons, workshops, cultural nights & more. Register now!",
     images: [
       {
-        url: "/riviera-logo.jpeg",
-        width: 1200,
+        url:    "/riviera-logo.jpeg",
+        width:  1200,
         height: 630,
-        alt: "Riviera Fest 2026 — Culling Games Techno-Cultural Fest at HIT Haldia",
+        alt:    "Riviera Fest 2026 — Culling Games Techno-Cultural Fest at HIT Haldia",
       },
     ],
   },
   twitter: {
-    card: "summary_large_image",
-    title: "Riviera Fest 2026 | Culling Games | HIT Haldia",
-    description:
-      "Riviera Fest — the Culling Games themed techno-cultural fest of HIT Haldia. 19-20 May 2026. Register now!",
-    images: ["/riviera-logo.jpeg"],
+    card:        "summary_large_image",
+    title:       "Riviera Fest 2026 | Culling Games | HIT Haldia",
+    description: "Riviera Fest — the Culling Games themed techno-cultural fest of HIT Haldia. 19-20 May 2026. Register now!",
+    images:      ["/riviera-logo.jpeg"],
   },
   robots: {
-    index: true,
+    index:  true,
     follow: true,
     googleBot: {
-      index: true,
-      follow: true,
+      index:               true,
+      follow:              true,
       "max-video-preview": -1,
       "max-image-preview": "large",
-      "max-snippet": -1,
+      "max-snippet":       -1,
     },
   },
   category: "education",
@@ -138,7 +136,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`theme-night ${jujutsuKaisen.variable} ${poppins.variable} ${bebasNeue.variable}`}
+      className={`
+        theme-night
+        ${jujutsuKaisen.variable}
+        ${poppins.variable}
+        ${bebasNeue.variable}
+      `}
     >
       <head>
         <JsonLd />
@@ -146,16 +149,20 @@ export default function RootLayout({
       <body
         className="antialiased"
         style={{
-          background: "var(--bg-primary)",
-          color: "var(--text-primary)",
-          fontFamily: "var(--font-poppins)",
+          background:  "var(--bg-primary)",
+          color:       "var(--text-primary)",
+          fontFamily:  "var(--font-poppins), 'Poppins', system-ui, sans-serif",
+          /* Cursed energy subtle vignette on the whole page */
+          backgroundImage:
+            "radial-gradient(ellipse at 50% 0%, rgba(139,0,0,0.08) 0%, transparent 60%)",
         }}
       >
         <SmoothScrollProvider>
-          <Switch3DButton />
+          {/* ✅ REMOVED: Switch3DButton */}
+
           <PageLoader />
 
-          {/* Global atmospheric layers */}
+          {/* Global atmospheric layers — now red-tinted via globals.css tokens */}
           <FogLayer />
           <ParticleLayer />
           <MouseGlow />
